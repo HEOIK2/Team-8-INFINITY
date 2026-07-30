@@ -4,7 +4,7 @@
 
 // 아이템/스킬 등급
 enum class ItemRarity {
-    D, C, B, A, S
+    C, B, A, S
 };
 
 // ♻️ 분리수거 5대 속성
