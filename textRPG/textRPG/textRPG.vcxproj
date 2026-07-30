@@ -139,10 +139,26 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="battle.cpp" />
+    <ClCompile Include="inventory.cpp" />
+    <ClCompile Include="Item.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="monster.cpp" />
+    <ClCompile Include="player.cpp" />
+    <ClCompile Include="shop.cpp" />
+    <ClCompile Include="UI.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="battle.h" />
+    <ClInclude Include="gameText.h" />
+    <ClInclude Include="inventory.h" />
+    <ClInclude Include="Item.h" />
     <ClInclude Include="main.h" />
+    <ClInclude Include="monster.h" />
+    <ClInclude Include="player.h" />
+    <ClInclude Include="shop.h" />
+    <ClInclude Include="type.h" />
+    <ClInclude Include="UI.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
