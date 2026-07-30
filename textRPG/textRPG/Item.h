@@ -11,12 +11,12 @@ private:
     ItemRarity rarity;         // 등급 (D~S)
     MonsterType strongAgainst;  // 강한 상대 (데미지 증가)
     MonsterType weakAgainst;    // 약한 상대 (데미지 감쇄)
-    int basePower;             // 기본 위력
+    int baseATK;             // 기본 위력
 
 public:
     // 생성자 선언
     Item(std::string name, std::string desc, std::string attackText, ItemRarity rarity,
-        MonsterType strong, MonsterType weak, int power);
+        MonsterType strong, MonsterType weak, int ATK);
 
     // Getters 선언
     std::string GetName() const;
@@ -25,7 +25,7 @@ public:
     ItemRarity GetRarity() const;
     MonsterType GetStrongAgainst() const;
     MonsterType GetWeakAgainst() const;
-    int GetBasePower() const;
+    int GetBaseATK() const;
 
     // 등급 문자열 반환 헬퍼 함수 선언
     std::string GetRarityString() const;
