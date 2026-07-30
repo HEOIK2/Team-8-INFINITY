@@ -20,7 +20,7 @@ std::string Item::GetAttackText() const {
 ItemRarity Item::GetRarity() const {
     return rarity;
 }
-TargetType Item::GetStrongAgainst() const {
+MonsterType Item::GetStrongAgainst() const {
     return strongAgainst;
 }
 TargetType Item::GetWeakAgainst() const {
