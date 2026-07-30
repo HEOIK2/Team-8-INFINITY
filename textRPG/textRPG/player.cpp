@@ -138,4 +138,5 @@ void Player::PrintStatus() const
     std::cout << "경험치 : " << exp << " / " << EXP_PER_LEVEL << "\n";
     std::cout << "아이템 : " << (item.empty() ? "없음" : item) << "\n";
     std::cout << "=========================\n";
+
 }
