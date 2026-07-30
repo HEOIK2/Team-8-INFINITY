@@ -1,6 +1,10 @@
 #include <iostream>
 #include <string>
-#include "type.h"
+#include <vector>
+#include <map>
+#include <algorithm>
+
+#include "main.h"
 
 int main() {
 	std::cout << "Welcome to the Text RPG!" << std::endl;
