@@ -1,34 +1,39 @@
 #pragma once
 #include <iostream>
 #include <string>
+#include "type.h"
 
 class Player;
 
 class Monster {
 
-protected:
-	std::string name;
-	std::string property;
-	std::int hp;
-	std::int atk;
+private:
+	std::string name; // 몬스터 이름
+	MonsterType property; // 몬스터 특성 ( type.h에서 가져옴)
+	int hp;
+	int atk;
 
 public:
 
-	Monster(string name, string property, int hp, int atk);
+	Monster(std::string name, MonsterType property, int hp, int atk);
 
-	virtual Monster() {};
+	virtual ~Monster() {};
 
-	string getname() { return name; }
-	void setname(string name) { this->name = name; }
+	std::string getName() { return name; }
+	void setName(std::string name) { this->name = name; }
 
-	string getproperty() { return property; }
-	void setproperty()(string name) {this->property = property; }
+	MonsterType getProperty() { return property; }
+	void setProperty(MonsterType property) {this->property = property; }
 
-	int gethp() { return hp; }
-	void sethp(int hp) { int hp } {this->hp = hp; }
+	int getHp() { return hp; }
+	void setHp(int hp) {this->hp = hp; }
 
-	int getatk() { return atk; }
-	void setatk(int atk) { int atk } {this->atk = atk; }
+	int getAtk() { return atk; }
+	void setAtk(int atk) {this->atk = atk; }
 
+	void Attack(Player* target);
 
 };
+
+
+Monster* CreateMonster(MonsterType, int playerlevel);
