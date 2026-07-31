@@ -1,5 +1,4 @@
 #pragma once
-
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -19,7 +18,7 @@ public:
 
     void InitializeItems() {
         // ==========================================
-        // 💚 [C 등급] - 기본 도구 (가격: 25원)
+        //  [C 등급] - 기본 도구 (가격: 25원)
         // ==========================================
         RegisterItem(Item(
             "평범한 가위 (C)", "문구용 가위입니다.",
@@ -33,10 +32,11 @@ public:
             ItemRarity::C, { MonsterType::PLASTIC }, { MonsterType::IRON, MonsterType::ALUMINUM }, 28, 25
         ));
 
+        // {무상성)
         RegisterItem(Item(
             "대나무 빗자루 (C)", "마당을 쓸어내는 빗자루입니다.",
             "쓱싹! 바닥의 쓰레기를 쓸어냅니다!",
-            ItemRarity::C, { MonsterType::PAPER, MonsterType::PLASTIC }, { MonsterType::IRON }, 35, 25
+            ItemRarity::C, {}, {}, 35, 25
         ));
 
         RegisterItem(Item(
@@ -52,7 +52,7 @@ public:
         ));
 
         // ==========================================
-        // 💙 [B 등급] - 압축 & 중형 장비 (가격: 100원)
+        //  [B 등급] - 압축 & 중형 장비 (가격: 100원)
         // ==========================================
         RegisterItem(Item(
             "커터칼과 라벨 제거기 (B)", "비닐 라벨 제거용 도구입니다.",
@@ -84,10 +84,11 @@ public:
             ItemRarity::B, { MonsterType::PAPER }, { MonsterType::PLASTIC }, 52, 100
         ));
 
+        //  무상성
         RegisterItem(Item(
             "신문지 해머 (B)", "굳힌 신문지 망치입니다.",
             "쿵! 단단한 유리 표면에 금을 냅니다!",
-            ItemRarity::B, { MonsterType::GLASS }, { MonsterType::IRON }, 54, 100
+            ItemRarity::B, {}, {}, 54, 100
         ));
 
         RegisterItem(Item(
@@ -103,7 +104,7 @@ public:
         ));
 
         // ==========================================
-        // 💜 [A 등급] - 전문 파쇄 & 용해 장비 (가격: 250원)
+        //  [A 등급] - 전문 파쇄 & 용해 장비 (가격: 250원)
         // ==========================================
         RegisterItem(Item(
             "초음파 유리 분쇄기 (A)", "고주파 유리 분쇄 장비입니다.",
@@ -141,10 +142,11 @@ public:
             ItemRarity::A, { MonsterType::PAPER, MonsterType::PLASTIC }, { MonsterType::ALUMINUM }, 84, 250
         ));
 
+        // 무상성
         RegisterItem(Item(
             "고주파 충격파 캐논 (A)", "충격파 발사 무기입니다.",
             "콰-앙! 진동 충격파를 발사합니다!",
-            ItemRarity::A, { MonsterType::GLASS }, { MonsterType::IRON }, 87, 250
+            ItemRarity::A, {}, {}, 87, 250
         ));
 
         RegisterItem(Item(
@@ -154,28 +156,31 @@ public:
         ));
 
         // ==========================================
-        // 💛 [S 등급] - 종결자 무기 (가격: 500원)
+        //  [S 등급] - 종결자 무기 (가격: 500원)
         // ==========================================
 
         // 1. IRON 스페셜리스트
         RegisterItem(Item(
             "플라즈마 용융 토치 (S)", "철제 용해용 초고온 토치입니다.",
             "화아아악! IRON 속성의 철판을 녹여버립니다!",
-            ItemRarity::S, { MonsterType::IRON }, { MonsterType::NONE }, 150, 500
+            // 기존 { MonsterType::NONE } 제거 및 {} 처리
+            ItemRarity::S, { MonsterType::IRON }, {}, 150, 500
         ));
 
-        // 2. 모든 타입 제너럴리스트
+        // 2. 모든 타입 제너럴리스트 (무상성)
         RegisterItem(Item(
             "클린 월드 엔드 캐논 (S)", "최종 정화 병기입니다.",
             "콰콰콰쾅! 궁극의 정화 레이저를 발사합니다!",
-            ItemRarity::S, { MonsterType::PAPER, MonsterType::PLASTIC, MonsterType::GLASS, MonsterType::ALUMINUM, MonsterType::IRON }, { MonsterType::NONE }, 130, 500
+            // 무상성 처리 (강점/약점 모두 없음)
+            ItemRarity::S, {}, {}, 130, 500
         ));
 
         // 3. 기타 (IRON 제외 광역 정화)
         RegisterItem(Item(
             "소형 블랙홀 압축기 (S)", "초중력 발생 장치입니다.",
             "쿠구구구... 초중력으로 쓰레기를 한 점으로 압축합니다!",
-            ItemRarity::S, { MonsterType::PAPER, MonsterType::PLASTIC, MonsterType::GLASS, MonsterType::ALUMINUM }, { MonsterType::NONE }, 160, 500
+            // 기존 { MonsterType::NONE } 제거 및 {} 처리
+            ItemRarity::S, { MonsterType::PAPER, MonsterType::PLASTIC, MonsterType::GLASS, MonsterType::ALUMINUM }, {}, 160, 500
         ));
     }
 
