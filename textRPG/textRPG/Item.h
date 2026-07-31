@@ -1,35 +1,41 @@
 #pragma once
-
 #include <string>
 #include <vector>
-#include "Types.h"
+#include "Types.h" 
+
+enum class ItemCategory {
+    WEAPON,    
+    CONSUMABLE  
+};
 
 class Item {
 private:
-    std::string name;          // 아이템(스킬) 이름
-    std::string description;   // 아이템 설명
-    std::string attackText;    // 공격시 출력 텍스트
-    ItemRarity rarity;         // 등급 (C~S)
-    std::vector<MonsterType> strongAgainst;  // 강한 상대 (데미지 증가)
-    std::vector<MonsterType> weakAgainst;    // 약한 상대 (데미지 감쇄)
-    int baseATK;             // 기본 위력
-	int price;               // 아이템 가격
+    std::string name;
+    std::string description;
+    std::string attackText;
+    ItemRarity rarity;
+    std::vector<MonsterType> strongAgainst;
+    std::vector<MonsterType> weakAgainst;
+    int baseATK;
+    int price;
+    ItemCategory category;
 
 public:
-    // 생성자 선언
+    // 끝에 category와 healAmount를 추가하고 기본값을 줍니다.
     Item(std::string name, std::string desc, std::string attackText, ItemRarity rarity,
-        std::vector<MonsterType> strong, std::vector<MonsterType> weak, int ATK , int price);
+        std::vector<MonsterType> strong, std::vector<MonsterType> weak, int ATK, int price,
+        ItemCategory category = ItemCategory::WEAPON);
 
-    // Getters 선언
+    // 기존 Getters
     std::string GetName() const;
     std::string GetDescription() const;
-    std::string GetAttackText() const;
+    std::string GetAttackText() const; // 소비템의 경우 "사용 시 출력 텍스트"로 쓸 수 있습니다.
     ItemRarity GetRarity() const;
     std::vector<MonsterType> GetStrongAgainst() const;
     std::vector<MonsterType> GetWeakAgainst() const;
     int GetBaseATK() const;
-	int GetPrice() const;
-
-    // 등급 문자열 반환 헬퍼 함수 선언
+    int GetPrice() const;
     std::string GetRarityString() const;
+    ItemCategory GetCategory() const;
+    int GetHealAmount() const;
 };
