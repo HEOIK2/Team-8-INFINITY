@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 #include "type.h"
+#include "Player.h"
 
 class Player;
 
@@ -12,10 +13,12 @@ private:
 	MonsterType property; // 몬스터 특성 ( type.h에서 가져옴)
 	int hp;
 	int atk;
+	int expReward;
+	int goldReward;
 
 public:
 
-	Monster(std::string name, MonsterType property, int hp, int atk);
+	Monster(std::string name, MonsterType property, int hp, int atk, int expReward, int goldReward);
 
 	virtual ~Monster() {};
 
@@ -30,6 +33,10 @@ public:
 
 	int getAtk() { return atk; }
 	void setAtk(int atk) {this->atk = atk; }
+
+	int getExpReward() { return expReward; }
+	
+	int getGoldReward() { return goldReward; }
 
 	void Attack(Player* target);
 

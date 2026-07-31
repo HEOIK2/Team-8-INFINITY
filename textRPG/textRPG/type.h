@@ -7,7 +7,7 @@ enum class ItemRarity {
     D, C, B, A, S
 };
 
-// ♻️ 분리수거 5대 속성
+//  분리수거 5대 속성
 enum class MonsterType {
     NONE,       // 무속성 (상성 없음)
     PAPER,      // 종이

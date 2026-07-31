@@ -1,14 +1,16 @@
-#include "player.h"
+ï»¿#include "Player.h"
 #include "monster.h"
 #include "type.h"
 #include <iostream>
 
-Monster::Monster(std::string name, MonsterType property, int hp, int atk) {
+Monster::Monster(std::string name, MonsterType property, int hp, int atk, int expReward, int goldReward) {
 
 	this->name = name;
 	this->property = property;
 	this->hp = hp;
 	this->atk = atk;
+	this->expReward = expReward;
+	this->goldReward = goldReward;
 }
 
 
@@ -19,27 +21,27 @@ Monster* CreateMonster(MonsterType type, int playerlevel) {
 	switch (type) {
 
 	case MonsterType::NONE:
-		monster = new Monster("ÀÏ¹Ý¾²·¹±â", MonsterType::NONE, 20 + 3 * (playerlevel), 10 + 1 * (playerlevel));
+		monster = new Monster("ì¼ë°˜ì“°ë ˆê¸°", MonsterType::NONE, 20 + 3 * (playerlevel), 10 + 1 * (playerlevel), 10, 5);
 		break;
 
 	case MonsterType::PAPER:
-		monster = new Monster("Á¾ÀÌ¹Ú½º", MonsterType::PAPER, 40 + 3 * (playerlevel), 10 + 1 * (playerlevel));
+		monster = new Monster("ì¢…ì´ë°•ìŠ¤", MonsterType::PAPER, 40 + 3 * (playerlevel), 10 + 1 * (playerlevel), 15, 10);
 		break;
 
 	case MonsterType::PLASTIC:
-		monster = new Monster("ÇÃ¶ó½ºÆ½", MonsterType::PLASTIC, 45 + 3 * (playerlevel), 10 + 1 * (playerlevel));
+		monster = new Monster("í”Œë¼ìŠ¤í‹±", MonsterType::PLASTIC, 45 + 3 * (playerlevel), 10 + 1 * (playerlevel), 20, 20);
 		break;
 
 	case MonsterType::GLASS:
-		monster = new Monster("±úÁø¸ÆÁÖÀÜ", MonsterType::GLASS, 40 + 3 * (playerlevel), 20 + 1 * (playerlevel));
+		monster = new Monster("ê¹¨ì§„ë§¥ì£¼ìž”", MonsterType::GLASS, 40 + 3 * (playerlevel), 20 + 1 * (playerlevel), 20, 15);
 		break;
 
 	case MonsterType::ALUMINUM:
-		monster = new Monster("¾Ë·ç¹Ì´½¹æ¸ÁÀÌ", MonsterType::ALUMINUM, 120 + 3 * (playerlevel), 30 + 1 * (playerlevel));
+		monster = new Monster("ì•Œë£¨ë¯¸ëŠ„ë°©ë§ì´", MonsterType::ALUMINUM, 120 + 3 * (playerlevel), 30 + 1 * (playerlevel), 50, 40);
 		break;
 
 	case MonsterType::IRON:
-		monster = new Monster("Ã¶", MonsterType::IRON, 150 + 3 * (playerlevel), 40 + 1 * (playerlevel));
+		monster = new Monster("ì² ", MonsterType::IRON, 150 + 3 * (playerlevel), 40 + 1 * (playerlevel), 100, 70);
 		break;
 	}
 	return monster;
@@ -48,7 +50,7 @@ Monster* CreateMonster(MonsterType type, int playerlevel) {
 	
 void Monster::Attack(Player * target) {
 		int damage = this->atk;
-		int remainHp = target->getHp() - damage;
-		target->setHp(remainHp);
+		int remainHp = target->GetHp() - damage;
+		target->SetHp(remainHp);
 
 }
