@@ -72,6 +72,7 @@ private:
     Inventory inventory; // 소지 아이템 목록 (Inventory.h 참고)
 
 
+
 public:
     // ---------------- 생성자 ----------------
 
@@ -95,6 +96,8 @@ public:
 
     // ---------------- Getter (값 조회) ----------------
 
+    
+
     const std::string& GetName() const { return name; }
     int GetLevel() const { return level; }
     int GetHp() const { return hp; }
@@ -106,6 +109,8 @@ public:
     const std::string& GetItem() const { return item; }       // 직업 전용 지급 무기 이름
     bool IsMaxLevel() const { return level >= MAX_LEVEL; }     // 최대 레벨(10) 도달 여부
     int GetGold() const { return gold; }                       // 현재 보유 골드
+    void SetGold(int newGold) { gold = newGold; }
+    int GetExpPerLevel() const { return EXP_PER_LEVEL; }
 
     // 인벤토리 접근. 외부에서 player.GetInventory().AddItem(...) 처럼 사용한다.
     // 읽기 전용 상황(const Player&)에서는 아래 const 버전이 자동으로 선택된다.

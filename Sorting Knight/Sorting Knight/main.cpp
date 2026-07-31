@@ -16,8 +16,7 @@
 #include "monster.h"
 #include "battle.h"
 #include "shop.h"
-#include "UI.h"
-#include "gameLog.h"
+
 
 
 // [헬퍼 함수] 입력 오류(문자 입력 등) 방지
@@ -67,7 +66,7 @@ void EnterBattleMenu() {
 void OpenInventory() {
 
 }
-
+std::vector<std::pair<Item, int>> myItems;
 
 // 프로그램 진입점 (main 함수)
 
@@ -76,6 +75,8 @@ int main() {
 
     // [Outer Loop] 타이틀 화면 ↔ 메인 게임
     while (isProgramRunning) {
+		Player* player = new Player("플레이어", Job::Cleaner); // 임시로 기본 캐릭터 생성 (이름/직업은 나중에 입력받도록 수정 가능)
+		Monster* monster = new Monster("몬스터", MonsterType::NONE , 30, 10,10,10); // 임시로 기본 몬스터 생성 (이름/레벨/체력/공격력)
 
         // 1. 타이틀 화면 선택
         int titleChoice = ShowTitleMenu();
@@ -107,10 +108,12 @@ int main() {
             int mainChoice;
             std::cin >> mainChoice;
             ClearInputBuffer();
-
+            
             switch (mainChoice) {
             case 1:
-                EnterBattleMenu(); // 전투 호출 (예시함수)
+				 // 전투에 사용할 아이템 목록 (예시)
+                // StartBattle(Player* player, Monster* monster, std::vector<std::pair<Item, int>>& items)
+                StartBattle(player, monster, {myItems}); // 전투 호출 (예시함수)
                 break;
             case 2:
                 EnterShopMenu(); // 상점 호출 (예시함수)
