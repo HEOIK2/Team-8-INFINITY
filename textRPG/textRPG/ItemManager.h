@@ -4,7 +4,7 @@
 #include <vector>
 #include <cstdlib>
 #include "Item.h"
-#include "Types.h"
+#include "type.h"
 
 class ItemManager {
 private:
