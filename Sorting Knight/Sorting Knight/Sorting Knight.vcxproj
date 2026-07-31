@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>18.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{d766b389-89b9-44ea-8a2c-9ba700d311be}</ProjectGuid>
+    <ProjectGuid>{1d91ae8e-3aff-4be0-8577-383a08870b71}</ProjectGuid>
     <RootNamespace>SortingKnight</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
@@ -139,38 +139,26 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Team-8-INFINITY\textRPG\textRPG\battle.cpp" />
-    <ClCompile Include="..\..\Team-8-INFINITY\textRPG\textRPG\gameLog.cpp" />
-    <ClCompile Include="..\..\Team-8-INFINITY\textRPG\textRPG\inventory.cpp" />
-    <ClCompile Include="..\..\Team-8-INFINITY\textRPG\textRPG\Item.cpp" />
-    <ClCompile Include="..\..\Team-8-INFINITY\textRPG\textRPG\main.cpp" />
-    <ClCompile Include="..\..\Team-8-INFINITY\textRPG\textRPG\monster.cpp" />
-    <ClCompile Include="..\..\Team-8-INFINITY\textRPG\textRPG\player.cpp" />
-    <ClCompile Include="..\..\Team-8-INFINITY\textRPG\textRPG\shop.cpp" />
-    <ClCompile Include="..\..\Team-8-INFINITY\textRPG\textRPG\UI.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="battle.cpp" />
+    <ClCompile Include="gameLog.cpp" />
+    <ClCompile Include="inventory.cpp" />
+    <ClCompile Include="Item.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="monster.cpp" />
+    <ClCompile Include="player.cpp" />
+    <ClCompile Include="shop.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Team-8-INFINITY\textRPG\textRPG\battle.h" />
-    <ClInclude Include="..\..\Team-8-INFINITY\textRPG\textRPG\gameLog.h" />
-    <ClInclude Include="..\..\Team-8-INFINITY\textRPG\textRPG\gameText.h" />
-    <ClInclude Include="..\..\Team-8-INFINITY\textRPG\textRPG\inventory.h" />
-    <ClInclude Include="..\..\Team-8-INFINITY\textRPG\textRPG\Item.h" />
-    <ClInclude Include="..\..\Team-8-INFINITY\textRPG\textRPG\ItemManager.h" />
-    <ClInclude Include="..\..\Team-8-INFINITY\textRPG\textRPG\main.h" />
-    <ClInclude Include="..\..\Team-8-INFINITY\textRPG\textRPG\monster.h" />
-    <ClInclude Include="..\..\Team-8-INFINITY\textRPG\textRPG\player.h" />
-    <ClInclude Include="..\..\Team-8-INFINITY\textRPG\textRPG\shop.h" />
-    <ClInclude Include="..\..\Team-8-INFINITY\textRPG\textRPG\type.h" />
-    <ClInclude Include="..\..\Team-8-INFINITY\textRPG\textRPG\UI.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\Team-8-INFINITY\textRPG\textRPG\textRPG.vcxproj" />
-    <None Include="..\..\Team-8-INFINITY\textRPG\textRPG\textRPG.vcxproj.filters" />
-    <None Include="..\..\Team-8-INFINITY\textRPG\textRPG\textRPG.vcxproj.user" />
+    <ClInclude Include="battle.h" />
+    <ClInclude Include="gameText.h" />
+    <ClInclude Include="inventory.h" />
+    <ClInclude Include="Item.h" />
+    <ClInclude Include="ItemManager.h" />
+    <ClInclude Include="main.h" />
+    <ClInclude Include="monster.h" />
+    <ClInclude Include="player.h" />
+    <ClInclude Include="shop.h" />
+    <ClInclude Include="type.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

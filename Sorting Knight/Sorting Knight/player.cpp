@@ -1,5 +1,4 @@
 ﻿#include "player.h"
-#include "main.h"
 #include <iostream>
 #include <algorithm> // std::clamp 사용
 

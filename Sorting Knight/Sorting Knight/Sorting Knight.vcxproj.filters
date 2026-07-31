@@ -15,75 +15,61 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Team-8-INFINITY\textRPG\textRPG\battle.cpp">
+    <ClCompile Include="battle.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Team-8-INFINITY\textRPG\textRPG\gameLog.cpp">
+    <ClCompile Include="gameLog.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Team-8-INFINITY\textRPG\textRPG\inventory.cpp">
+    <ClCompile Include="inventory.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Team-8-INFINITY\textRPG\textRPG\Item.cpp">
+    <ClCompile Include="Item.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Team-8-INFINITY\textRPG\textRPG\main.cpp">
+    <ClCompile Include="main.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Team-8-INFINITY\textRPG\textRPG\monster.cpp">
+    <ClCompile Include="monster.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Team-8-INFINITY\textRPG\textRPG\player.cpp">
+    <ClCompile Include="player.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Team-8-INFINITY\textRPG\textRPG\shop.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Team-8-INFINITY\textRPG\textRPG\UI.cpp">
+    <ClCompile Include="shop.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Team-8-INFINITY\textRPG\textRPG\battle.h">
+    <ClInclude Include="battle.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Team-8-INFINITY\textRPG\textRPG\gameLog.h">
+    <ClInclude Include="gameText.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Team-8-INFINITY\textRPG\textRPG\gameText.h">
+    <ClInclude Include="inventory.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Team-8-INFINITY\textRPG\textRPG\inventory.h">
+    <ClInclude Include="Item.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Team-8-INFINITY\textRPG\textRPG\Item.h">
+    <ClInclude Include="ItemManager.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Team-8-INFINITY\textRPG\textRPG\ItemManager.h">
+    <ClInclude Include="main.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Team-8-INFINITY\textRPG\textRPG\main.h">
+    <ClInclude Include="monster.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Team-8-INFINITY\textRPG\textRPG\monster.h">
+    <ClInclude Include="player.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Team-8-INFINITY\textRPG\textRPG\player.h">
+    <ClInclude Include="shop.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Team-8-INFINITY\textRPG\textRPG\shop.h">
+    <ClInclude Include="type.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Team-8-INFINITY\textRPG\textRPG\type.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Team-8-INFINITY\textRPG\textRPG\UI.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\Team-8-INFINITY\textRPG\textRPG\textRPG.vcxproj" />
-    <None Include="..\..\Team-8-INFINITY\textRPG\textRPG\textRPG.vcxproj.filters" />
-    <None Include="..\..\Team-8-INFINITY\textRPG\textRPG\textRPG.vcxproj.user" />
   </ItemGroup>
 </Project>
