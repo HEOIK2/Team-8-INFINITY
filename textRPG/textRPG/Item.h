@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
-#include "Types.h" 
+#include "type.h" 
 
 // 아이템 종류 구분
 enum class ItemCategory {

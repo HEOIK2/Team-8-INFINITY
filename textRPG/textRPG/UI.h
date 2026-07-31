@@ -1,4 +1,3 @@
-<<<<<<< Updated upstream
 #pragma once
 // ============================================================================
 //  UI.h  —  콘솔 출력/입력 담당 (선언부)
@@ -81,7 +80,7 @@ namespace UI {
     void Pause();
 
 } // namespace UI
-=======
+
 namespace UI
 {
     // ── 화면 제어 ──────────────────────────────
@@ -118,4 +117,3 @@ namespace UI
     void PrintGameOver(...);   // "사망했습니다" + 처치 집계 같이 출력
     void PrintGameClear(...);  // "보스 처치!" + 처치 집계 같이 출력
 }
->>>>>>> Stashed changes
