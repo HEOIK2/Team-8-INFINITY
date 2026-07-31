@@ -1,5 +1,6 @@
-#pragma once
+﻿#pragma once
 #include <string>
+#include "inventory.h"   // Player가 Inventory를 멤버로 들고 있으므로 실제 include 필요
 
 // ============================================================
 // Job (직업)
@@ -67,6 +68,8 @@ private:
     Job job;               // 현재 직업 (enum 값)
     std::string jobName; // 현재 직업 이름 (한글 문자열, 출력용)
     std::string item;    // 직업 전용 지급 무기 이름
+    int gold;            // 보유 골드 (상점 구매/판매에 사용)
+    Inventory inventory; // 소지 아이템 목록 (Inventory.h 참고)
 
 
 public:
@@ -102,6 +105,12 @@ public:
     const std::string& GetJobName() const { return jobName; } // 직업 이름 (한글, 예: "청소부")
     const std::string& GetItem() const { return item; }       // 직업 전용 지급 무기 이름
     bool IsMaxLevel() const { return level >= MAX_LEVEL; }     // 최대 레벨(10) 도달 여부
+    int GetGold() const { return gold; }                       // 현재 보유 골드
+
+    // 인벤토리 접근. 외부에서 player.GetInventory().AddItem(...) 처럼 사용한다.
+    // 읽기 전용 상황(const Player&)에서는 아래 const 버전이 자동으로 선택된다.
+    Inventory& GetInventory() { return inventory; }
+    const Inventory& GetInventory() const { return inventory; }
 
 
     // ---------------- Setter (값 수정) ----------------
@@ -112,4 +121,23 @@ public:
     void SetMaxHp(int newMaxHp) { maxHp = newMaxHp; }
     void SetAttack(int newAttack) { attack = newAttack; }
     void SetExp(int newExp) { exp = newExp; }
+
+    // ---------------- 편의 함수 (직접 멤버를 건드리지 말고 이걸 쓸 것) ----------------
+
+    // 체력 회복. SetHp() 안에서 0 ~ maxHp로 clamp되므로 최대치를 넘지 않는다.
+    void Heal(int amount) { SetHp(hp + amount); }
+
+    // 공격력 증감. 버프 아이템 등에서 사용.
+    void AddAttack(int amount) { attack += amount; }
+
+    // 골드 획득. 음수를 넣으면 차감되며, 0 아래로는 내려가지 않는다.
+    void AddGold(int amount) { gold += amount; if (gold < 0) gold = 0; }
+
+    // 골드 지불. 잔액이 부족하면 아무것도 하지 않고 false를 반환한다.
+    // 상점 구매처럼 "부족하면 거래 자체를 취소"해야 하는 곳에서 사용.
+    bool SpendGold(int amount) {
+        if (amount < 0 || gold < amount) return false;
+        gold -= amount;
+        return true;
+    }
 };

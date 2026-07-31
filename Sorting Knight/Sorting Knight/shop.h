@@ -2,7 +2,7 @@
 #include <string>
 #include <vector>
 #include "Item.h"
-#include "Player.h"
+#include "player.h"
 
 // ================================================================================
 // [ Shop.h / Shop.cpp ]  -  상점(구매/판매) 시스템
@@ -13,10 +13,10 @@
 //   - 플레이어의 골드/인벤토리와 연동해서 "구매"와 "판매" 처리
 //
 // 다른 팀원이 알아야 할 것
-//   - Player.h  : Shop은 Player&를 받아서 player.gold(int), player.inventory(Inventory)를
+//   - Player.h  : Shop은 Player&를 받아서 player.GetGold()/SpendGold()/AddGold(), player.GetInventory()를
 //                 직접 읽고 씀. Player.h의 실제 멤버 이름이 이거랑 다르면 Shop.cpp가 컴파일 안 됨
 //                 -> 이름이 다르면 Shop.cpp 쪽에서 맞춰줄 테니 알려주면 됨.
-//   - Inventory : 구매 시 player.inventory.AddItem(), 판매 시 HasItem()/FindItem()/RemoveItem()을
+//   - Inventory : 구매 시 player.GetInventory().AddItem(), 판매 시 HasItem()/FindItem()/RemoveItem()을
 //                 그대로 가져다 씀. 인벤토리 30개 제한도 구매 시 자동으로 체크됨(BuyResult 참고).
 //   - UI.cpp    : GetStock()으로 상점 재고 목록을 받아서 화면에 그리고,
 //                 사용자가 아이템을 고르면 Buy()/Sell()을 호출하면 됨.
@@ -45,7 +45,7 @@ const double SELL_RATE = 0.6;
 enum class BuyResult {
     SUCCESS,           // 구매 성공 (골드 차감 + 아이템 지급 완료)
     NOT_FOUND,         // 상점 재고(stock)에 해당 이름의 아이템이 없음
-    NOT_ENOUGH_GOLD,   // player.gold가 총 가격보다 적음
+    NOT_ENOUGH_GOLD,   // 보유 골드가 총 가격보다 적음
     NOT_ENOUGH_SPACE   // 인벤토리 여유 공간(GetRemainingSpace())보다 구매 개수가 많음
 };
 
@@ -95,7 +95,7 @@ public:
     //   처리 순서:
     //     1) 인벤토리에 count개 이상 보유 중인지 확인 -> 아니면 false
     //     2) 인벤토리에서 count개 제거(RemoveItem)
-    //     3) 판매가만큼 player.gold 증가
+    //     3) 판매가만큼 골드 증가(AddGold)
     //
     //   매개변수:
     //     player   - 판매하는 플레이어 (gold, inventory가 변경됨)

@@ -13,8 +13,8 @@
 //
 // 다른 팀원이 알아야 할 것
 //   - Player.h        : Player 클래스가 멤버로 `Inventory inventory;` 를 들고 있음.
-//                        즉 어디서든 `player.inventory.함수이름()` 형태로 호출하면 됨.
-//   - battle.cpp/monster.cpp : 몬스터 처치 시 `player.inventory.AddItem(드랍아이템, 개수)` 호출해서
+//                        즉 어디서든 `player.GetInventory().함수이름()` 형태로 호출하면 됨.
+//   - battle.cpp/monster.cpp : 몬스터 처치 시 `player.GetInventory().AddItem(드랍아이템, 개수)` 호출해서
 //                        전리품을 인벤토리에 넣어주면 됨. 30개 꽉 차면 자동으로 초과분은 버려짐.
 //   - Shop.cpp         : 구매 시 AddItem(), 판매 시 RemoveItem()/HasItem()/FindItem() 사용.
 //   - UI.cpp           : GetItems()로 (아이템, 개수) 목록을 받아서 화면에 그리면 됨.
@@ -70,9 +70,9 @@ enum class UseResult {
 // 같은 이름의 아이템은 슬롯을 새로 만들지 않고 기존 슬롯의 개수만 늘어남.
 //
 // 사용 예시 (다른 팀원 코드에서):
-//     player.inventory.AddItem(dropItem, 1);              // 몬스터 드랍템 획득
-//     if (player.inventory.HasItem("포션", 2)) { ... }     // 포션 2개 있는지 체크
-//     player.inventory.RemoveItem("포션", 1);              // 포션 1개 소모
+//     player.GetInventory().AddItem(dropItem, 1);              // 몬스터 드랍템 획득
+//     if (player.GetInventory().HasItem("포션", 2)) { ... }     // 포션 2개 있는지 체크
+//     player.GetInventory().RemoveItem("포션", 1);              // 포션 1개 소모
 // ================================================================================
 class Inventory {
 public:
@@ -102,7 +102,7 @@ public:
     //     0이면 하나도 못 들어간 것 (인벤토리가 이미 가득 참).
     //     ※ 반환값을 안 받고 그냥 호출만 해도 동작에는 문제없음 (몬스터 드랍 등).
     //
-    //   호출 예) player.inventory.AddItem(potionItem, 3);
+    //   호출 예) player.GetInventory().AddItem(potionItem, 3);
     // ------------------------------------------------------------------
     int AddItem(const Item& item, int count = 1);
 
@@ -136,14 +136,15 @@ public:
     //     3) 아이템의 효과(healHP, buffMaxHP, buffATK, gainLevel)를 player에 적용
     //     4) 아이템을 인벤토리에서 1개 제거 -> SUCCESS
     //
-    //   ※ 데모 버전 주의: 실제 Player.h(캐릭터 담당)가 오기 전까지 player.hp/maxHp/atk는
-    //      임시 필드임. isPermanent가 false인(일시적) 버프도 이 데모에는 전투 시스템이
+    //   ※ Player의 멤버는 전부 private이므로, 효과 적용은 Player의 공개 함수로만 한다.
+    //      (Heal / SetMaxHp / AddAttack / SetLevel)
+    //      isPermanent가 false인(일시적) 버프도 이 데모에는 전투 시스템이
     //      없어서 "지속시간이 끝나면 원래대로" 로직은 아직 없음 - 실제 전투 시스템과
     //      연동할 때 buffATK 적용 방식을 isPermanent 기준으로 분기해줘야 함.
     //
     //   반환값: UseResult (위 enum 참고)
     //
-    //   호출 예) player.inventory.UseItem("체력 물약", player);
+    //   호출 예) player.GetInventory().UseItem("체력 물약", player);
     // ------------------------------------------------------------------
     UseResult UseItem(const std::string& itemName, Player& player);
 
@@ -154,7 +155,7 @@ public:
     //   반환값: true(충분히 있음) / false(부족하거나 아예 없음)
     //
     //   호출 예) 전투에서 소모품을 쓰기 전에:
-    //     if (player.inventory.HasItem("치료 물약", 1)) { ... 사용 ... }
+    //     if (player.GetInventory().HasItem("치료 물약", 1)) { ... 사용 ... }
     // ------------------------------------------------------------------
     bool HasItem(const std::string& itemName, int count = 1) const;
 
@@ -167,7 +168,7 @@ public:
     //   주의: 반드시 nullptr 체크 후 사용할 것 (없는 아이템이면 크래시 남)
     //
     //   호출 예) 전투에서 아이템 공격력을 가져올 때:
-    //     const Item* item = player.inventory.FindItem("녹슨 검");
+    //     const Item* item = player.GetInventory().FindItem("녹슨 검");
     //     if (item) { int atk = item->GetBaseATK(); }
     // ------------------------------------------------------------------
     const Item* FindItem(const std::string& itemName) const;
@@ -185,7 +186,7 @@ public:
     //   UI.cpp에서 인벤토리 화면을 그릴 때 이 함수로 목록을 받아서 순회하면 됨.
     //
     //   호출 예)
-    //     for (const auto& slot : player.inventory.GetItems()) {
+    //     for (const auto& slot : player.GetInventory().GetItems()) {
     //         const Item& item = slot.first;
     //         int count = slot.second;
     //         // 화면에 item.GetName(), count 등을 출력
@@ -231,7 +232,7 @@ public:
     //
     //   반환값: true(합성 성공) / false(재료 부족이나 레시피 없음 - 아무것도 소모되지 않음)
     //
-    //   호출 예) player.inventory.Craft("녹슨 방패");
+    //   호출 예) player.GetInventory().Craft("녹슨 방패");
     // ------------------------------------------------------------------
     bool Craft(const std::string& resultName);
 

@@ -1,4 +1,4 @@
-﻿#include "Player.h"
+﻿#include "player.h"
 #include <iostream>
 #include <algorithm> // std::clamp 사용
 
@@ -16,6 +16,7 @@ Player::Player(const std::string& name, Job initialJob)
     , maxHp(INIT_HP)
     , attack(INIT_ATTACK)
     , exp(0)
+    , gold(0)
     , job(Job::None)
     , jobName("무직")
     , item("")
@@ -192,5 +193,6 @@ void Player::PrintStatus() const
     std::cout << "공격력 : " << attack << "\n";
     std::cout << "경험치 : " << exp << " / " << EXP_PER_LEVEL << "\n";
     std::cout << "아이템 : " << (item.empty() ? "없음" : item) << "\n";
+    std::cout << "골드   : " << gold << "\n";
     std::cout << "=========================\n";
 }

@@ -1,5 +1,5 @@
-﻿#include "Inventory.h"
-#include "Player.h"
+﻿#include "inventory.h"
+#include "player.h"
 #include <iostream>
 #include <algorithm>
 
@@ -155,17 +155,17 @@ UseResult Inventory::UseItem(const std::string& itemName, Player& player) {
 
     // 효과 적용 (데모용: isPermanent와 무관하게 즉시 적용, 실전투 연동 시 분기 필요)
     if (item->GetHealHP() > 0) {
-        player.hp = std::min(player.maxHp, player.hp + item->GetHealHP());
+        player.Heal(item->GetHealHP()); // SetHp 내부에서 0~maxHp로 clamp되므로 초과 회복 걱정 없음
     }
     if (item->GetBuffMaxHP() > 0) {
-        player.maxHp += item->GetBuffMaxHP();
-        player.hp += item->GetBuffMaxHP(); // 최대체력이 늘어난 만큼 현재체력도 같이 증가
+        player.SetMaxHp(player.GetMaxHp() + item->GetBuffMaxHP());
+        player.Heal(item->GetBuffMaxHP()); // 최대체력이 늘어난 만큼 현재체력도 같이 증가
     }
     if (item->GetBuffATK() > 0) {
-        player.atk += item->GetBuffATK();
+        player.AddAttack(item->GetBuffATK());
     }
     if (item->GetGainLevel() > 0) {
-        player.level += item->GetGainLevel();
+        player.SetLevel(player.GetLevel() + item->GetGainLevel());
     }
 
     RemoveItem(itemName, 1); // 사용한 만큼 소모

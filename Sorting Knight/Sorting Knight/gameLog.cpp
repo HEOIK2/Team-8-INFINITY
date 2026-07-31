@@ -1,4 +1,4 @@
-#include "GameLog.h"
+﻿#include "gameLog.h"
 
 namespace
 {
