@@ -1,4 +1,4 @@
-﻿#include "Shop.h"
+﻿#include "shop.h"
 #include <iostream>
 #include <cmath>
 
@@ -19,15 +19,15 @@ BuyResult Shop::Buy(Player& player, const std::string& itemName, int count) {
         return BuyResult::NOT_FOUND; // 상점에 없는 아이템 (이름 오타 등)
     }
     int totalPrice = item->GetPrice() * count;
-    if (player.gold < totalPrice) {
+    if (player.GetGold() < totalPrice) {
         return BuyResult::NOT_ENOUGH_GOLD; // 골드 부족
     }
-    if (player.inventory.GetRemainingSpace() < count) {
+    if (player.GetInventory().GetRemainingSpace() < count) {
         return BuyResult::NOT_ENOUGH_SPACE; // 인벤토리 공간 부족 (30개 제한)
     }
     // 여기 도달했다는 건 구매 조건을 전부 통과했다는 뜻 -> 실제 처리
-    player.gold -= totalPrice;
-    player.inventory.AddItem(*item, count);
+    player.SpendGold(totalPrice);
+    player.GetInventory().AddItem(*item, count);
     return BuyResult::SUCCESS;
 }
 
@@ -36,16 +36,16 @@ BuyResult Shop::Buy(Player& player, const std::string& itemName, int count) {
 // 판매가는 정가의 SELL_RATE(60%)를 반올림한 값 * 판매 개수.
 // ------------------------------------------------------------------
 bool Shop::Sell(Player& player, const std::string& itemName, int count) {
-    if (!player.inventory.HasItem(itemName, count)) {
+    if (!player.GetInventory().HasItem(itemName, count)) {
         return false; // 보유 수량 부족 (혹은 아예 없음)
     }
-    const Item* item = player.inventory.FindItem(itemName);
+    const Item* item = player.GetInventory().FindItem(itemName);
     if (!item) {
         return false; // 이론상 HasItem 통과했으면 여기 안 걸리지만 방어적으로 체크
     }
     int sellPrice = static_cast<int>(std::round(item->GetPrice() * SELL_RATE)) * count;
-    player.inventory.RemoveItem(itemName, count);
-    player.gold += sellPrice;
+    player.GetInventory().RemoveItem(itemName, count);
+    player.AddGold(sellPrice);
     return true;
 }
 

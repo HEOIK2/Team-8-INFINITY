@@ -1,4 +1,4 @@
-#include "Item.h"
+﻿#include "Item.h"
 
 // 생성자 구현
 Item::Item(std::string name, std::string desc, std::string attackText, ItemRarity rarity,
