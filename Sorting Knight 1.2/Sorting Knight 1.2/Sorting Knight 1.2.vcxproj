@@ -139,33 +139,33 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Sorting Knight\Sorting Knight\battle.cpp" />
     <ClCompile Include="..\..\Sorting Knight\Sorting Knight\gameLog.cpp" />
     <ClCompile Include="..\..\Sorting Knight\Sorting Knight\inventory.cpp" />
     <ClCompile Include="..\..\Sorting Knight\Sorting Knight\Item.cpp" />
     <ClCompile Include="..\..\Sorting Knight\Sorting Knight\main.cpp" />
-    <ClCompile Include="..\..\Sorting Knight\Sorting Knight\monster.cpp" />
     <ClCompile Include="..\..\Sorting Knight\Sorting Knight\player.cpp" />
     <ClCompile Include="..\..\Sorting Knight\Sorting Knight\shop.cpp" />
     <ClCompile Include="..\..\Sorting Knight\Sorting Knight\UI.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\..\textRPG\textRPG\battle.cpp" />
+    <ClCompile Include="..\..\textRPG\textRPG\monster.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Sorting Knight\Sorting Knight\battle.h" />
     <ClInclude Include="..\..\Sorting Knight\Sorting Knight\gameLog.h" />
     <ClInclude Include="..\..\Sorting Knight\Sorting Knight\gameText.h" />
     <ClInclude Include="..\..\Sorting Knight\Sorting Knight\inventory.h" />
     <ClInclude Include="..\..\Sorting Knight\Sorting Knight\Item.h" />
     <ClInclude Include="..\..\Sorting Knight\Sorting Knight\ItemManager.h" />
     <ClInclude Include="..\..\Sorting Knight\Sorting Knight\main.h" />
-    <ClInclude Include="..\..\Sorting Knight\Sorting Knight\monster.h" />
     <ClInclude Include="..\..\Sorting Knight\Sorting Knight\player.h" />
     <ClInclude Include="..\..\Sorting Knight\Sorting Knight\shop.h" />
     <ClInclude Include="..\..\Sorting Knight\Sorting Knight\type.h" />
     <ClInclude Include="..\..\Sorting Knight\Sorting Knight\UI.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="..\..\textRPG\textRPG\battle.h" />
+    <ClInclude Include="..\..\textRPG\textRPG\monster.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\Sorting Knight\Sorting Knight\Sorting Knight.vcxproj" />

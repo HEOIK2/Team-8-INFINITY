@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Sorting Knight\Sorting Knight\battle.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Sorting Knight\Sorting Knight\gameLog.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -30,9 +27,6 @@
     <ClCompile Include="..\..\Sorting Knight\Sorting Knight\main.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Sorting Knight\Sorting Knight\monster.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Sorting Knight\Sorting Knight\player.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -42,11 +36,14 @@
     <ClCompile Include="..\..\Sorting Knight\Sorting Knight\UI.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\textRPG\textRPG\battle.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\textRPG\textRPG\monster.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Sorting Knight\Sorting Knight\battle.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Sorting Knight\Sorting Knight\gameLog.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -65,9 +62,6 @@
     <ClInclude Include="..\..\Sorting Knight\Sorting Knight\main.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Sorting Knight\Sorting Knight\monster.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Sorting Knight\Sorting Knight\player.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -78,6 +72,12 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Sorting Knight\Sorting Knight\UI.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\textRPG\textRPG\battle.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\textRPG\textRPG\monster.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
