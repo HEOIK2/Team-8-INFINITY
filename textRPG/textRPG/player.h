@@ -4,24 +4,22 @@
 
 enum class Job
 {
-    None,     // 전직 전
-    Warrior,  // 전사
-    Mage,     // 마법사
-    Archer,   // 궁수
-    Priest,   // 성직자
+    None,           // 무직
+    Cleaner,        // 청소부
+    StreetCleaner,  // 환경미화원
+    RecycleExpert,  // 분리수거전문가
+    RecycleTech,    // 재활용기사
 };
 
 
 class Player
 {
 public:
-    explicit Player(const std::string& name);
+    explicit Player(const std::string& name, Job initialJob);
 
     
     void GainExp(int exp);
 
-  
-    bool ChangeJob(Job newJob);
 
     
     void PrintStatus() const;
@@ -37,7 +35,7 @@ public:
     const std::string& GetJobName() const { return jobName; }
     const std::string& GetItem() const { return item; }
     bool IsMaxLevel() const { return level >= MAX_LEVEL; }
-    bool HasJob() const { return job != Job::None; }
+    
 
     
     void SetName(const std::string& newName) { name = newName; }
@@ -51,6 +49,8 @@ private:
     
     void LevelUp();
 
+    void ApplyJob(Job newJob);
+
    
     static std::string JobToString(Job job);
 
@@ -61,7 +61,7 @@ private:
     static constexpr int EXP_PER_LEVEL = 100;   
     static constexpr int INIT_HP = 200;         
     static constexpr int INIT_ATTACK = 30;      
-    static constexpr int JOB_CHANGE_LEVEL = 5;  
+     
 
     std::string name;
     int level;

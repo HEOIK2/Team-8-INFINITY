@@ -2,7 +2,7 @@
 #include <iostream>
 #include <algorithm>
 
-Player::Player(const std::string& name)
+Player::Player(const std::string& name, Job initialJob)
     : name(name)
     , level(1)
     , hp(INIT_HP)
@@ -13,6 +13,8 @@ Player::Player(const std::string& name)
     , jobName("무직")
     , item("")
 {
+
+    ApplyJob(initialJob);
 }
 
 void Player::GainExp(int exp)
@@ -36,15 +38,9 @@ void Player::GainExp(int exp)
     }
 }
 
-bool Player::ChangeJob(Job newJob)
+void Player::ApplyJob(Job newJob)
 {
-    if (HasJob() || level < JOB_CHANGE_LEVEL || newJob == Job::None)
-    {
-        std::cout << "[" << name << "] 전직에 실패했습니다. "
-            << "(필요 레벨: " << JOB_CHANGE_LEVEL << ", 전직 여부: "
-            << (HasJob() ? "이미 전직함" : "전직 가능") << ")\n";
-        return false;
-    }
+    
 
     job = newJob;
     jobName = JobToString(job);
@@ -52,21 +48,21 @@ bool Player::ChangeJob(Job newJob)
     // 직업별 스탯 보너스 적용
     switch (job)
     {
-    case Job::Warrior:
-        attack += 20;
-        maxHp += 50;
+    case Job::Cleaner:
+        attack += 15;
+        maxHp += 35;
         break;
-    case Job::Mage:
-        attack += 40;
-        maxHp -= 20;
-        break;
-    case Job::Archer:
-        attack += 30;
-        maxHp += 10;
-        break;
-    case Job::Priest:
+    case Job::StreetCleaner:
         attack += 10;
         maxHp += 40;
+        break;
+    case Job::RecycleExpert:
+        attack += 35;
+        maxHp += 15;
+        break;
+    case Job::RecycleTech:
+        attack += 20;
+        maxHp += 30;
         break;
     default:
         break;
@@ -78,11 +74,14 @@ bool Player::ChangeJob(Job newJob)
     // 직업 전용 아이템 지급
     item = GetItemForJob(job);
 
-    std::cout << "[" << name << "] " << jobName << "(으)로 전직했습니다! "
+    std::cout << "[" << name << "] " << jobName << "(으)로 시작합니다! "
         << "(공격력: " << attack << ", 최대 체력: " << maxHp << ")\n";
-    std::cout << "[" << name << "] 아이템 [" << item << "] 을(를) 획득했습니다!\n";
 
-    return true;
+
+    if (!item.empty())
+    {
+        std::cout << "[" << name << "] 무기 아이템 [" << item << "] 을(를) 획득했습니다!\n";
+    }
 }
 
 void Player::SetHp(int newHp)
@@ -107,11 +106,11 @@ std::string Player::JobToString(Job job)
 {
     switch (job)
     {
-    case Job::Warrior: return "전사";
-    case Job::Mage:    return "마법사";
-    case Job::Archer:  return "궁수";
-    case Job::Priest:  return "성직자";
-    default:           return "무직";
+    case Job::Cleaner:          return "청소부";
+    case Job::StreetCleaner:    return "환경미화원";
+    case Job::RecycleExpert:    return "분리수거전문가";
+    case Job::RecycleTech:      return "재활용기사";
+    default:                    return "무직";
     }
 }
 
@@ -119,11 +118,11 @@ std::string Player::GetItemForJob(Job job)
 {
     switch (job)
     {
-    case Job::Warrior: return "강철 대검";
-    case Job::Mage:    return "마력의 지팡이";
-    case Job::Archer:  return "장궁";
-    case Job::Priest:  return "신성한 지팡이";
-    default:           return "";
+    case Job::Cleaner:          return "대나무 빗자루";
+    case Job::StreetCleaner:    return "나무 젓가락";
+    case Job::RecycleExpert:    return "평범한 가위";
+    case Job::RecycleTech:      return "분리수거 집게";
+    default:                    return "";
     }
 }
 
