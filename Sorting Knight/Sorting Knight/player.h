@@ -122,6 +122,11 @@ public:
     void SetAttack(int newAttack) { attack = newAttack; }
     void SetExp(int newExp) { exp = newExp; }
 
+    //asdsadsadasdadasdsadasd
+    int GetGold() const { return gold; }
+    void SetGold(int newGold) { gold = newGold; }
+    int GetExpPerLevel() const { return EXP_PER_LEVEL; }
+
     // ---------------- 편의 함수 (직접 멤버를 건드리지 말고 이걸 쓸 것) ----------------
 
     // 체력 회복. SetHp() 안에서 0 ~ maxHp로 clamp되므로 최대치를 넘지 않는다.

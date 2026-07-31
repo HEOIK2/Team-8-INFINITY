@@ -3,31 +3,27 @@
 #include "Player.h"
 #include "monster.h"
 #include "Item.h"
-#include <iostream>
-#include <algorithm>
-#include <cstdlib>
+#include "main.h"
 
 void StartBattle(Player* player, Monster* monster, std::vector<std::pair<Item, int>>& items) {
-    
 
-        std::cout << "\n" << player->GetName() << " VS " << monster->getName() << "\n" << std::endl;
-        
-        
-        while (player->GetHp() > 0 && monster->getHp() > 0) {
-        
-        std::cout << "\n========ÇÃ·¹ÀÌ¾î ÅÏ========\n" << std::endl;
-        
+    std::cout << "\n" << player->GetName() << " VS " << monster->getName() << "\n" << std::endl;
+
+    while (player->GetHp() > 0 && monster->getHp() > 0) {
+
+        std::cout << "\n========í”Œë ˆì´ì–´ í„´========\n" << std::endl;
+
         for (int i = 0; i < items.size(); i++) {
             std::cout << i + 1 << ". " << items[i].first.GetName() << " x" << items[i].second << std::endl;
         }
 
-        std::cout << "»ç¿ëÇÒ ¾ÆÀÌÅÛ ¹øÈ£ ¼±ÅÃ: ";
+        std::cout << "ì‚¬ìš©í•  ì•„ì´í…œ ë²ˆí˜¸ ì„ íƒ: ";
         int choice;
         std::cin >> choice;
         int index = choice - 1;
 
         if (index < 0 || index >= items.size()) {
-            std::cout << "Àß¸øµÈ ¼±ÅÃÀÔ´Ï´Ù." << std::endl;
+            std::cout << "ìž˜ëª»ëœ ìž…ë ¥ìž…ë‹ˆë‹¤." << std::endl;
             continue;
         }
 
@@ -44,38 +40,38 @@ void StartBattle(Player* player, Monster* monster, std::vector<std::pair<Item, i
 
             if (std::find(strong.begin(), strong.end(), monsterType) != strong.end()) {
                 damage = damage * 1.5;
-                std::cout << "È¿°ú°¡ ±²ÀåÇß´Ù!" << std::endl;
+                std::cout << "íš¨ê³¼ê°€ êµ‰ìž¥í–ˆë‹¤!" << std::endl;
             }
             else if (std::find(weak.begin(), weak.end(), monsterType) != weak.end()) {
                 damage = damage / 1.5;
-                std::cout << "È¿°ú°¡ º°·Î´Ù..." << std::endl;
+                std::cout << "íš¨ê³¼ê°€ ë³„ë¡œë‹¤..." << std::endl;
             }
             else {
-                std::cout << "È¿°ú´Â º¸ÅëÀÌ´Ù." << std::endl;
+                std::cout << "íš¨ê³¼ê°€ ë³´í†µì´ë‹¤." << std::endl;
             }
 
             int finalDamage = (int)damage;
             monster->setHp(monster->getHp() - finalDamage);
 
-            std::cout << finalDamage << " ÇÇÇØ!" << std::endl;
-            std::cout << monster->getName() << " Ã¼·Â:" << monster->getHp() << std::endl;
+            std::cout << finalDamage << " ë°ë¯¸ì§€!" << std::endl;
+            std::cout << monster->getName() << " ì²´ë ¥:" << monster->getHp() << std::endl;
         }
         else {
             if (selectedItem.GetHealHP() > 0) {
-                 player->SetHp(player->GetHp() + selectedItem.GetHealHP());
-                 std::cout << "Ã¼·Â " << selectedItem.GetHealHP() << " È¸º¹!" << std::endl;
+                player->SetHp(player->GetHp() + selectedItem.GetHealHP());
+                std::cout << "ì²´ë ¥ " << selectedItem.GetHealHP() << " íšŒë³µ!" << std::endl;
             }
             if (selectedItem.GetBuffATK() > 0) {
                 player->SetAttack(player->GetAttack() + selectedItem.GetBuffATK());
-                std::cout << "°ø°Ý·Â " << selectedItem.GetBuffATK() << " Áõ°¡!" << std::endl;
+                std::cout << "ê³µê²©ë ¥ " << selectedItem.GetBuffATK() << " ì¦ê°€!" << std::endl;
             }
             if (selectedItem.GetBuffMaxHP() > 0) {
                 player->SetMaxHp(player->GetMaxHp() + selectedItem.GetBuffMaxHP());
-                std::cout << "ÃÖ´ë Ã¼·Â " << selectedItem.GetBuffMaxHP() << " Áõ°¡!" << std::endl;
+                std::cout << "ìµœëŒ€ ì²´ë ¥ " << selectedItem.GetBuffMaxHP() << " ì¦ê°€!" << std::endl;
             }
             if (selectedItem.GetGainLevel() > 0) {
                 player->SetLevel(player->GetLevel() + selectedItem.GetGainLevel());
-                std::cout << "·¹º§ " << selectedItem.GetGainLevel() << " ¾÷!" << std::endl;
+                std::cout << "ë ˆë²¨ " << selectedItem.GetGainLevel() << " ì—…!" << std::endl;
             }
         }
 
@@ -89,33 +85,33 @@ void StartBattle(Player* player, Monster* monster, std::vector<std::pair<Item, i
         }
 
         monster->Attack(player);
-        std::cout << "\n" << monster->getName() << "ÀÇ °ø°Ý!" << std::endl;
-        std::cout << player->GetName() << " Ã¼·Â: " << player->GetHp() << std::endl;
+        std::cout << "\n" << monster->getName() << "ì˜ ê³µê²©!" << std::endl;
+        std::cout << player->GetName() << " ì²´ë ¥: " << player->GetHp() << std::endl;
     }
 
 
     std::cout << "\n===============" << std::endl;
     if (player->GetHp() <= 0) {
-        std::cout << "ÆÐ¹è..." << std::endl;
+        std::cout << "íŒ¨ë°°..." << std::endl;
     }
     else if (monster->getHp() <= 0) {
-        std::cout << monster->getName() << " Ã³Ä¡! ½Â¸®" << std::endl;
+        std::cout << monster->getName() << " ì²˜ì¹˜! ìŠ¹ë¦¬" << std::endl;
 
         int gainedExp = monster->getExpReward();
         player->GainExp(gainedExp);
         std::cout << "exp + " << gainedExp << " (" << player->GetExp() << " / " << player->GetExpPerLevel() << ")" << std::endl;
-        
+
         int gainedGold = monster->getGoldReward();
         player->SetGold(player->GetGold() + gainedGold);
-        std::cout << "gold + " << gainedGold << " (º¸À¯°ñµå " << player->GetGold() << "g)" << std::endl;
+        std::cout << "gold + " << gainedGold << " (í˜„ìž¬ ê³¨ë“œ " << player->GetGold() << "g)" << std::endl;
 
         int dropChance = rand() % 100;
         if (dropChance < 30) {
-            std::cout << "¾ÆÀÌÅÛ µå·Ó ÆÇÁ¤... ¼º°ø!! (30%)" << std::endl;
+            std::cout << "ì•„ì´í…œ ë“œëž íŒì •... ì„±ê³µ!! (30%)" << std::endl;
         }
         else {
-            std::cout << "¾ÆÀÌÅÛ µå·Ó ÆÇÁ¤... ½ÇÆÐ..(30%)" << std::endl;
+            std::cout << "ì•„ì´í…œ ë“œëž íŒì •... ì‹¤íŒ¨..(30%)" << std::endl;
         }
-    
+
     }
 }

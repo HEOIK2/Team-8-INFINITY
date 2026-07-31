@@ -19,6 +19,38 @@
 #include "UI.h"
 #include "gameLog.h"
 
+class Monster {
+private:
+    std::string name;     // 몬스터 이름
+    MonsterType property; // 몬스터 속성 (type.h에 정의됨)
+    int hp;
+    int atk;
+    int expReward;
+    int goldReward;
+
+public:
+    Monster(std::string name, MonsterType property, int hp, int atk, int expReward, int goldReward);
+
+    virtual ~Monster() {};
+
+    std::string getName() { return name; }
+    void setName(std::string name) { this->name = name; }
+
+    MonsterType getProperty() { return property; }
+    void setProperty(MonsterType property) { this->property = property; }
+
+    int getHp() { return hp; }
+    void setHp(int hp) { this->hp = hp; }
+
+    int getAtk() { return atk; }
+    void setAtk(int atk) { this->atk = atk; }
+
+    int getExpReward() { return expReward; }
+    int getGoldReward() { return goldReward; }
+
+    void Attack(Player* target);
+};
+
 
 // [헬퍼 함수] 입력 오류(문자 입력 등) 방지
 void ClearInputBuffer() {
@@ -49,7 +81,7 @@ int ShowTitleMenu() {
 }
 
 // 플레이어 초기 세팅 함수
-void InitializeGame() {
+void StartBattle() {
 
 }
 
@@ -72,6 +104,13 @@ void OpenInventory() {
 // 프로그램 진입점 (main 함수)
 
 int main() {
+	Player* player = nullptr; // 플레이어 객체 포인터 초기화
+	player = new Player("PlayerName", Job::Cleaner); // 예시로 청소부 직업 선택
+    Monster* monster = nullptr;
+	monster = new Monster("일반쓰레기", MonsterType::NONE, 20, 10, 10, 5); // 예시 몬스터 생성
+
+
+
     bool isProgramRunning = true;
 
     // [Outer Loop] 타이틀 화면 ↔ 메인 게임
@@ -110,7 +149,7 @@ int main() {
 
             switch (mainChoice) {
             case 1:
-                EnterBattleMenu(); // 전투 호출 (예시함수)
+                StartBattle(); // 전투 호출 (예시함수)
                 break;
             case 2:
                 EnterShopMenu(); // 상점 호출 (예시함수)
