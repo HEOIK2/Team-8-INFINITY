@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 #pragma once
 // ============================================================================
 //  UI.h  —  콘솔 출력/입력 담당 (선언부)
@@ -80,3 +81,41 @@ namespace UI {
     void Pause();
 
 } // namespace UI
+=======
+namespace UI
+{
+    // ── 화면 제어 ──────────────────────────────
+    void Init();      // 콘솔 한글 깨짐 방지(UTF-8 설정). main 맨 처음 딱 1회
+    void Clear();     // 화면 싹 지움 (system("cls"))
+    void WaitEnter(); // "계속하려면 Enter..." 찍고 사용자가 칠 때까지 대기
+    void Line();      // ====== 굵은 구분선 한 줄
+    void Thin();      // ------ 얇은 구분선 한 줄
+
+    // ── 입력 받기 ──────────────────────────────
+    int  GetInt(const std::string& prompt);          // 숫자 입력. 글자 치면 다시 물어봄
+    std::string GetLine(const std::string& prompt);  // 문자열 입력. 빈칸이면 다시 물어봄
+
+    // ── 게임 시작 ──────────────────────────────
+    void PrintTitle();               // 제목 화면 (=== 분리수거 기사단 ===)
+    void PrintCharacterCreated(...); // "Hero 생성 완료! Lv.1 HP 200/200 ..." 한 줄
+
+    // ── 전투 ───────────────────────────────────
+    void PrintBattleHeader(...);   // 전투 화면 맨 위 상태바 (내 이름/레벨/HP)
+    void PrintMonsterAppear(...);  // "몬스터 고블린 등장! 체력: 40, 공격력: 8"
+    void PrintAttack(...);         // "A가 B를 공격합니다! (-30) 체력: 40 -> 10"
+    void PrintItemUse(...);        // "체력 포션 사용! HP 184 -> 200"
+    void PrintKill(...);           // "고블린 처치!"
+    
+    // ── 보상 / 성장 ────────────────────────────
+    void PrintReward(...);   // "EXP +50, 골드 +14 (EXP: 50/100, 골드: 14)"
+    void PrintLevelUp(...);  // ">> 레벨 업! Lv.1 -> Lv.2  HP 220/220 ATK 35"
+
+    // ── 목록 출력 ──────────────────────────────
+    void PrintInventory(...);   // 인벤토리 전체 + 보유 골드
+    void PrintKillSummary(...); // ★체크리스트 2번★ 몬스터별 처치 수 집계표
+
+    // ── 게임 끝 ────────────────────────────────
+    void PrintGameOver(...);   // "사망했습니다" + 처치 집계 같이 출력
+    void PrintGameClear(...);  // "보스 처치!" + 처치 집계 같이 출력
+}
+>>>>>>> Stashed changes

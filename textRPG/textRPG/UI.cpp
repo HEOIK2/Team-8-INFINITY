@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 // ============================================================================
 //  UI.cpp  —  UI.h 에 선언한 함수들의 실제 구현
 // ============================================================================
@@ -176,3 +177,154 @@ namespace UI {
     }
 
 } // namespace UI
+=======
+#include "UI.h"
+#include "GameLog.h"
+#include <iostream>
+#include <sstream>
+#include <cstdlib>
+#include <limits>
+
+namespace {
+    const char* LINE_S = "==========================================";
+    const char* THIN_S = "------------------------------------------";
+}
+
+void UI::Init() { system("chcp 65001 > nul"); }
+void UI::Clear() { system("cls"); }
+void UI::Line() { std::cout << LINE_S << '\n'; }
+void UI::Thin() { std::cout << THIN_S << '\n'; }
+
+void UI::WaitEnter()
+{
+    std::cout << "\n계속하려면 Enter...";
+    std::cin.get();
+}
+
+// 입력은 전부 getline 기반 -> cin >> 와 섞이지 않아 Enter 씹힘 없음
+int UI::GetInt(const std::string& prompt)
+{
+    std::string buf;
+    while (true)
+    {
+        std::cout << prompt;
+        std::getline(std::cin, buf);
+        std::istringstream iss(buf);
+        int v;
+        if (iss >> v) return v;
+        std::cout << "숫자를 입력해주세요.\n";
+    }
+}
+
+std::string UI::GetLine(const std::string& prompt)
+{
+    std::string buf;
+    while (true)
+    {
+        std::cout << prompt;
+        std::getline(std::cin, buf);
+        if (!buf.empty() && buf.find_first_not_of(" \t") != std::string::npos)
+            return buf;
+        std::cout << "이름을 입력해주세요.\n";
+    }
+}
+
+void UI::PrintTitle()
+{
+    Line();
+    std::cout << "        분리수거 기사단\n";
+    Line();
+}
+
+void UI::PrintCharacterCreated(const std::string& name, int lv, int hp, int maxHp,
+    int atk, int exp, int gold)
+{
+    std::cout << "\n" << name << " 생성 완료!  Lv." << lv
+        << "  HP " << hp << "/" << maxHp
+        << "  ATK " << atk
+        << "  EXP " << exp << "/100"
+        << "  Gold " << gold << '\n';
+}
+
+void UI::PrintBattleHeader(const std::string& name, int lv, int hp, int maxHp)
+{
+    Line();
+    std::cout << " [ 전투 ]  " << name << "  Lv." << lv
+        << "  HP " << hp << "/" << maxHp << '\n';
+    Line();
+}
+
+void UI::PrintMonsterAppear(const std::string& mName, int mHp, int mAtk)
+{
+    std::cout << "몬스터 " << mName << " 등장! 체력: " << mHp
+        << ", 공격력: " << mAtk << "\n\n";
+}
+
+void UI::PrintAttack(const std::string& attacker, const std::string& target,
+    int damage, int hpBefore, int hpAfter)
+{
+    if (hpAfter < 0) hpAfter = 0;
+    std::cout << attacker << "가 " << target << "을(를) 공격합니다! (-"
+        << damage << ") 체력: " << hpBefore << " -> " << hpAfter << '\n';
+}
+
+void UI::PrintItemUse(const std::string& item, int hpBefore, int hpAfter)
+{
+    std::cout << item << " 사용! HP " << hpBefore << " -> " << hpAfter << '\n';
+}
+
+void UI::PrintKill(const std::string& mName)
+{
+    std::cout << mName << " 처치!\n";
+}
+
+void UI::PrintReward(int exp, int gold, int curExp, int totalGold, bool leveled)
+{
+    std::cout << "EXP +" << exp << ", 골드 +" << gold << "  (EXP: ";
+    if (leveled) std::cout << "100/100 -> 레벨업!";
+    else         std::cout << curExp << "/100";
+    std::cout << ", 골드: " << totalGold << ")\n";
+}
+
+void UI::PrintLevelUp(int before, int after, int maxHp, int atk)
+{
+    std::cout << ">> 레벨 업!  Lv." << before << " -> Lv." << after
+        << "   HP " << maxHp << "/" << maxHp << "  ATK " << atk << '\n';
+}
+
+void UI::PrintInventory(const std::vector<std::string>& labels, int gold)
+{
+    Line();
+    std::cout << " [ 인벤토리 ]  골드: " << gold << "G\n";
+    Line();
+    if (labels.empty())
+        std::cout << " (비어 있음)\n";
+    else
+        for (size_t i = 0; i < labels.size(); ++i)
+            std::cout << " " << (i + 1) << ". " << labels[i] << '\n';
+    Line();
+}
+
+void UI::PrintKillSummary(const GameLog& log)
+{
+    Line();
+    std::cout << " [ 처치 집계 ]  총 " << log.GetTotalKills()
+        << "마리 / 누적 골드 " << log.GetTotalGold() << "G\n";
+    Line();
+    for (const auto& kv : log.GetKills())
+        std::cout << " " << kv.first << " : " << kv.second << "마리\n";
+    Line();
+}
+
+void UI::PrintGameOver(const std::string& name, const GameLog& log)
+{
+    std::cout << "\n" << name << "가 사망했습니다. 게임 오버!\n";
+    PrintKillSummary(log);
+}
+
+void UI::PrintGameClear(const std::string& name, const GameLog& log)
+{
+    std::cout << "\n보스 처치! " << name << " 게임 클리어!\n";
+    PrintKillSummary(log);
+}
+>>>>>>> Stashed changes
