@@ -62,15 +62,25 @@ void EnterShopMenu() {
 // 전투 호출
 void EnterBattle() {
 
-    Player* testPlayer = new Player("테스트", Job::Cleaner);
+    Player* testPlayer = new Player("테스트", Job::Cleaner); // 이 아래 다 테스트용입니다
+    testPlayer->SetLevel(5); 
 
     std::vector<std::pair<Item, int>> testItems;
-    testItems.push_back({ Item("나무 젓가락", "기본 무기", "나무 젓가락으로 공격!", ItemRarity::N, { MonsterType::PAPER }, { MonsterType::IRON }, 10, 5), 100 });
+    testItems.push_back({ Item("나무 젓가락", "기본 무기", "나무 젓가락으로 공격!", ItemRarity::N, { MonsterType::PAPER }, { MonsterType::IRON }, 100, 5), 100 });
     testItems.push_back({ Item("포션", "체력 회복", "포션을 마셨다!", ItemRarity::N, {}, {}, 0, 10, ItemCategory::CONSUMABLE, 50), 3 });
 
-    EnterBattle(testPlayer, testItems);
+    int selectedStage = 0;
+    Monster* monster = StageMonster(testPlayer->GetLevel(), selectedStage);
+
+    bool isWin = StartBattle(testPlayer, monster, testItems);
+
+    if (isWin) {
+
+        ClearStage(selectedStage);
+    }
 
     delete testPlayer;
+    delete monster;
 }
 
 // 인벤토리
