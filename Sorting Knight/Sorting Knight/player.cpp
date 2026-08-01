@@ -1,4 +1,5 @@
 ﻿#include "player.h"
+#include "asciiArt.h"
 #include <iostream>
 #include <algorithm> // std::clamp 사용
 
@@ -98,8 +99,8 @@ void Player::ApplyJob(Job newJob)
 
     hp = maxHp; // 직업 적용 후 체력을 최대치로 맞춰줌
 
-    std::cout << "[" << name << "] " << jobName << "(으)로 시작합니다! "
-        << "(공격력: " << attack << ", 최대 체력: " << maxHp << ")\n";
+    // (안내 메시지는 UI 화면에서 표시하므로 여기서 직접 출력하지 않음 -
+    //  std::cout을 쓰면 그려둔 UI 박스가 깨진다)
 }
 
 
@@ -119,21 +120,21 @@ void Player::SetHp(int newHp)
 // LevelUp - 레벨업 처리 (내부 전용, GainExp에서만 호출됨)
 // ------------------------------------------------------------
 // - 레벨을 1 올림
-// - 최대체력은 (오른 레벨 x 20)만큼, 공격력은 (오른 레벨 x 5)만큼 증가
+// - 최대체력/공격력 증가량은 "레벨업 '전' 레벨" 기준 (기획서 합의사항:
+//   '후' 기준이면 후반 성장이 과해지므로 '전' 기준을 채택)
 // - 체력을 최대치로 완전 회복
-// - 레벨업 결과를 콘솔에 출력
+// - 레벨업 안내 출력은 UI(전투 결과 화면)가 담당하므로 여기서는 안 함
 // ============================================================
 void Player::LevelUp()
 {
+    int grownLevel = level; // 레벨업 '전' 레벨
+
     level++;
 
-    maxHp += level * 20;
-    attack += level * 5;
+    maxHp += grownLevel * 20;
+    attack += grownLevel * 5;
 
     hp = maxHp;
-
-    std::cout << "[" << name << "] 레벨 업! Lv." << level
-        << " (최대 체력: " << maxHp << ", 공격력: " << attack << ")\n";
 }
 
 
@@ -169,4 +170,23 @@ void Player::PrintStatus() const
     std::cout << "경험치 : " << exp << " / " << EXP_PER_LEVEL << "\n";
     std::cout << "골드   : " << gold << "\n";
     std::cout << "=========================\n";
+}
+
+// ============================================================
+// ToActorDisplay - JRPG UI 화면용 데이터로 변환
+// ============================================================
+ActorDisplay Player::ToActorDisplay() const
+{
+    ActorDisplay display;
+    display.art = GameArt::Player();
+    display.name = name + " (" + jobName + ")";
+    display.nameColor = UIColor::Green;
+    display.statLines = {
+        { "Lv." + std::to_string(level) + (IsMaxLevel() ? " (MAX)" : ""), UIColor::White },
+        { "HP " + UI_MakeGauge(hp, maxHp, 10), UIColor::Red },
+        { "ATK " + std::to_string(attack), UIColor::White },
+        { "EXP " + std::to_string(exp) + "/" + std::to_string(EXP_PER_LEVEL), UIColor::Cyan },
+        { "Gold " + std::to_string(gold) + "G", UIColor::Yellow },
+    };
+    return display;
 }

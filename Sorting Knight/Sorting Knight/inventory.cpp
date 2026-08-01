@@ -90,35 +90,25 @@ int Inventory::GetRemainingSpace() const {
 //      (Shop::Buy()가 그렇게 하고 있음, Shop.cpp 참고).
 // ------------------------------------------------------------------
 int Inventory::AddItem(const Item& item, int count) {
+    // ※ 공간 부족 안내는 반환값(실제로 들어간 개수)을 보고 호출부(UI)가 표시한다.
+    //    여기서 std::cout으로 직접 출력하면 그려둔 UI 박스가 깨지므로 하지 않음.
     int remaining = GetRemainingSpace();
     if (remaining <= 0) {
-        // 인벤토리가 이미 꽉 참 -> 하나도 못 넣고 전부 버림
-        std::cout << "[!] 인벤토리가 가득 차서 '" << item.GetName()
-                   << "' x" << count << "개를 버렸습니다." << std::endl;
-        return 0;
+        return 0; // 인벤토리가 이미 꽉 참 -> 하나도 못 넣음
     }
 
     int actualAdd = std::min(count, remaining); // 들어갈 수 있는 만큼만
-    int discarded = count - actualAdd;           // 공간 부족으로 못 들어간 개수
 
     // 이미 같은 아이템이 있으면 개수만 증가시키고 끝
     for (auto& slot : items) {
         if (slot.first.GetName() == item.GetName()) {
             slot.second += actualAdd;
-            if (discarded > 0) {
-                std::cout << "[!] 인벤토리가 가득 차서 '" << item.GetName()
-                           << "' " << discarded << "개는 버려졌습니다." << std::endl;
-            }
             return actualAdd;
         }
     }
 
     // 처음 들어오는 아이템이면 새 슬롯 추가
     items.push_back({ item, actualAdd });
-    if (discarded > 0) {
-        std::cout << "[!] 인벤토리가 가득 차서 '" << item.GetName()
-                   << "' " << discarded << "개는 버려졌습니다." << std::endl;
-    }
     return actualAdd;
 }
 

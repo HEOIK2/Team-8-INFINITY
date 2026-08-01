@@ -5,6 +5,19 @@
 #include <cstdlib>
 #include "Item.h"
 #include "type.h"
+#include "ui.h"
+
+// 아이템 등급 -> 화면 표시 색 (상점/전투/인벤토리 목록에서 공통 사용)
+//   S 노랑 / A 보라 / B 청록 / C 흰색 / N(소비템) 초록
+inline UIColor RarityToColor(ItemRarity rarity) {
+    switch (rarity) {
+    case ItemRarity::S: return UIColor::Yellow;
+    case ItemRarity::A: return UIColor::Magenta;
+    case ItemRarity::B: return UIColor::Cyan;
+    case ItemRarity::C: return UIColor::White;
+    default:            return UIColor::Green; // N (소비 아이템)
+    }
+}
 
 class ItemManager {
 private:
@@ -259,6 +272,16 @@ public:
         return Item("더미 아이템", "", "", ItemRarity::C, {}, {}, 0, 0);
     }
 
+    // 등록된 아이템 전체를 반환한다. (상점 화면에서 "재고 전체 보여주기" 용도)
+    std::vector<Item> GetAllItems() const {
+        std::vector<Item> result;
+        result.reserve(itemDatabase.size());
+        for (const auto& pair : itemDatabase) {
+            result.push_back(pair.second);
+        }
+        return result;
+    }
+
     Item GetRandomItemByRarity(ItemRarity rarity) const {
         std::vector<Item> candidates;
 
@@ -274,5 +297,21 @@ public:
         }
 
         return GetItem("평범한 가위 (C)");
+    }
+
+    // 소비 아이템(N등급) 중 하나를 랜덤으로 반환 (전투 승리 드랍용)
+    Item GetRandomConsumable() const {
+        std::vector<Item> candidates;
+
+        for (const auto& pair : itemDatabase) {
+            if (pair.second.GetCategory() == ItemCategory::CONSUMABLE) {
+                candidates.push_back(pair.second);
+            }
+        }
+
+        if (!candidates.empty()) {
+            return candidates[rand() % candidates.size()];
+        }
+        return GetItem("박카스 (N)");
     }
 };

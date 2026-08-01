@@ -147,9 +147,12 @@
     <ClCompile Include="monster.cpp" />
     <ClCompile Include="player.cpp" />
     <ClCompile Include="shop.cpp" />
+    <ClCompile Include="ui.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="asciiArt.h" />
     <ClInclude Include="battle.h" />
+    <ClInclude Include="gameLog.h" />
     <ClInclude Include="gameText.h" />
     <ClInclude Include="inventory.h" />
     <ClInclude Include="Item.h" />
@@ -159,6 +162,7 @@
     <ClInclude Include="player.h" />
     <ClInclude Include="shop.h" />
     <ClInclude Include="type.h" />
+    <ClInclude Include="ui.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include <string>
 #include "inventory.h"   // Player가 Inventory를 멤버로 들고 있으므로 실제 include 필요
+#include "ui.h"          // ToActorDisplay()가 반환하는 ActorDisplay 타입 필요
 
 // ============================================================
 // Job (직업)
@@ -88,6 +89,9 @@ public:
     // 현재 플레이어 상태(이름/직업/레벨/체력/공격력/경험치/아이템)를
     // 콘솔에 보기 좋게 출력한다. (상태를 바꾸지 않는 const 함수)
     void PrintStatus() const;
+
+    // 현재 상태를 JRPG UI 화면(ui.cpp)에 그릴 수 있는 ActorDisplay로 변환한다.
+    ActorDisplay ToActorDisplay() const;
 
 
     // ---------------- Getter (값 조회) ----------------

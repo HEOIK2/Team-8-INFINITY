@@ -39,9 +39,18 @@
     <ClCompile Include="shop.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="ui.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="asciiArt.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
     <ClInclude Include="battle.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="gameLog.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="gameText.h">
@@ -69,6 +78,9 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="type.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="ui.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
