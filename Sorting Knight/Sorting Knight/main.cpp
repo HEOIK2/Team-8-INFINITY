@@ -48,25 +48,60 @@ int ShowTitleMenu() {
 }
 
 // 플레이어 초기 세팅 함수
-void InitializeGame() {
+// 유효한 입력을 받을 때까지 재시도하고, 생성된 Player*를 반환합니다.
+Player* InitializeGame() {
+    std::string name;
+    int cnt = 0;
 
+    std::cout << "플레이어 이름과 직업을 정해주세요" << std::endl;
+    std::cout << "직업: 1. 청소부 2. 환경미화원 3. 분리수거전문가 4. 재활용기사" << std::endl;
+
+    // 이름 입력
+    while (true) {
+        std::cout << "이름: ";
+        if (std::cin >> name) {
+            ClearInputBuffer();
+            if (!name.empty()) break;
+        } else {
+            ClearInputBuffer();
+        }
+        std::cout << "유효한 이름을 입력하세요.\n";
+    }
+
+    // 직업 입력 (1~4)
+    while (true) {
+        std::cout << "직업 번호(1-4): ";
+        if (std::cin >> cnt) {
+            ClearInputBuffer();
+            if (cnt >= 1 && cnt <= 4) break;
+        } else {
+            ClearInputBuffer();
+        }
+        std::cout << "유효한 숫자(1~4)를 입력하세요.\n";
+    }
+
+    switch (cnt) {
+    case 1:
+        return new Player(name, Job::Cleaner); // 임시로 기본 캐릭터 생성
+    case 2:
+        return new Player(name, Job::StreetCleaner);
+    case 3:
+        return new Player(name, Job::RecycleExpert);
+    case 4:
+        return new Player(name, Job::RecycleTech);
+    default:
+        return new Player(name, Job::Cleaner);
+    }
 }
 
 // 상점 호출 
 void EnterShopMenu() {
 
 }
-
-// 전투 호출
-void EnterBattleMenu() {
-
-}
-
 // 인벤토리
 void OpenInventory() {
 
 }
-std::vector<std::pair<Item, int>> myItems;
 
 // 프로그램 진입점 (main 함수)
 
@@ -75,8 +110,6 @@ int main() {
 
     // [Outer Loop] 타이틀 화면 ↔ 메인 게임
     while (isProgramRunning) {
-		Player* player = new Player("플레이어", Job::Cleaner); // 임시로 기본 캐릭터 생성 (이름/직업은 나중에 입력받도록 수정 가능)
-		Monster* monster = new Monster("몬스터", MonsterType::NONE , 30, 10,10,10); // 임시로 기본 몬스터 생성 (이름/레벨/체력/공격력)
 
         // 1. 타이틀 화면 선택
         int titleChoice = ShowTitleMenu();
@@ -92,7 +125,17 @@ int main() {
         }
 
         // 2. 캐릭터 생성 및 초기 세팅
-        InitializeGame();
+        // InitializeGame은 생성된 Player*를 반환합니다.
+        Player* player = InitializeGame();
+        if (!player) {
+            std::cout << "플레이어 생성에 실패했습니다. 타이틀로 돌아갑니다." << std::endl;
+            continue;
+        }
+        // 임시 몬스터 생성 (플레이 중 공통으로 사용할 몬스터 예시)
+        Monster* monster = new Monster("몬스터", MonsterType::NONE, 30, 10, 10, 10); // 임시로 기본 몬스터 생성 (이름/레벨/체력/공격력)
+
+		//아이템 목록 (전투에서 사용할 아이템)
+        std::vector<std::pair<Item, int>> myItems;
 
         // 3. [Inner Loop] 인게임 메인 메뉴 루프
         bool inMainMenu = true;
@@ -108,12 +151,12 @@ int main() {
             int mainChoice;
             std::cin >> mainChoice;
             ClearInputBuffer();
-            
+
             switch (mainChoice) {
             case 1:
-				 // 전투에 사용할 아이템 목록 (예시)
+                // 전투에 사용할 아이템 목록 (예시)
                 // StartBattle(Player* player, Monster* monster, std::vector<std::pair<Item, int>>& items)
-                StartBattle(player, monster, {myItems}); // 전투 호출 (예시함수)
+                StartBattle(player, monster, myItems); // 전투 호출 (예시함수)
                 break;
             case 2:
                 EnterShopMenu(); // 상점 호출 (예시함수)
@@ -130,7 +173,12 @@ int main() {
                 break;
             }
         }
-    }
 
+        // 플레이어/몬스터 메모리 정리 (메뉴에서 타이틀로 돌아갈 때)
+        delete player;
+        player = nullptr;
+        delete monster;
+        monster = nullptr;
+    }
     return 0;
 }
