@@ -27,9 +27,6 @@ void ClearInputBuffer() {
     }
 }
 
-
-// [콘텐츠 로직 함수 정의] 
-
 // 타이틀 화면을 출력 and 사용자 입력을 받는 함수 (아마 UI 호출해서 들어갈 것)
 int ShowTitleMenu() {
     std::cout << "\n===================================" << std::endl;
@@ -94,6 +91,27 @@ Player* InitializeGame() {
     }
 }
 
+// 직업별 초기 아이템 지급
+void GiveInitialItems(Player* player, std::vector<std::pair<Item, int>>& items, ItemManager& itemManager) {
+   
+    switch (player->GetJob()) {
+    case Job::Cleaner:
+        items.push_back({ itemManager.GetItem("대나무 빗자루 (C)"), 1 });
+        break;
+    case Job::StreetCleaner:
+        items.push_back({ itemManager.GetItem("나무 젓가락 (C)"), 1 });
+        break;
+    case Job::RecycleExpert:
+        items.push_back({ itemManager.GetItem("평범한 가위 (C)"), 1 });
+        break;
+    case Job::RecycleTech:
+        items.push_back({ itemManager.GetItem("분리수거 집게 (C)"), 1 });
+        break;
+    default:
+        break;
+    }
+}
+
 // 상점 호출 
 void EnterShopMenu() {
 
@@ -125,17 +143,23 @@ int main() {
         }
 
         // 2. 캐릭터 생성 및 초기 세팅
-        // InitializeGame은 생성된 Player*를 반환합니다.
+        // 
+        // 2 - 0. 아이템 목록 (전투에서 사용할 아이템)
+        std::vector<std::pair<Item, int>> myItems;
+        ItemManager itemManager; // 아이템 매니저 인스턴스 생성
+
+        // 2 - 1. InitializeGame은 생성된 Player*를 반환합니다.
         Player* player = InitializeGame();
         if (!player) {
             std::cout << "플레이어 생성에 실패했습니다. 타이틀로 돌아갑니다." << std::endl;
             continue;
         }
-        // 임시 몬스터 생성 (플레이 중 공통으로 사용할 몬스터 예시)
+        // 2 - 2. 초기 아이템 지급 (예시)
+		GiveInitialItems(player, myItems, itemManager);
+        // 2 - (2).임시 몬스터 생성 (플레이 중 공통으로 사용할 몬스터 예시)
         Monster* monster = new Monster("몬스터", MonsterType::NONE, 30, 10, 10, 10); // 임시로 기본 몬스터 생성 (이름/레벨/체력/공격력)
 
-		//아이템 목록 (전투에서 사용할 아이템)
-        std::vector<std::pair<Item, int>> myItems;
+		
 
         // 3. [Inner Loop] 인게임 메인 메뉴 루프
         bool inMainMenu = true;
@@ -153,8 +177,7 @@ int main() {
             ClearInputBuffer();
 
             switch (mainChoice) {
-            case 1:
-                // 전투에 사용할 아이템 목록 (예시)
+            case 1:             
                 // StartBattle(Player* player, Monster* monster, std::vector<std::pair<Item, int>>& items)
                 StartBattle(player, monster, myItems); // 전투 호출 (예시함수)
                 break;
