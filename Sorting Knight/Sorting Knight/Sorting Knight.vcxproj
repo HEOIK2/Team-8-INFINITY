@@ -143,10 +143,13 @@
     <ClCompile Include="gameLog.cpp" />
     <ClCompile Include="inventory.cpp" />
     <ClCompile Include="Item.cpp" />
-    <ClCompile Include="main.cpp" />
+    <ClCompile Include="main.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="monster.cpp" />
     <ClCompile Include="player.cpp" />
     <ClCompile Include="shop.cpp" />
+    <ClCompile Include="test_main.cpp" />
     <ClCompile Include="ui.cpp" />
   </ItemGroup>
   <ItemGroup>
