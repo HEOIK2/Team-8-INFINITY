@@ -6,3 +6,12 @@ std::string Color(const std::string& s, const char* code);		// string은 std에�
 
 std::string MakeGauge(int cur, int max, int slots);
 // HP바 문자열 생성하는 것. 예시 MakeGauge(142, 200, 20) -> 현재값, 최대값, 칸수 -> ■■■■■■■■■■■ 142/ 200
+
+
+
+void Line(const std::string& c = "=");; // 구분선 인자 없으면 =가 들어갑니다. 원하는 구분선 스타일을 넣어주세요.
+void Title(const std::string& t); // 제목을 구분선 사이에 출력
+void Clear(); // 화면 지우기
+void Pause(); // 계속하려면 Enter
+
+void ShowMainTitleArt(); // 메인타이틀아트입니다.
