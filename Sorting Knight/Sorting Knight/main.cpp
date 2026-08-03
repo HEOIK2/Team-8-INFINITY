@@ -1,4 +1,4 @@
-﻿ #include <iostream>
+﻿#include <iostream>
 #include <string>
 #include <vector>
 #include <map>
@@ -61,7 +61,8 @@ Player* InitializeGame() {
         if (std::cin >> name) {
             ClearInputBuffer();
             if (!name.empty()) break;
-        } else {
+        }
+        else {
             ClearInputBuffer();
         }
         std::cout << "유효한 이름을 입력하세요.\n";
@@ -73,7 +74,8 @@ Player* InitializeGame() {
         if (std::cin >> cnt) {
             ClearInputBuffer();
             if (cnt >= 1 && cnt <= 4) break;
-        } else {
+        }
+        else {
             ClearInputBuffer();
         }
         std::cout << "유효한 숫자(1~4)를 입력하세요.\n";
@@ -95,28 +97,24 @@ Player* InitializeGame() {
 
 // 직업별 초기 아이템 지급
 void GiveInitialItems(Player* player, ItemManager& itemManager) {
-   
+
     switch (player->GetJob()) {
     case Job::Cleaner:
-        player->GetInventory().AddItem( itemManager.GetItem("대나무 빗자루 (C)"), 1 );
+        player->GetInventory().AddItem(itemManager.GetItem("대나무 빗자루 (C)"), 1);
         break;
     case Job::StreetCleaner:
-        player->GetInventory().AddItem( itemManager.GetItem("나무 젓가락 (C)"), 1 );
+        player->GetInventory().AddItem(itemManager.GetItem("나무 젓가락 (C)"), 1);
         break;
     case Job::RecycleExpert:
-        player->GetInventory().AddItem( itemManager.GetItem("평범한 가위 (C)"), 1 );
+        player->GetInventory().AddItem(itemManager.GetItem("평범한 가위 (C)"), 1);
         break;
     case Job::RecycleTech:
-        player->GetInventory().AddItem( itemManager.GetItem("분리수거 집게 (C)"), 1 );
+        player->GetInventory().AddItem(itemManager.GetItem("분리수거 집게 (C)"), 1);
         break;
     default:
         break;
     }
 }
-
-
-// 전투 호출
-void EnterBattle() {}
 
 
 // 프로그램 진입점 (main 함수)
@@ -155,8 +153,8 @@ int main() {
             continue;
         }
         // 2 - 2. 초기 아이템 지급 (예시)
-		GiveInitialItems(player , itemManager);
-		// 2 - 3 . 상점 초기화 (전역 포인터에 player와 itemManager 주소 저장)
+        GiveInitialItems(player, itemManager);
+        // 2 - 3 . 상점 초기화 (전역 포인터에 player와 itemManager 주소 저장)
         InitShop(player, &itemManager);
 
         // 3. [Inner Loop] 인게임 메인 메뉴 루프
@@ -167,6 +165,7 @@ int main() {
             std::cout << "2. 상점" << std::endl;
             std::cout << "3. 인벤토리" << std::endl;
             std::cout << "4. 플레이어 스탯" << std::endl;
+            std::cout << "9. ???" << std::endl;
             std::cout << "0. 종료 (타이틀로 돌아가기)" << std::endl;
             std::cout << "===================================" << std::endl;
             std::cout << "선택: ";
@@ -185,8 +184,29 @@ int main() {
             case 3:
                 player->GetInventory().Show();
                 break;
-            case 4: 
-				player->PrintStatus(); // 상태창 호출 (예시함수)               
+            case 4:
+                player->PrintStatus(); // 상태창 호출 (예시함수)               
+                break;
+            case 9:
+                std::cout << "1. 개발자용 : 경험치 1000 획득" << std::endl;
+                std::cout << "2. 개발자용 : 10000G 획득" << std::endl;
+                std::cout << "3. 나가기 " << std::endl;
+                int DebugChoice;
+                while (true) {
+                    std::cin >> DebugChoice;
+                    if (DebugChoice == 1 || DebugChoice == 2 || DebugChoice == 3) {
+                        break;
+                    }
+                    std::cout << "잘못된 입력입니다. 다시 선택하세요: ";
+                }
+                switch (DebugChoice) {
+                case 1:
+                    player->GainExp(1000);
+                    break;
+                case 2:
+                    player->SetGold(player->GetGold() + 10000);
+                    break;
+                }
                 break;
             case 0:
                 std::cout << "\n타이틀 화면으로 돌아갑니다..." << std::endl;
