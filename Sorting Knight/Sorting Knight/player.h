@@ -45,9 +45,6 @@ private:
     // Job enum 값을 화면에 표시할 한글 문자열로 변환한다. (예: Job::Cleaner -> "청소부")
     static std::string JobToString(Job job);
 
-    // 직업(job)에 대응하는 지급 무기 이름을 반환한다. (예: Job::Cleaner -> "대나무 빗자루")
-    static std::string GetItemForJob(Job job);
-
 
     // ---------------- 상수 (밸런스 값) ----------------
 
@@ -67,7 +64,6 @@ private:
     int exp;               // 현재 경험치 (0 ~ EXP_PER_LEVEL)
     Job job;               // 현재 직업 (enum 값)
     std::string jobName; // 현재 직업 이름 (한글 문자열, 출력용)
-    std::string item;    // 직업 전용 지급 무기 이름
     int gold;            // 보유 골드 (상점 구매/판매에 사용)
     Inventory inventory; // 소지 아이템 목록 (Inventory.h 참고)
 
@@ -106,7 +102,6 @@ public:
     int GetExp() const { return exp; }
     Job GetJob() const { return job; }
     const std::string& GetJobName() const { return jobName; } // 직업 이름 (한글, 예: "청소부")
-    const std::string& GetItem() const { return item; }       // 직업 전용 지급 무기 이름
     bool IsMaxLevel() const { return level >= MAX_LEVEL; }     // 최대 레벨(10) 도달 여부
     int GetGold() const { return gold; }                       // 현재 보유 골드
     void SetGold(int newGold) { gold = newGold; }

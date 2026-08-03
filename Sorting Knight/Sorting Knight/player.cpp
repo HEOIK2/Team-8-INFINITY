@@ -19,7 +19,6 @@ Player::Player(const std::string& name, Job initialJob)
     , gold(0)
     , job(Job::None)
     , jobName("무직")
-    , item("")
 {
     ApplyJob(initialJob); // 생성과 동시에 직업 적용
 }
@@ -99,15 +98,8 @@ void Player::ApplyJob(Job newJob)
 
     hp = maxHp; // 직업 적용 후 체력을 최대치로 맞춰줌
 
-    item = GetItemForJob(job); // 직업 전용 무기 지급
-
     std::cout << "[" << name << "] " << jobName << "(으)로 시작합니다! "
         << "(공격력: " << attack << ", 최대 체력: " << maxHp << ")\n";
-
-    if (!item.empty())
-    {
-        std::cout << "[" << name << "] 무기 아이템 [" << item << "] 을(를) 획득했습니다!\n";
-    }
 }
 
 
@@ -160,23 +152,6 @@ std::string Player::JobToString(Job job)
     }
 }
 
-
-// ============================================================
-// GetItemForJob - 직업별 지급 무기 이름 반환 (내부 전용)
-// ============================================================
-std::string Player::GetItemForJob(Job job)
-{
-    switch (job)
-    {
-    case Job::Cleaner:          return "대나무 빗자루";
-    case Job::StreetCleaner:    return "나무 젓가락";
-    case Job::RecycleExpert:    return "평범한 가위";
-    case Job::RecycleTech:      return "분리수거 집게";
-    default:                    return "";
-    }
-}
-
-
 // ============================================================
 // PrintStatus - 현재 플레이어 상태를 콘솔에 출력
 // ------------------------------------------------------------
@@ -192,7 +167,6 @@ void Player::PrintStatus() const
     std::cout << "체력   : " << hp << " / " << maxHp << "\n";
     std::cout << "공격력 : " << attack << "\n";
     std::cout << "경험치 : " << exp << " / " << EXP_PER_LEVEL << "\n";
-    std::cout << "아이템 : " << (item.empty() ? "없음" : item) << "\n";
     std::cout << "골드   : " << gold << "\n";
     std::cout << "=========================\n";
 }

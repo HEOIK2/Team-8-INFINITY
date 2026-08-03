@@ -29,9 +29,6 @@ void ClearInputBuffer() {
     }
 }
 
-
-// [콘텐츠 로직 함수 정의] 
-
 // 타이틀 화면을 출력 and 사용자 입력을 받는 함수 (아마 UI 호출해서 들어갈 것)
 int ShowTitleMenu() {
     std::cout << "\n===================================" << std::endl;
@@ -50,44 +47,84 @@ int ShowTitleMenu() {
 }
 
 // 플레이어 초기 세팅 함수
-void InitializeGame() {
+// 유효한 입력을 받을 때까지 재시도하고, 생성된 Player*를 반환합니다.
+Player* InitializeGame() {
+    std::string name;
+    int cnt = 0;
 
+    std::cout << "플레이어 이름과 직업을 정해주세요" << std::endl;
+    std::cout << "직업: 1. 청소부 2. 환경미화원 3. 분리수거전문가 4. 재활용기사" << std::endl;
+
+    // 이름 입력
+    while (true) {
+        std::cout << "이름: ";
+        if (std::cin >> name) {
+            ClearInputBuffer();
+            if (!name.empty()) break;
+        } else {
+            ClearInputBuffer();
+        }
+        std::cout << "유효한 이름을 입력하세요.\n";
+    }
+
+    // 직업 입력 (1~4)
+    while (true) {
+        std::cout << "직업 번호(1-4): ";
+        if (std::cin >> cnt) {
+            ClearInputBuffer();
+            if (cnt >= 1 && cnt <= 4) break;
+        } else {
+            ClearInputBuffer();
+        }
+        std::cout << "유효한 숫자(1~4)를 입력하세요.\n";
+    }
+
+    switch (cnt) {
+    case 1:
+        return new Player(name, Job::Cleaner); // 임시로 기본 캐릭터 생성
+    case 2:
+        return new Player(name, Job::StreetCleaner);
+    case 3:
+        return new Player(name, Job::RecycleExpert);
+    case 4:
+        return new Player(name, Job::RecycleTech);
+    default:
+        return new Player(name, Job::Cleaner);
+    }
 }
 
-// 상점 호출 
-void EnterShopMenu() {
-
+// 직업별 초기 아이템 지급
+void GiveInitialItems(Player* player, std::vector<std::pair<Item, int>>& items, ItemManager& itemManager) {
+   
+    switch (player->GetJob()) {
+    case Job::Cleaner:
+        items.push_back({ itemManager.GetItem("대나무 빗자루 (C)"), 1 });
+        break;
+    case Job::StreetCleaner:
+        items.push_back({ itemManager.GetItem("나무 젓가락 (C)"), 1 });
+        break;
+    case Job::RecycleExpert:
+        items.push_back({ itemManager.GetItem("평범한 가위 (C)"), 1 });
+        break;
+    case Job::RecycleTech:
+        items.push_back({ itemManager.GetItem("분리수거 집게 (C)"), 1 });
+        break;
+    default:
+        break;
+    }
 }
+
 
 // 전투 호출
 void EnterBattle() {
 
-    Player* testPlayer = new Player("테스트", Job::Cleaner); // 이 아래 다 테스트용입니다
-    testPlayer->SetLevel(5); 
-
-    std::vector<std::pair<Item, int>> testItems;
-    testItems.push_back({ Item("나무 젓가락", "기본 무기", "나무 젓가락으로 공격!", ItemRarity::N, { MonsterType::PAPER }, { MonsterType::IRON }, 100, 5), 100 });
-    testItems.push_back({ Item("포션", "체력 회복", "포션을 마셨다!", ItemRarity::N, {}, {}, 0, 10, ItemCategory::CONSUMABLE, 50), 3 });
-
-    int selectedStage = 0;
-    Monster* monster = StageMonster(testPlayer->GetLevel(), selectedStage);
-
-    bool isWin = StartBattle(testPlayer, monster, testItems);
-
-    if (isWin) {
-
-        ClearStage(selectedStage);
-    }
-
-    delete testPlayer;
-    delete monster;
-}
+// 상점 호출 
+void EnterShopMenu() {
 
 // 인벤토리
 void OpenInventory() {
 
 }
-
 
 // 프로그램 진입점 (main 함수)
 
@@ -114,7 +151,23 @@ int main() {
         }
 
         // 2. 캐릭터 생성 및 초기 세팅
-        InitializeGame();
+        // 
+        // 2 - 0. 아이템 목록 (전투에서 사용할 아이템)
+        std::vector<std::pair<Item, int>> myItems;
+        ItemManager itemManager; // 아이템 매니저 인스턴스 생성
+
+        // 2 - 1. InitializeGame은 생성된 Player*를 반환합니다.
+        Player* player = InitializeGame();
+        if (!player) {
+            std::cout << "플레이어 생성에 실패했습니다. 타이틀로 돌아갑니다." << std::endl;
+            continue;
+        }
+        // 2 - 2. 초기 아이템 지급 (예시)
+		GiveInitialItems(player, myItems, itemManager);
+        // 2 - (2).임시 몬스터 생성 (플레이 중 공통으로 사용할 몬스터 예시)
+        Monster* monster = new Monster("몬스터", MonsterType::NONE, 30, 10, 10, 10); // 임시로 기본 몬스터 생성 (이름/레벨/체력/공격력)
+
+		
 
         // 3. [Inner Loop] 인게임 메인 메뉴 루프
         bool inMainMenu = true;
@@ -150,7 +203,12 @@ int main() {
                 break;
             }
         }
-    }
 
+        // 플레이어/몬스터 메모리 정리 (메뉴에서 타이틀로 돌아갈 때)
+        delete player;
+        player = nullptr;
+        delete monster;
+        monster = nullptr;
+    }
     return 0;
 }
