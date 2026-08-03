@@ -2,6 +2,7 @@
 #include "Player.h"
 #include "monster.h"
 #include "Item.h"
+#include "ItemManager.h"
 #include <iostream>
 #include <algorithm>
 #include <cstdlib>
@@ -67,18 +68,18 @@ Monster* StageMonster(int playerLevel, int& selectedStage) {  // selecteStage는
 }
 
 
-void EnterBattle(Player* player, std::vector < std::pair<Item, int >> &items) {
+void EnterBattle(Player* player) {
     int selectedStage = 0;
     Monster* monster = StageMonster(player->GetLevel(), selectedStage);
 
-    bool isWin = StartBattle(player, monster, items);
+    bool isWin = StartBattle(player, monster);
     if (isWin) {
         ClearStage(selectedStage);
     }
     delete monster;
 }
 
-bool StartBattle(Player* player, Monster* monster, std::vector<std::pair<Item, int>>& items) { // 중간,메인 보스 승패 결과 알려주기 위해서 bool로 바꿨어요
+bool StartBattle(Player* player, Monster* monster) { // 중간,메인 보스 승패 결과 알려주기 위해서 bool로 바꿨어요
 
     std::cout << "\n" << player->GetName() << " VS " << monster->getName() << "\n" << std::endl;
 
@@ -86,11 +87,13 @@ bool StartBattle(Player* player, Monster* monster, std::vector<std::pair<Item, i
 
         std::cout << "\n========플레이어 턴========\n" << std::endl;
 
-        for (int i = 0; i < items.size(); i++) {
-            std::cout << i + 1 << ". " << items[i].first.GetName();
+        const std::vector<std::pair<Item, int >> &inventoryItems = player->GetInventory().GetItems();   // player inventory 에서 가져옴
 
-            if (items[i].first.GetCategory() == ItemCategory::CONSUMABLE) {
-                std::cout << " x" << items[i].second;
+        for (int i = 0; i < inventoryItems.size(); i++) {  
+            std::cout << i + 1 << ". " << inventoryItems[i].first.GetName();
+
+            if (inventoryItems[i].first.GetCategory() == ItemCategory::CONSUMABLE) {
+                std::cout << " x" << inventoryItems[i].second;
             }
 
             std::cout << std::endl;
@@ -101,15 +104,15 @@ bool StartBattle(Player* player, Monster* monster, std::vector<std::pair<Item, i
         int choice;
         std::cin >> choice;
         int index = choice - 1;
-        if (index < 0 || index >= (int)items.size()) {
+        if (index < 0 || index >= (int)inventoryItems.size()) {
             std::cout << "잘못된 선택입니다." << std::endl;
             continue;
         }
 
-        Item selectedItem = items[index].first;
+        Item selectedItem = inventoryItems[index].first;
         std::cout << "\n" << selectedItem.GetAttackText() << std::endl;
 
-        if (selectedItem.GetCategory() == ItemCategory::WEAPON) {
+        if (selectedItem.GetCategory() == ItemCategory::WEAPON) {                                                 /// 무기 아이템
             double damage = selectedItem.GetBaseATK();
             MonsterType monsterType = monster->getProperty();
             std::vector<MonsterType> strong = selectedItem.GetStrongAgainst();
@@ -132,7 +135,7 @@ bool StartBattle(Player* player, Monster* monster, std::vector<std::pair<Item, i
             std::cout << finalDamage << " 피해!" << std::endl;
             std::cout << monster->getName() << " 체력: " << monster->getHp() << std::endl;
         }
-        else {
+        else {                                                                                                    ///소모아이템
             if (selectedItem.GetHealHP() > 0) {
                 player->SetHp(player->GetHp() + selectedItem.GetHealHP());
                 std::cout << "체력 " << selectedItem.GetHealHP() << " 회복!" << std::endl;
@@ -153,10 +156,7 @@ bool StartBattle(Player* player, Monster* monster, std::vector<std::pair<Item, i
 
         if (selectedItem.GetCategory() == ItemCategory::CONSUMABLE) {
 
-            items[index].second -= 1;
-            if (items[index].second <= 0) {
-                items.erase(items.begin() + index);
-            }
+            player->GetInventory().RemoveItem(selectedItem.GetName(), 1);
 
         }
 
@@ -189,6 +189,22 @@ bool StartBattle(Player* player, Monster* monster, std::vector<std::pair<Item, i
         int dropChance = rand() % 100;
         if (dropChance < 30) {
             std::cout << "아이템 드롭 판정... 성공 (30%)" << std::endl;
+
+            static ItemManager itemManager;                                   // 아이템 랜덤 드롭
+
+            ItemRarity droppedRarity;
+            int rarityRoll = rand() % 100;
+            if (rarityRoll < 80) {
+                droppedRarity = ItemRarity::C;
+            }
+            else {
+                droppedRarity = ItemRarity::B;
+            }
+
+            Item droppedItem = itemManager.GetRandomItemByRarity(droppedRarity);
+            player->GetInventory().AddItem(droppedItem, 1);
+            std::cout << droppedItem.GetName() << " 을(를) 획득했습니다!" << std::endl;
+                 
         }
         else {
             std::cout << "아이템 드롭 판정... 실패 (30%)" << std::endl;

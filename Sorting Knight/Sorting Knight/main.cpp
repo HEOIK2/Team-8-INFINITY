@@ -95,19 +95,19 @@ Player* InitializeGame() {
 
 // 직업별 초기 아이템 지급
 void GiveInitialItems(Player* player, ItemManager& itemManager) {
-
+   
     switch (player->GetJob()) {
     case Job::Cleaner:
-        player->GetInventory().AddItem(itemManager.GetItem("대나무 빗자루 (C)"), 1);
+        player->GetInventory().AddItem( itemManager.GetItem("대나무 빗자루 (C)"), 1 );
         break;
     case Job::StreetCleaner:
-        player->GetInventory().AddItem(itemManager.GetItem("나무 젓가락 (C)"), 1);
+        player->GetInventory().AddItem( itemManager.GetItem("나무 젓가락 (C)"), 1 );
         break;
     case Job::RecycleExpert:
-        player->GetInventory().AddItem(itemManager.GetItem("평범한 가위 (C)"), 1);
+        player->GetInventory().AddItem( itemManager.GetItem("평범한 가위 (C)"), 1 );
         break;
     case Job::RecycleTech:
-        player->GetInventory().AddItem(itemManager.GetItem("분리수거 집게 (C)"), 1);
+        player->GetInventory().AddItem( itemManager.GetItem("분리수거 집게 (C)"), 1 );
         break;
     default:
         break;
@@ -177,7 +177,7 @@ int main() {
 
             switch (mainChoice) {
             case 1:
-                
+                EnterBattle(player); // 전투 호출 (예시함수)
                 break;
             case 2:
                 EnterShopMenu(); // 상점 호출 (예시함수)
