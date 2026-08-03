@@ -118,13 +118,6 @@ void GiveInitialItems(Player* player, ItemManager& itemManager) {
 // 전투 호출
 void EnterBattle() {}
 
-// 상점 호출 
-void EnterShopMenu() {}
-
-// 인벤토리
-void OpenInventory() {
-
-}
 
 // 프로그램 진입점 (main 함수)
 
@@ -162,8 +155,9 @@ int main() {
             continue;
         }
         // 2 - 2. 초기 아이템 지급 (예시)
-		GiveInitialItems(player, itemManager);
-    
+		GiveInitialItems(player , itemManager);
+		// 2 - 3 . 상점 초기화 (전역 포인터에 player와 itemManager 주소 저장)
+        InitShop(player, &itemManager);
 
         // 3. [Inner Loop] 인게임 메인 메뉴 루프
         bool inMainMenu = true;
@@ -172,6 +166,7 @@ int main() {
             std::cout << "1. 전투" << std::endl;
             std::cout << "2. 상점" << std::endl;
             std::cout << "3. 인벤토리" << std::endl;
+            std::cout << "4. 플레이어 스탯" << std::endl;
             std::cout << "0. 종료 (타이틀로 돌아가기)" << std::endl;
             std::cout << "===================================" << std::endl;
             std::cout << "선택: ";
@@ -188,7 +183,10 @@ int main() {
                 EnterShopMenu(); // 상점 호출 (예시함수)
                 break;
             case 3:
-                OpenInventory(); // 인벤토리 호출 (예시함수)
+                player->GetInventory().Show();
+                break;
+            case 4: 
+				player->PrintStatus(); // 상태창 호출 (예시함수)               
                 break;
             case 0:
                 std::cout << "\n타이틀 화면으로 돌아갑니다..." << std::endl;
