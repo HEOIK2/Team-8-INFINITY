@@ -18,7 +18,7 @@
 #include "battle.h"
 #include "shop.h"
 #include "UI.h"
-#include "gameLog.h"
+
 
 
 // [헬퍼 함수] 입력 오류(문자 입력 등) 방지
@@ -116,10 +116,10 @@ void GiveInitialItems(Player* player, std::vector<std::pair<Item, int>>& items, 
 
 
 // 전투 호출
-void EnterBattle() {
+void EnterBattle() {}
 
 // 상점 호출 
-void EnterShopMenu() {
+void EnterShopMenu() {}
 
 // 인벤토리
 void OpenInventory() {
@@ -186,7 +186,7 @@ int main() {
 
             switch (mainChoice) {
             case 1:
-                EnterBattle(); // 전투 호출 (예시함수)
+                EnterBattle(player , myItems); // 전투 호출 (예시함수)
                 break;
             case 2:
                 EnterShopMenu(); // 상점 호출 (예시함수)
