@@ -190,8 +190,15 @@ int main() {
             case 9:
                 std::cout << "1. 개발자용 : 경험치 1000 획득" << std::endl;
                 std::cout << "2. 개발자용 : 10000G 획득" << std::endl;
+                std::cout << "3. 나가기 " << std::endl;
                 int DebugChoice;
-                std::cin >> DebugChoice;
+                while (true) {
+                    std::cin >> DebugChoice;
+                    if (DebugChoice == 1 || DebugChoice == 2 || DebugChoice == 3) {
+                        break;
+                    }
+                    std::cout << "잘못된 입력입니다. 다시 선택하세요: ";
+                }
                 switch (DebugChoice) {
                 case 1:
                     player->GainExp(1000);
