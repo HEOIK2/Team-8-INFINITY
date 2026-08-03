@@ -291,5 +291,3 @@ const int BOX_WIDTH = 100;   // 콘솔 폭에 맞춤 (UI_Init에서 cols=120)
 		for (const std::string& line : footer) { BoxLine(line, BOX_WIDTH); }
 		BoxBottom(BOX_WIDTH);
 	}
-
-
