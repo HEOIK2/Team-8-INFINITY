@@ -4,6 +4,10 @@
 #include "Item.h"
 #include "player.h"
 
+// main.cpp 쪽에서 ItemManager.h를 이미 include하고 있고,
+// 여기서는 포인터만 넘겨받으면 되므로 무거운 include 대신 전방 선언만 해둠.
+class ItemManager;
+
 // ================================================================================
 // [ Shop.h / Shop.cpp ]  -  상점(구매/판매) 시스템
 // 담당: (인벤토리 / 상점)
@@ -132,3 +136,33 @@ private:
     // (Buy() 내부에서만 사용되는 private 함수라 외부에서 직접 호출할 필요 없음)
     const Item* FindInStock(const std::string& itemName) const;
 };
+
+// ================================================================================
+// [ InitShop / EnterShopMenu ]
+//
+// main.cpp가 상점을 쓰기 위해 알아야 할 함수는 이 두 개뿐임.
+//
+//   1) InitShop(player, itemManager)
+//      - 게임 시작 시 Player와 ItemManager를 만든 "직후" 딱 한 번만 호출.
+//      - shop.cpp 내부의 static 포인터에 두 객체의 주소를 저장해둠.
+//      - main.cpp 예시:
+//            Player player(...);
+//            ItemManager itemManager;
+//            InitShop(&player, &itemManager);   // 게임 시작 시 1회
+//
+//   2) EnterShopMenu()
+//      - 더 이상 인자를 받지 않음. 상점에 들어갈 때마다(메인 메뉴에서 "상점" 선택 시)
+//        이거 한 줄만 호출하면 됨.
+//      - 내부적으로 InitShop()에서 저장해둔 Player/ItemManager 포인터를 사용해서
+//        메뉴 출력 -> 구매 -> 합성 -> 나가기까지 전부 처리.
+//      - main.cpp 예시:
+//            case 2:
+//                EnterShopMenu();
+//                break;
+//
+// 주의: InitShop()을 먼저 호출하지 않고 EnterShopMenu()를 호출하면
+//       (Player/ItemManager가 등록되지 않은 상태) 콘솔에 에러 메시지만 출력하고
+//       아무 동작도 하지 않음 (크래시 방지용 방어 코드, shop.cpp 참고).
+// ================================================================================
+void InitShop(Player* player, ItemManager* itemManager);
+void EnterShopMenu();

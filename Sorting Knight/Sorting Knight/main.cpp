@@ -118,13 +118,6 @@ void GiveInitialItems(Player* player, ItemManager& itemManager) {
 // 전투 호출
 void EnterBattle() {}
 
-// 상점 호출 
-void EnterShopMenu() {}
-
-// 인벤토리
-void OpenInventory() {
-
-}
 
 // 프로그램 진입점 (main 함수)
 
@@ -163,7 +156,8 @@ int main() {
         }
         // 2 - 2. 초기 아이템 지급 (예시)
 		GiveInitialItems(player , itemManager);
-    
+		// 2 - 3 . 상점 초기화 (전역 포인터에 player와 itemManager 주소 저장)
+        InitShop(player, &itemManager);
 
         // 3. [Inner Loop] 인게임 메인 메뉴 루프
         bool inMainMenu = true;
@@ -183,7 +177,7 @@ int main() {
 
             switch (mainChoice) {
             case 1:
-                EnterBattle(player); // 전투 호출 (예시함수)
+                
                 break;
             case 2:
                 EnterShopMenu(); // 상점 호출 (예시함수)
