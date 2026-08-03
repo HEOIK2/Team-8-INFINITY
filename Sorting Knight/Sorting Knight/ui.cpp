@@ -23,7 +23,7 @@
 // Windows가 정해놓은 절차라 바꿀 수 없다. 그냥 복붙해서 쓰면 된다. 이런게 있다 정도만 이해하시오. 아마 개발자들도 복붙해서 그냥 쓸겁니다. 제가 교수가 되려는게 아니니까요... 색깔을 넣고 싶을뿐.
 
 void UI_Init() {
-	system("mode con: cols=100 lines=40"); // 콘솔 크기를 가로 100칸, 40줄로 고정해놓습니다.
+	system("mode con: cols=120 lines=40"); // 콘솔 크기를 가로 100칸, 40줄로 고정해놓습니다.
 	SetConsoleOutputCP(CP_UTF8); // UTF8로 콘솔 출력함.
 	HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE); //  콘솔 조작 권한 얻기
 	DWORD mode = 0; //현재 설정값 담을 그릇
@@ -202,6 +202,9 @@ static std::wstring ToWide(const std::string& s) { // 이건 이제 쉽습니다
 static int CharWidth(wchar_t ch) { // wchar_t가 wide 글자를 하나 담는 타입이다. char의 2바이트 버전. ch는 그냥 변수이름이다. character.
 
 	if ((ch >= 0x1100 && ch <= 0x115F) ||   // 한글 자모
+		(ch >= 0x2500 && ch <= 0x257F) ||   // 박스 문자 ─│┌┐
+		(ch >= 0x2580 && ch <= 0x259F) ||   // 블록 █▄▀
+		(ch >= 0x25A0 && ch <= 0x25FF) ||   // 도형 ■□▶
 		(ch >= 0x2E80 && ch <= 0xA4CF) ||   // CJK 기호·한자
 		(ch >= 0xAC00 && ch <= 0xD7A3) ||   // 한글 완성형 (가~힣)
 		(ch >= 0xFF00 && ch <= 0xFF60)) {   // 전각 영숫자
@@ -233,25 +236,25 @@ int DisplayWidth(const std::string& s) {
 // 다 더한다 → 총 칸 수
 
 
-// 아래는 박스입니다.             여기까지 함 이어서 하기.
+// 아래는 박스입니다.             각 Box 함수에 width 너비를 인자로 받고 그 수만큼 길게 합니다. for에서 2를 빼주는 이유는 위 아래 꺽쇠를 뺐기 때문이겠죠.
 // ┌──────────┐
 void BoxTop(int width) {
 	std::cout << "┌";
-	for (int i = 0; i < (width - 2) / 2; ++i) { std::cout << "─"; }
+	for (int i = 0; i < width - 2; ++i) { std::cout << "─"; }
 	std::cout << "┐\n";
 }
 
 // └──────────┘
 void BoxBottom(int width) {
 	std::cout << "└";
-	for (int i = 0; i < (width - 2) / 2; ++i) { std::cout << "─"; }
+	for (int i = 0; i < width - 2; ++i) { std::cout << "─"; }
 	std::cout << "┘\n";
 }
 
 // ├──────────┤
 void BoxDivider(int width) {
 	std::cout << "├";
-	for (int i = 0; i < (width - 2) / 2; ++i) { std::cout << "─"; }
+	for (int i = 0; i < width - 2; ++i) { std::cout << "─"; }
 	std::cout << "┤\n";
 }
 
@@ -267,7 +270,7 @@ void BoxLine(const std::string& text, int width) {
 	std::cout << "│\n";
 }
 
-const int BOX_WIDTH = 100;   // 콘솔 폭에 맞춤 (UI_Init에서 cols=100)
+const int BOX_WIDTH = 100;   // 콘솔 폭에 맞춤 (UI_Init에서 cols=120)
 
 
 	void DrawScreen(const std::string & title,
@@ -281,12 +284,10 @@ const int BOX_WIDTH = 100;   // 콘솔 폭에 맞춤 (UI_Init에서 cols=100)
 		for (const std::string& line : body) { BoxLine(line, BOX_WIDTH); }
 
 		// 남는 줄을 빈 줄로 채워서 하단 영역을 아래로 밀어냄
-		int used = 4 + (int)body.size() + (int)footer.size();
-		for (int i = used; i < 43; ++i) { BoxLine("", BOX_WIDTH); }
+		int used = 5 + (int)body.size() + (int)footer.size();
+		for (int i = used; i < 30; ++i) { BoxLine("", BOX_WIDTH); }
 
 		BoxDivider(BOX_WIDTH);
 		for (const std::string& line : footer) { BoxLine(line, BOX_WIDTH); }
 		BoxBottom(BOX_WIDTH);
 	}
-
-
