@@ -1,4 +1,4 @@
-﻿ #include <iostream>
+﻿#include <iostream>
 #include <string>
 #include <vector>
 #include <map>
@@ -17,7 +17,7 @@
 #include "monster.h"
 #include "battle.h"
 #include "shop.h"
-#include "UI.h"
+#include "ui.h"
 
 
 
@@ -122,6 +122,7 @@ void EnterBattle() {}
 // 프로그램 진입점 (main 함수)
 
 int main() {
+    UI_Init();
     SetConsoleOutputCP(CP_UTF8);
     SetConsoleCP(CP_UTF8);
 

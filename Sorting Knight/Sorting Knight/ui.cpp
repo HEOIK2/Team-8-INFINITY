@@ -270,7 +270,7 @@ void BoxLine(const std::string& text, int width) {
 	std::cout << "│\n";
 }
 
-const int BOX_WIDTH = 100;   // 콘솔 폭에 맞춤 (UI_Init에서 cols=120)
+const int BOX_WIDTH = 117;   // 콘솔 폭에 맞춤 (UI_Init에서 cols=120)
 
 
 	void DrawScreen(const std::string & title,
@@ -285,7 +285,7 @@ const int BOX_WIDTH = 100;   // 콘솔 폭에 맞춤 (UI_Init에서 cols=120)
 
 		// 남는 줄을 빈 줄로 채워서 하단 영역을 아래로 밀어냄
 		int used = 5 + (int)body.size() + (int)footer.size();
-		for (int i = used; i < 30; ++i) { BoxLine("", BOX_WIDTH); }
+		for (int i = used; i < 38; ++i) { BoxLine("", BOX_WIDTH); }
 
 		BoxDivider(BOX_WIDTH);
 		for (const std::string& line : footer) { BoxLine(line, BOX_WIDTH); }

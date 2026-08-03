@@ -3,65 +3,96 @@
 #include "monster.h"
 #include "Item.h"
 #include "ItemManager.h"
+#include "ui.h"
 #include <iostream>
+#include <string>
+#include <vector>
 #include <algorithm>
 #include <cstdlib>
 
-static bool stage2Entered = false; // 입장했는지 확인하기위해서 만들었습니다.
+static bool stage2Entered = false;
 static bool stage3Entered = false;
 
-Monster* StageMonster(int playerLevel, int& selectedStage) {  // selecteStage는 중간보스, 메인보스 레벨 제한 위해서 만들었습니다.
+// 전투 로그를 모아두는 곳. 최근 4줄만 유지
+static std::vector<std::string> battleLog;
 
-    MonsterType randomPool[] = { MonsterType::NONE, MonsterType::PAPER, MonsterType::PLASTIC, MonsterType::GLASS }; // 몬스터 랜덤생성 위해서
+static void AddLog(const std::string& msg) {
+    battleLog.push_back(msg);
+    while (battleLog.size() > 4) {
+        battleLog.erase(battleLog.begin());
+    }
+}
+
+Monster* StageMonster(int playerLevel, int& selectedStage) {
+
+    MonsterType randomPool[] = { MonsterType::NONE, MonsterType::PAPER, MonsterType::PLASTIC, MonsterType::GLASS };
     int poolSize = sizeof(randomPool) / sizeof(randomPool[0]);
 
-    while(true) {
-        std::cout << "\n=======스테이지 선택=======\n" << std::endl;
-        std::cout << "1. 쓰레기장" << std::endl;
-        std::cout << "2. 분리수거장( 권장레벨 : 5)" << std::endl;
-        std::cout << "3. 폐기처리장( 권장레벨 : 10)" << std::endl;
-        std::cout << "입장 구역을 선택해주세요 : ";
+    std::string notice = "";
+
+    while (true) {
+        std::vector<std::string> body = {
+            "",
+            "  1. 쓰레기장",
+            Color("  2. 분리수거장      (권장 레벨 5)",  playerLevel >= 5 ? "37" : "90"),
+            Color("  3. 폐기처리장      (권장 레벨 10)", playerLevel >= 10 ? "37" : "90"),
+            "",
+            Color("  ※ 권장 레벨 미달 구역은 출입이 제한됩니다.", "90"),
+            ""
+        };
+        std::vector<std::string> footer = {
+            notice.empty() ? "" : Color(notice, "91"),
+            "",
+            "입장 구역: "
+        };
+        DrawScreen("구역 선택", body, footer);
 
         int stageChoice;
         std::cin >> stageChoice;
+        if (std::cin.fail()) {
+            std::cin.clear();
+            std::cin.ignore(1000, '\n');
+            notice = "잘못된 입력입니다.";
+            continue;
+        }
 
         MonsterType selectedType;
 
         switch (stageChoice) {
 
         case 1:
-            selectedType = randomPool[rand() % poolSize]; // 1단계는 랜덤 몬스터 , 몬스터 더 만든다음 연결 필요
+            selectedType = randomPool[rand() % poolSize];
             selectedStage = 1;
             return CreateMonster(selectedType, playerLevel);
 
         case 2:
             if (playerLevel < 5) {
-                std::cout << "아직 분리수거할 수 없는 구역입니다." << std::endl;
+                notice = "아직 분리수거할 수 없는 구역입니다.";
                 continue;
             }
             if (stage2Entered) {
-                std::cout << "이미 분리수거가 완료된 구역입니다." << std::endl;
+                notice = "이미 분리수거가 완료된 구역입니다.";
                 continue;
             }
-            selectedType = MonsterType::ALUMINUM; //중간보스 고정
-            selectedStage = 2; //중간보스 입장 정보
+            selectedType = MonsterType::ALUMINUM;
+            selectedStage = 2;
             return CreateMonster(selectedType, playerLevel);
 
         case 3:
             if (playerLevel < 10) {
-                std::cout << "아직 분리수거할 수 없는 구역입니다." << std::endl; // 레벨 안되면 입장 못하게
+                notice = "아직 분리수거할 수 없는 구역입니다.";
                 continue;
             }
             if (stage3Entered) {
-                std::cout << "이미 분리수거가 완료된 구역입니다." << std::endl; // 한번만 입장하게
+                notice = "이미 분리수거가 완료된 구역입니다.";
                 continue;
             }
-            selectedType = MonsterType::IRON; // 메인보스 고정
+            selectedType = MonsterType::IRON;
             selectedStage = 3;
             return CreateMonster(selectedType, playerLevel);
 
         default:
-            std::cout << "잘못된 선택입니다." << std::endl;
+            notice = "잘못된 선택입니다.";
             continue;
         }
     }
@@ -79,40 +110,67 @@ void EnterBattle(Player* player) {
     delete monster;
 }
 
-bool StartBattle(Player* player, Monster* monster) { // 중간,메인 보스 승패 결과 알려주기 위해서 bool로 바꿨어요
 
-    std::cout << "\n" << player->GetName() << " VS " << monster->getName() << "\n" << std::endl;
+bool StartBattle(Player* player, Monster* monster) {
+
+    battleLog.clear();
+    AddLog("> " + monster->getName() + " 이(가) 나타났다!");
 
     while (player->GetHp() > 0 && monster->getHp() > 0) {
 
-        std::cout << "\n========플레이어 턴========\n" << std::endl;
+        const std::vector<std::pair<Item, int>>& inventoryItems = player->GetInventory().GetItems();
 
-        const std::vector<std::pair<Item, int >> &inventoryItems = player->GetInventory().GetItems();   // player inventory 에서 가져옴
+        // ── 화면 구성 ──
+        std::vector<std::string> body = {
+            "",
+            Color(monster->getName(), "91"),
+    "HP  " + std::to_string(monster->getHp()),           
+                   + "   " + std::to_string(monster->getHp()),
+            "",
+            Color(player->GetName() + "   Lv." + std::to_string(player->GetLevel()), "92"),
+            "HP  " + Color(MakeGauge(player->GetHp(), player->GetMaxHp(), 20), "92")
+                   + "   " + std::to_string(player->GetHp()) + "/" + std::to_string(player->GetMaxHp()),
+            "ATK " + std::to_string(player->GetAttack()),
+            "",
+            Color("──  사용할 아이템  ──", "90"),
+            ""
+        };
 
-        for (int i = 0; i < inventoryItems.size(); i++) {  
-            std::cout << i + 1 << ". " << inventoryItems[i].first.GetName();
-
+        for (size_t i = 0; i < inventoryItems.size(); i++) {
+            std::string line = "  " + std::to_string(i + 1) + ". " + inventoryItems[i].first.GetName();
             if (inventoryItems[i].first.GetCategory() == ItemCategory::CONSUMABLE) {
-                std::cout << " x" << inventoryItems[i].second;
+                line += "  x" + std::to_string(inventoryItems[i].second);
             }
-
-            std::cout << std::endl;
+            body.push_back(line);
         }
+        body.push_back("");
 
+        std::vector<std::string> footer = battleLog;
+        footer.push_back("");
+        footer.push_back("아이템 번호: ");
 
-        std::cout << "사용할 아이템 번호 선택: ";
+        DrawScreen("전투 - " + monster->getName(), body, footer);
+
+        // ── 입력 ──
         int choice;
         std::cin >> choice;
+        if (std::cin.fail()) {
+            std::cin.clear();
+            std::cin.ignore(1000, '\n');
+            AddLog(Color("> 잘못된 입력입니다.", "91"));
+            continue;
+        }
+
         int index = choice - 1;
         if (index < 0 || index >= (int)inventoryItems.size()) {
-            std::cout << "잘못된 선택입니다." << std::endl;
+            AddLog(Color("> 잘못된 선택입니다.", "91"));
             continue;
         }
 
         Item selectedItem = inventoryItems[index].first;
-        std::cout << "\n" << selectedItem.GetAttackText() << std::endl;
+        AddLog("> " + selectedItem.GetAttackText());
 
-        if (selectedItem.GetCategory() == ItemCategory::WEAPON) {                                                 /// 무기 아이템
+        if (selectedItem.GetCategory() == ItemCategory::WEAPON) {
             double damage = selectedItem.GetBaseATK();
             MonsterType monsterType = monster->getProperty();
             std::vector<MonsterType> strong = selectedItem.GetStrongAgainst();
@@ -120,44 +178,41 @@ bool StartBattle(Player* player, Monster* monster) { // 중간,메인 보스 승
 
             if (std::find(strong.begin(), strong.end(), monsterType) != strong.end()) {
                 damage = damage * 1.5;
-                std::cout << "효과가 굉장했다!" << std::endl;
+                AddLog(Color("> 효과가 굉장했다!", "96"));
             }
             else if (std::find(weak.begin(), weak.end(), monsterType) != weak.end()) {
                 damage = damage / 1.5;
-                std::cout << "효과가 별로다..." << std::endl;
+                AddLog(Color("> 효과가 별로다...", "90"));
             }
             else {
-                std::cout << "효과는 보통이다." << std::endl;
+                AddLog("> 효과는 보통이다.");
             }
 
             int finalDamage = (int)damage;
             monster->setHp(monster->getHp() - finalDamage);
-            std::cout << finalDamage << " 피해!" << std::endl;
-            std::cout << monster->getName() << " 체력: " << monster->getHp() << std::endl;
+            AddLog(Color("> " + std::to_string(finalDamage) + " 피해!", "93"));
         }
-        else {                                                                                                    ///소모아이템
+        else {
             if (selectedItem.GetHealHP() > 0) {
                 player->SetHp(player->GetHp() + selectedItem.GetHealHP());
-                std::cout << "체력 " << selectedItem.GetHealHP() << " 회복!" << std::endl;
+                AddLog(Color("> 체력 " + std::to_string(selectedItem.GetHealHP()) + " 회복!", "92"));
             }
             if (selectedItem.GetBuffATK() > 0) {
                 player->SetAttack(player->GetAttack() + selectedItem.GetBuffATK());
-                std::cout << "공격력 " << selectedItem.GetBuffATK() << " 증가!" << std::endl;
+                AddLog(Color("> 공격력 " + std::to_string(selectedItem.GetBuffATK()) + " 증가!", "92"));
             }
             if (selectedItem.GetBuffMaxHP() > 0) {
                 player->SetMaxHp(player->GetMaxHp() + selectedItem.GetBuffMaxHP());
-                std::cout << "최대 체력 " << selectedItem.GetBuffMaxHP() << " 증가!" << std::endl;
+                AddLog(Color("> 최대 체력 " + std::to_string(selectedItem.GetBuffMaxHP()) + " 증가!", "92"));
             }
             if (selectedItem.GetGainLevel() > 0) {
                 player->SetLevel(player->GetLevel() + selectedItem.GetGainLevel());
-                std::cout << "레벨 " << selectedItem.GetGainLevel() << " 업!" << std::endl;
+                AddLog(Color("> 레벨 " + std::to_string(selectedItem.GetGainLevel()) + " 업!", "93"));
             }
         }
 
         if (selectedItem.GetCategory() == ItemCategory::CONSUMABLE) {
-
             player->GetInventory().RemoveItem(selectedItem.GetName(), 1);
-
         }
 
         if (monster->getHp() <= 0) {
@@ -165,57 +220,82 @@ bool StartBattle(Player* player, Monster* monster) { // 중간,메인 보스 승
         }
 
         monster->Attack(player);
-        std::cout << "\n" << monster->getName() << "의 공격!" << std::endl;
-        std::cout << player->GetName() << " 체력: " << player->GetHp() << std::endl;
+        AddLog(Color("> " + monster->getName() + "의 공격!", "91"));
+        AddLog("> " + player->GetName() + " 체력 " + std::to_string(player->GetHp()));
     }
 
-    std::cout << "\n===============" << std::endl;
+    // ── 결과 화면 ──
     if (player->GetHp() <= 0) {
-        std::cout << "패배..." << std::endl;
+        std::vector<std::string> body = {
+            "", "",
+            Color("        근무 중 순직하셨습니다.", "91"),
+            "",
+            Color("        규정 제17조에 의거, 후임은 배정되지 않습니다.", "90"),
+            "", ""
+        };
+        std::vector<std::string> footer = { "[ Enter: 계속 ]" };
+        DrawScreen("게임 오버", body, footer);
+        std::cin.ignore();
+        std::cin.get();
         return false;
     }
-    else if (monster->getHp() <= 0) {
-        std::cout << monster->getName() << " 처치! 승리" << std::endl;
 
+    if (monster->getHp() <= 0) {
         int gainedExp = monster->getExpReward();
         player->GainExp(gainedExp);
-        std::cout << "exp + " << gainedExp << " (" << player->GetExp() << "/100)" << std::endl;
 
         int gainedGold = monster->getGoldReward();
         player->AddGold(gainedGold);
-        std::cout << "gold + " << gainedGold << " (보유골드 " << player->GetGold() << "g)" << std::endl;
 
-        
+        std::string dropText = "";
         int dropChance = rand() % 100;
         if (dropChance < 30) {
-            std::cout << "아이템 드롭 판정... 성공 (30%)" << std::endl;
-
-            static ItemManager itemManager;                                   // 아이템 랜덤 드롭
+            static ItemManager itemManager;
 
             ItemRarity droppedRarity;
             int rarityRoll = rand() % 100;
-            if (rarityRoll < 80) {
-                droppedRarity = ItemRarity::C;
-            }
-            else {
-                droppedRarity = ItemRarity::B;
-            }
+            if (rarityRoll < 80) { droppedRarity = ItemRarity::C; }
+            else { droppedRarity = ItemRarity::B; }
 
             Item droppedItem = itemManager.GetRandomItemByRarity(droppedRarity);
             player->GetInventory().AddItem(droppedItem, 1);
-            std::cout << droppedItem.GetName() << " 을(를) 획득했습니다!" << std::endl;
-                 
+            dropText = droppedItem.GetName();
+        }
+
+        std::vector<std::string> body = {
+            "",
+            Color("  " + monster->getName() + " 처리 완료.", "93"),
+            "",
+            "  EXP   +" + std::to_string(gainedExp)
+                        + "     (" + std::to_string(player->GetExp()) + "/100)",
+            "  Gold  +" + std::to_string(gainedGold)
+                        + "     (보유 " + std::to_string(player->GetGold()) + "G)",
+            ""
+        };
+        if (!dropText.empty()) {
+            body.push_back(Color("  획득   " + dropText, "96"));
         }
         else {
-            std::cout << "아이템 드롭 판정... 실패 (30%)" << std::endl;
+            body.push_back(Color("  회수 가능한 폐기물이 없습니다.", "90"));
         }
+        body.push_back("");
+
+        std::vector<std::string> footer = {
+            Color("규정 제4조에 의거, 처리 완료.", "90"),
+            "",
+            "[ Enter: 계속 ]"
+        };
+        DrawScreen("처리 완료", body, footer);
+        std::cin.ignore();
+        std::cin.get();
         return true;
     }
+
     return false;
 }
 
 
-void ClearStage(int stage) {   // 중간, 메인보스 처리를 위해 추가
+void ClearStage(int stage) {
     if (stage == 2) stage2Entered = true;
     else if (stage == 3) stage3Entered = true;
 }

@@ -2,6 +2,8 @@
 #include <string>
 #include <vector>
 
+class Inventory;   // 전방 선언
+void ShowInventoryScreen(const Inventory& inv);
 
 void UI_Init();													// Initialize 초기화. 이 넘은 콘솔이 ANSI 색상 코드를 해석하게 켜주는 것입니다. main 맨 앞에 딱 한번만 키면 돼요.
 std::string Color(const std::string& s, const char* code);		// string은 std에서 꺼내온 것이기 때문에 std. const 상수. 참조 받으면 원본 건드릴 수도 있으니까 읽기 전용을 명시하는 것
