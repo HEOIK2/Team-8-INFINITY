@@ -1,10 +1,10 @@
-#pragma once
+﻿#pragma once
 #include <string>
 #include <unordered_map>
 #include <vector>
 #include <cstdlib>
 #include "Item.h"
-#include "Types.h"
+#include "type.h"
 
 class ItemManager {
 private:
