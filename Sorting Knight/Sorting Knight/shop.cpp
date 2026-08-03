@@ -56,14 +56,14 @@ namespace {
 
     // 상점에서는 C등급(최하 등급)만 판매. B/A/S 등급은 "등급 합성"으로만 획득 가능.
     const std::vector<std::string> weaponItemNames = {
-        "평범한 가위 (C)", "나무 젓가락 (C)", "대나무 빗자루 (C)",
-        "분리수거 집게 (C)", "두꺼운 고무장갑 (C)"
+        "평범한 가위", "나무 젓가락", "대나무 빗자루",
+        "분리수거 집게", "두꺼운 고무장갑"
     };
 
     const std::vector<std::string> consumableItemNames = {
-        "박카스 (N)", "응급 구급상자 (N)", "아드레날린 앰플 (N)", "전투 각성제 (N)",
-        "특제 단백질 보충제 (N)", "생명력의 영약 (N)", "불법 개조 부품 (N)",
-        "장인의 숫돌 (N)", "환경부 장관의 표창장 (N)", "기적의 엘릭서 (N)"
+        "박카스", "응급 구급상자", "아드레날린 앰플", "전투 각성제",
+        "특제 단백질 보충제", "생명력의 영약", "불법 개조 부품",
+        "장인의 숫돌", "환경부 장관의 표창장", "기적의 엘릭서"
     };
 
     std::vector<Item> BuildStock(const ItemManager& itemManager, const std::vector<std::string>& names) {
@@ -128,6 +128,7 @@ namespace {
             };
 
             DrawScreen(title, body, footer);
+            std::cout << "\033[37;15H";
             notice = "";
 
             int choice;
@@ -161,6 +162,7 @@ namespace {
                 "수량: "
             };
             DrawScreen("구매 신청", qBody, qFooter);
+            std::cout << "\033[37;15H";
 
             int count;
             if (!(std::cin >> count)) {
@@ -265,6 +267,7 @@ namespace {
             };
 
             DrawScreen("등급 합성", body, footer);
+            std::cout << "\033[37;11H";
             notice = "";
 
             int choice;
@@ -334,6 +337,7 @@ void EnterShopMenu() {
         };
 
         DrawScreen("보급소", body, footer);
+        std::cout << "\033[37;11H";
         notice = "";
 
         int choice;

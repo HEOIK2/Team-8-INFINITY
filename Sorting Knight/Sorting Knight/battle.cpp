@@ -51,6 +51,7 @@ Monster* StageMonster(int playerLevel, int& selectedStage) {
             "입장 구역: "
         };
         DrawScreen("구역 선택", body, footer);
+        std::cout << "\033[37;14H";        
 
         int stageChoice;
         std::cin >> stageChoice;
@@ -140,10 +141,10 @@ bool StartBattle(Player* player, Monster* monster) {
             "",
             Color("──  사용할 아이템  ──", "90"),
             ""
-        };
+        };  
 
         for (size_t i = 0; i < inventoryItems.size(); i++) {
-            std::string line = "  " + std::to_string(i + 1) + ". " + inventoryItems[i].first.GetName();
+            std::string line = "  " + std::to_string(i + 1) + ". " + inventoryItems[i].first.GetName() + " [" + inventoryItems[i].first.GetRarityString() + "등급]";
             if (inventoryItems[i].first.GetCategory() == ItemCategory::CONSUMABLE) {
                 line += "  x" + std::to_string(inventoryItems[i].second);
             }
@@ -156,6 +157,7 @@ bool StartBattle(Player* player, Monster* monster) {
         footer.push_back("아이템 번호: ");
 
         DrawScreen("전투 - " + monster->getName(), body, footer);
+        std::cout << "\033[37;16H";
 
         int choice;
         std::cin >> choice;

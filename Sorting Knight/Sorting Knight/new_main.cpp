@@ -19,9 +19,10 @@
 #include "shop.h"
 #include "ui.h"
 
+
 // ── 입력 오류 방지 ────────────────────────────────────────
 void ClearInputBuffer() {
-    if (std::cin.fail()) {
+    if (std::cin.fail()) { // ◀◀ 원인!
         std::cin.clear();
         std::cin.ignore(1000, '\n');
     }
@@ -43,6 +44,7 @@ void ShowIntro() {
     };
     std::vector<std::string> footer = { "[ Enter: 계속 ]" };
     DrawScreen("프롤로그", body, footer);
+    std::cin.ignore();
     std::cin.get();
 }
 
@@ -62,7 +64,7 @@ int ShowTitleMenu() {
         "", "선택: "
     };
     DrawScreen("타이틀", body, footer);
-
+    std::cout << "\033[37;11H";
     int choice;
     std::cin >> choice;
     ClearInputBuffer();
@@ -82,6 +84,7 @@ Player* InitializeGame() {
         };
         std::vector<std::string> footer = { "이름: " };
         DrawScreen("신규 요원 등록", body, footer);
+        std::cout << "\033[37;11H";
 
         if (std::cin >> name) {
             ClearInputBuffer();
@@ -104,6 +107,7 @@ Player* InitializeGame() {
         };
         std::vector<std::string> footer = { "부서 번호(1-4): " };
         DrawScreen("부서 배치", body, footer);
+        std::cout << "\033[37;20H";
 
         if (std::cin >> cnt) {
             ClearInputBuffer();
@@ -166,7 +170,7 @@ int ShowMainMenu(Player* player) {
         "", "선택: "
     };
     DrawScreen("메인 메뉴", body, footer);
-
+    std::cout << "\033[37;11H";
     int choice;
     std::cin >> choice;
     ClearInputBuffer();
@@ -202,6 +206,7 @@ void ShowInventoryScreen(const Inventory& inv) {
         "", "[ Enter: 돌아가기 ]"
     };
     DrawScreen("인벤토리", body, footer);
+    
     std::cin.ignore();
     std::cin.get();
 }
@@ -224,7 +229,7 @@ void ShowStatusScreen(Player* player) {
     };
     std::vector<std::string> footer = { "[ Enter: 돌아가기 ]" };
     DrawScreen("근무 기록부", body, footer);
-    std::cin.ignore();
+	std::cin.ignore();
     std::cin.get();
 }
 
@@ -251,6 +256,7 @@ void ShowDebugMenu(Player* player) {
         };
 
         DrawScreen("특별 감사 단말", body, footer);
+        std::cout << "\033[37;11H";
         notice = "";
 
         int choice;
