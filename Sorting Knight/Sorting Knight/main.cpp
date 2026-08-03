@@ -1,10 +1,11 @@
-﻿#include <iostream>
+﻿ #include <iostream>
 #include <string>
 #include <vector>
 #include <map>
 #include <algorithm>
 #include <ctime>
 #include <cstdlib>
+#include <windows.h>
 
 #include "main.h"
 #include "type.h"
@@ -16,6 +17,7 @@
 #include "monster.h"
 #include "battle.h"
 #include "shop.h"
+#include "UI.h"
 
 
 
@@ -112,10 +114,13 @@ void GiveInitialItems(Player* player, std::vector<std::pair<Item, int>>& items, 
     }
 }
 
-// 상점 호출 
-void EnterShopMenu() {
 
-}
+// 전투 호출
+void EnterBattle() {}
+
+// 상점 호출 
+void EnterShopMenu() {}
+
 // 인벤토리
 void OpenInventory() {
 
@@ -124,6 +129,9 @@ void OpenInventory() {
 // 프로그램 진입점 (main 함수)
 
 int main() {
+    SetConsoleOutputCP(CP_UTF8);
+    SetConsoleCP(CP_UTF8);
+
     bool isProgramRunning = true;
 
     // [Outer Loop] 타이틀 화면 ↔ 메인 게임
@@ -156,10 +164,7 @@ int main() {
         }
         // 2 - 2. 초기 아이템 지급 (예시)
 		GiveInitialItems(player, myItems, itemManager);
-        // 2 - (2).임시 몬스터 생성 (플레이 중 공통으로 사용할 몬스터 예시)
-        Monster* monster = new Monster("몬스터", MonsterType::NONE, 30, 10, 10, 10); // 임시로 기본 몬스터 생성 (이름/레벨/체력/공격력)
-
-		
+    
 
         // 3. [Inner Loop] 인게임 메인 메뉴 루프
         bool inMainMenu = true;
@@ -177,9 +182,8 @@ int main() {
             ClearInputBuffer();
 
             switch (mainChoice) {
-            case 1:             
-                // StartBattle(Player* player, Monster* monster, std::vector<std::pair<Item, int>>& items)
-                StartBattle(player, monster, myItems); // 전투 호출 (예시함수)
+            case 1:
+                EnterBattle(player , myItems); // 전투 호출 (예시함수)
                 break;
             case 2:
                 EnterShopMenu(); // 상점 호출 (예시함수)
@@ -200,8 +204,6 @@ int main() {
         // 플레이어/몬스터 메모리 정리 (메뉴에서 타이틀로 돌아갈 때)
         delete player;
         player = nullptr;
-        delete monster;
-        monster = nullptr;
     }
     return 0;
 }
