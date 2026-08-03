@@ -4,6 +4,7 @@
 #include "Item.h"
 #include "ItemManager.h"
 #include "ui.h"
+#include <map>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -13,7 +14,11 @@
 static bool stage2Entered = false;
 static bool stage3Entered = false;
 
-// 전투 로그를 모아두는 곳. 최근 4줄만 유지
+// 처치 집계 (몬스터 이름 -> 처치 수)
+static std::map<std::string, int> monsterkillCount;
+static int totalWinCount = 0;
+
+// 전투 로그. 최근 4줄만 유지
 static std::vector<std::string> battleLog;
 
 static void AddLog(const std::string& msg) {
@@ -106,6 +111,9 @@ void EnterBattle(Player* player) {
     bool isWin = StartBattle(player, monster);
     if (isWin) {
         ClearStage(selectedStage);
+        if (selectedStage == 3) {
+            EnterEnding(player);
+        }
     }
     delete monster;
 }
@@ -120,12 +128,10 @@ bool StartBattle(Player* player, Monster* monster) {
 
         const std::vector<std::pair<Item, int>>& inventoryItems = player->GetInventory().GetItems();
 
-        // ── 화면 구성 ──
         std::vector<std::string> body = {
             "",
             Color(monster->getName(), "91"),
-    "HP  " + std::to_string(monster->getHp()),           
-                   + "   " + std::to_string(monster->getHp()),
+            "HP  " + std::to_string(monster->getHp()),
             "",
             Color(player->GetName() + "   Lv." + std::to_string(player->GetLevel()), "92"),
             "HP  " + Color(MakeGauge(player->GetHp(), player->GetMaxHp(), 20), "92")
@@ -151,7 +157,6 @@ bool StartBattle(Player* player, Monster* monster) {
 
         DrawScreen("전투 - " + monster->getName(), body, footer);
 
-        // ── 입력 ──
         int choice;
         std::cin >> choice;
         if (std::cin.fail()) {
@@ -224,7 +229,7 @@ bool StartBattle(Player* player, Monster* monster) {
         AddLog("> " + player->GetName() + " 체력 " + std::to_string(player->GetHp()));
     }
 
-    // ── 결과 화면 ──
+    // ── 패배 ──
     if (player->GetHp() <= 0) {
         std::vector<std::string> body = {
             "", "",
@@ -240,6 +245,7 @@ bool StartBattle(Player* player, Monster* monster) {
         return false;
     }
 
+    // ── 승리 ──
     if (monster->getHp() <= 0) {
         int gainedExp = monster->getExpReward();
         player->GainExp(gainedExp);
@@ -262,6 +268,10 @@ bool StartBattle(Player* player, Monster* monster) {
             dropText = droppedItem.GetName();
         }
 
+        // 처치 집계
+        monsterkillCount[monster->getName()]++;
+        totalWinCount++;
+
         std::vector<std::string> body = {
             "",
             Color("  " + monster->getName() + " 처리 완료.", "93"),
@@ -278,6 +288,8 @@ bool StartBattle(Player* player, Monster* monster) {
         else {
             body.push_back(Color("  회수 가능한 폐기물이 없습니다.", "90"));
         }
+        body.push_back("");
+        body.push_back(Color("  누적 처리 실적  " + std::to_string(totalWinCount) + "건", "90"));
         body.push_back("");
 
         std::vector<std::string> footer = {
@@ -298,4 +310,41 @@ bool StartBattle(Player* player, Monster* monster) {
 void ClearStage(int stage) {
     if (stage == 2) stage2Entered = true;
     else if (stage == 3) stage3Entered = true;
+}
+
+
+// ── 엔딩 : 최종 민원 처리 대장 ────────────────────────────
+void EnterEnding(Player* player) {
+
+    std::vector<std::string> body = {
+        "",
+        Color("  - 최종 민원 처리 대장 -", "93"),
+        "",
+        "  담당자   " + player->GetName()
+                     + " (" + player->GetJobName()
+                     + ", Lv." + std::to_string(player->GetLevel()) + ")",
+        "",
+        Color("  ── 처리 내역 ──", "90"),
+        ""
+    };
+
+    for (const auto& pair : monsterkillCount) {
+        body.push_back("    " + pair.first + "   x" + std::to_string(pair.second));
+    }
+
+    body.push_back("");
+    body.push_back(Color("  누적 처리 실적   " + std::to_string(totalWinCount) + "건", "96"));
+    body.push_back("");
+    body.push_back(Color("  폐기처리장 완전 정화 완료. 수고하셨습니다.", "92"));
+    body.push_back("");
+
+    std::vector<std::string> footer = {
+        Color("※ 분리배출에 관한 법률은 여전히 폐지 상태입니다.", "90"),
+        "",
+        "[ Enter: 계속 ]"
+    };
+
+    DrawScreen("엔딩 - 업무 보고", body, footer);
+    std::cin.ignore();
+    std::cin.get();
 }

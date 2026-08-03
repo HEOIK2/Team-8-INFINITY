@@ -157,6 +157,7 @@ int ShowMainMenu(Player* player) {
         "  2. 상점",
         "  3. 인벤토리",
         "  4. 근무 기록부",
+        Color("  9. ???", "90"),
         "  0. 타이틀로",
         ""
     };
@@ -201,8 +202,7 @@ void ShowInventoryScreen(const Inventory& inv) {
         "", "[ Enter: 돌아가기 ]"
     };
     DrawScreen("인벤토리", body, footer);
-    DrawScreen("인벤토리", body, footer);
-    std::cin.ignore();    
+    std::cin.ignore();
     std::cin.get();
 }
 
@@ -226,6 +226,56 @@ void ShowStatusScreen(Player* player) {
     DrawScreen("근무 기록부", body, footer);
     std::cin.ignore();
     std::cin.get();
+}
+
+// ── 개발자용 치트 ────────────────────────────────────────
+void ShowDebugMenu(Player* player) {
+    std::string notice = "";
+
+    while (true) {
+        std::vector<std::string> body = {
+            "",
+            Color("  ※ 관리자 전용 단말입니다.", "90"),
+            "",
+            "  1. 경험치 1000 지급",
+            "  2. 10000G 지급",
+            "  3. 나가기",
+            ""
+        };
+        std::vector<std::string> footer = {
+            "Lv." + std::to_string(player->GetLevel())
+            + "    EXP " + std::to_string(player->GetExp())
+            + "    Gold " + std::to_string(player->GetGold()) + "G",
+            notice,
+            "선택: "
+        };
+
+        DrawScreen("특별 감사 단말", body, footer);
+        notice = "";
+
+        int choice;
+        if (!(std::cin >> choice)) {
+            ClearInputBuffer();
+            notice = Color("[!] 잘못된 입력입니다.", "91");
+            continue;
+        }
+        ClearInputBuffer();
+
+        if (choice == 1) {
+            player->GainExp(1000);
+            notice = Color("[지급 완료] 경험치 1000", "92");
+        }
+        else if (choice == 2) {
+            player->SetGold(player->GetGold() + 10000);
+            notice = Color("[지급 완료] 10000G", "92");
+        }
+        else if (choice == 3) {
+            break;
+        }
+        else {
+            notice = Color("[!] 잘못된 선택입니다.", "91");
+        }
+    }
 }
 
 // ── main ────────────────────────────────────────────────
@@ -274,6 +324,9 @@ int main() {
                 break;
             case 4:
                 ShowStatusScreen(player);
+                break;
+            case 9:
+                ShowDebugMenu(player);
                 break;
             case 0:
                 inMainMenu = false;

@@ -8,6 +8,7 @@
 #include <vector>
 #include <cmath>
 #include <limits>
+#include <algorithm>
 
 Shop::Shop(std::vector<Item> stock) : stock(std::move(stock)) {}
 
@@ -53,16 +54,10 @@ namespace {
     Player* g_player = nullptr;
     ItemManager* g_itemManager = nullptr;
 
+    // 상점에서는 C등급(최하 등급)만 판매. B/A/S 등급은 "등급 합성"으로만 획득 가능.
     const std::vector<std::string> weaponItemNames = {
         "평범한 가위 (C)", "나무 젓가락 (C)", "대나무 빗자루 (C)",
-        "분리수거 집게 (C)", "두꺼운 고무장갑 (C)",
-        "커터칼과 라벨 제거기 (B)", "발로 밝는 캔 찌그러뜨리개 (B)", "네오디뮴 자석 석궁 (B)",
-        "스티로폼 열선 절단기 (B)", "고압 세척건 (B)", "신문지 해머 (B)",
-        "알루미늄 캔 분쇄기 (B)", "산업용 강풍 핑퐁포 (B)",
-        "초음파 유리 분쇄기 (A)", "유압 박스 압축기 (A)", "고온 유기물 분해기 (A)",
-        "산업용 회전 분쇄 칼날 (A)", "알루미늄 용해 용광로포 (A)", "레이저 라벨 절단포 (A)",
-        "고주파 충격파 캐논 (A)", "폐지 고압 수압포 (A)",
-        "플라즈마 용융 토치 (S)", "클린 월드 엔드 캐논 (S)", "소형 블랙홀 압축기 (S)"
+        "분리수거 집게 (C)", "두꺼운 고무장갑 (C)"
     };
 
     const std::vector<std::string> consumableItemNames = {
@@ -87,7 +82,6 @@ namespace {
         }
     }
 
-    // BuyResult를 화면에 띄울 안내 문자열로 변환
     std::string BuyResultText(BuyResult result, const std::string& itemName) {
         switch (result) {
         case BuyResult::SUCCESS:
@@ -152,7 +146,6 @@ namespace {
                 continue;
             }
 
-            // 수량 입력 화면
             const std::string itemName = stock[index].GetName();
             std::vector<std::string> qBody = {
                 "",
@@ -186,41 +179,92 @@ namespace {
         }
     }
 
-    // ── 합성 화면 ──────────────────────────────────────────
-    void CraftMenu(Player* player) {
+    // ── 등급 합성 ──────────────────────────────────────────
+    // 같은 등급의 무기 5개(종류 무관)를 소모해 다음 등급 무기 1개를 무작위로 획득.
+    // 등급 순서: C(최하) -> B -> A -> S(최고)
+    const int UPGRADE_REQUIRE_COUNT = 5;
+
+    // 보유한 무기 중 해당 등급인 것들의 개수 합 (종류 무관)
+    int CountByRarity(Player* player, ItemRarity rarity) {
+        int total = 0;
+        for (const auto& slot : player->GetInventory().GetItems()) {
+            if (slot.first.GetCategory() == ItemCategory::WEAPON && slot.first.GetRarity() == rarity) {
+                total += slot.second;
+            }
+        }
+        return total;
+    }
+
+    // 해당 등급 무기를 종류 무관하게 총 count개 제거.
+    // GetItems()는 내부 벡터의 참조라 순회 중 RemoveItem을 부르면 벡터가 변형됨
+    // -> 먼저 (이름, 개수) 스냅샷을 뜬 뒤 그 기준으로 제거.
+    bool ConsumeByRarity(Player* player, ItemRarity rarity, int count) {
+        if (CountByRarity(player, rarity) < count) {
+            return false;
+        }
+
+        std::vector<std::pair<std::string, int>> targets;
+        for (const auto& slot : player->GetInventory().GetItems()) {
+            if (slot.first.GetCategory() == ItemCategory::WEAPON && slot.first.GetRarity() == rarity) {
+                targets.push_back({ slot.first.GetName(), slot.second });
+            }
+        }
+
+        int remaining = count;
+        for (const auto& target : targets) {
+            if (remaining <= 0) { break; }
+            int take = std::min(remaining, target.second);
+            player->GetInventory().RemoveItem(target.first, take);
+            remaining -= take;
+        }
+        return true;
+    }
+
+    void RarityUpgradeMenu(Player* player, ItemManager& itemManager) {
+        static const std::vector<std::pair<ItemRarity, ItemRarity>> steps = {
+            { ItemRarity::C, ItemRarity::B },
+            { ItemRarity::B, ItemRarity::A },
+            { ItemRarity::A, ItemRarity::S }
+        };
+
+        auto rarityChar = [](ItemRarity r) -> char {
+            switch (r) {
+            case ItemRarity::C: return 'C';
+            case ItemRarity::B: return 'B';
+            case ItemRarity::A: return 'A';
+            case ItemRarity::S: return 'S';
+            default: return '?';
+            }
+            };
+
         std::string notice = "";
 
         while (true) {
-            const std::vector<Recipe>& recipes = GetCraftingRecipes();
-
             std::vector<std::string> body = { "" };
-            if (recipes.empty()) {
-                body.push_back(Color("  (등록된 합성 규격이 없습니다)", "90"));
-            }
-            else {
-                for (size_t i = 0; i < recipes.size(); ++i) {
-                    const Recipe& r = recipes[i];
-                    std::string line = "  " + std::to_string(i + 1) + ". " + r.result.GetName() + "   <-  ";
-                    for (size_t j = 0; j < r.ingredients.size(); ++j) {
-                        line += r.ingredients[j].first + " x" + std::to_string(r.ingredients[j].second);
-                        if (j + 1 < r.ingredients.size()) { line += ", "; }
-                    }
-                    bool canCraft = player->GetInventory().CanCraft(r.result.GetName());
-                    line += canCraft ? Color("   [가능]", "92") : Color("   [재료 부족]", "90");
-                    body.push_back(line);
-                }
+            for (size_t i = 0; i < steps.size(); ++i) {
+                ItemRarity from = steps[i].first;
+                ItemRarity to = steps[i].second;
+                int have = CountByRarity(player, from);
+                bool canUpgrade = have >= UPGRADE_REQUIRE_COUNT;
+
+                std::string line = "  " + std::to_string(i + 1) + ". ["
+                    + std::string(1, rarityChar(from)) + "등급 -> "
+                    + std::string(1, rarityChar(to)) + "등급]    재료 "
+                    + std::to_string(have) + "/" + std::to_string(UPGRADE_REQUIRE_COUNT);
+                line += canUpgrade ? Color("   [가능]", "92") : Color("   [재료 부족]", "90");
+                body.push_back(line);
             }
             body.push_back("");
             body.push_back("  0. 이전 메뉴로");
             body.push_back("");
 
             std::vector<std::string> footer = {
-                Color("※ 합성 시 하위 등급 재료는 소멸합니다.", "90"),
+                Color("※ 같은 등급 무기 5개(종류 무관)를 소모해 다음 등급 무기 1개를 무작위로 얻습니다.", "90"),
                 notice,
-                "규격 번호: "
+                "선택: "
             };
 
-            DrawScreen("합성", body, footer);
+            DrawScreen("등급 합성", body, footer);
             notice = "";
 
             int choice;
@@ -234,16 +278,23 @@ namespace {
             if (choice == 0) { break; }
 
             int index = choice - 1;
-            if (index < 0 || index >= (int)recipes.size()) {
+            if (index < 0 || index >= (int)steps.size()) {
                 notice = Color("[!] 잘못된 선택입니다.", "91");
                 continue;
             }
 
-            const std::string resultName = recipes[index].result.GetName();
-            bool success = player->GetInventory().Craft(resultName);
-            notice = success
-                ? Color("[합성 완료] " + resultName, "92")
-                : Color("[!] 재료가 부족합니다.", "91");
+            ItemRarity from = steps[index].first;
+            ItemRarity to = steps[index].second;
+
+            if (!ConsumeByRarity(player, from, UPGRADE_REQUIRE_COUNT)) {
+                notice = Color("[!] 재료가 부족합니다. ("
+                    + std::string(1, rarityChar(from)) + "등급 5개 필요)", "91");
+                continue;
+            }
+
+            Item resultItem = itemManager.GetRandomItemByRarity(to);
+            player->GetInventory().AddItem(resultItem, 1);
+            notice = Color("[합성 완료] " + resultItem.GetName() + " 획득!", "92");
         }
     }
 
@@ -272,7 +323,7 @@ void EnterShopMenu() {
             "",
             "  1. 장비 수령",
             "  2. 소모품 수령",
-            "  3. 합성",
+            "  3. 등급 합성",
             "  0. 나가기",
             ""
         };
@@ -296,7 +347,7 @@ void EnterShopMenu() {
         switch (choice) {
         case 1: BuyMenu(player, weaponShop, "장비 보급"); break;
         case 2: BuyMenu(player, consumableShop, "소모품 보급"); break;
-        case 3: CraftMenu(player); break;
+        case 3: RarityUpgradeMenu(player, itemManager); break;
         case 0: inShop = false; break;
         default: notice = Color("[!] 잘못된 선택입니다.", "91"); break;
         }
