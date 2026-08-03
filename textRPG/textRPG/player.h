@@ -30,45 +30,6 @@ enum class Job
 // ============================================================
 class Player
 {
-private:
-    // ---------------- 내부 전용 함수 ----------------
-
-    // 레벨을 1 올리고, 레벨에 비례해 체력/공격력을 증가시킨 뒤 체력을 완전 회복한다.
-    // GainExp() 내부에서만 호출되는 private 함수.
-    void LevelUp();
-
-    // 생성자에서 호출되어, 선택된 직업(newJob)에 맞는 스탯 보너스와
-    // 전용 무기 아이템을 캐릭터에게 적용한다.
-    void ApplyJob(Job newJob);
-
-    // Job enum 값을 화면에 표시할 한글 문자열로 변환한다. (예: Job::Cleaner -> "청소부")
-    static std::string JobToString(Job job);
-
-    // 직업(job)에 대응하는 지급 무기 이름을 반환한다. (예: Job::Cleaner -> "대나무 빗자루")
-    static std::string GetItemForJob(Job job);
-
-
-    // ---------------- 상수 (밸런스 값) ----------------
-
-    static constexpr int MAX_LEVEL = 10;        // 최대 레벨 (이 이상 레벨업 불가)
-    static constexpr int EXP_PER_LEVEL = 100;   // 레벨업에 필요한 경험치 (고정값)
-    static constexpr int INIT_HP = 200;         // 캐릭터 생성 시 기본 체력
-    static constexpr int INIT_ATTACK = 30;      // 캐릭터 생성 시 기본 공격력
-
-
-    // ---------------- 멤버 변수 ----------------
-
-    std::string name;    // 캐릭터 이름
-    int level;            // 현재 레벨
-    int hp;                // 현재 체력
-    int maxHp;            // 최대 체력 (레벨업/전직으로 증가)
-    int attack;           // 공격력 (레벨업/전직으로 증가)
-    int exp;               // 현재 경험치 (0 ~ EXP_PER_LEVEL)
-    Job job;               // 현재 직업 (enum 값)
-    std::string jobName; // 현재 직업 이름 (한글 문자열, 출력용)
-    std::string item;    // 직업 전용 지급 무기 이름
-
-
 public:
     // ---------------- 생성자 ----------------
 
@@ -112,4 +73,43 @@ public:
     void SetMaxHp(int newMaxHp) { maxHp = newMaxHp; }
     void SetAttack(int newAttack) { attack = newAttack; }
     void SetExp(int newExp) { exp = newExp; }
+
+private:
+    // ---------------- 내부 전용 함수 ----------------
+
+    // 레벨을 1 올리고, 레벨에 비례해 체력/공격력을 증가시킨 뒤 체력을 완전 회복한다.
+    // GainExp() 내부에서만 호출되는 private 함수.
+    void LevelUp();
+
+    // 생성자에서 호출되어, 선택된 직업(newJob)에 맞는 스탯 보너스와
+    // 전용 무기 아이템을 캐릭터에게 적용한다.
+    void ApplyJob(Job newJob);
+
+    // Job enum 값을 화면에 표시할 한글 문자열로 변환한다. (예: Job::Cleaner -> "청소부")
+    static std::string JobToString(Job job);
+
+    // 직업(job)에 대응하는 지급 무기 이름을 반환한다. (예: Job::Cleaner -> "대나무 빗자루")
+    static std::string GetItemForJob(Job job);
+
+
+    // ---------------- 상수 (밸런스 값) ----------------
+
+    static constexpr int MAX_LEVEL = 10;        // 최대 레벨 (이 이상 레벨업 불가)
+    static constexpr int EXP_PER_LEVEL = 100;   // 레벨업에 필요한 경험치 (고정값)
+    static constexpr int INIT_HP = 200;         // 캐릭터 생성 시 기본 체력
+    static constexpr int INIT_ATTACK = 30;      // 캐릭터 생성 시 기본 공격력
+
+
+    // ---------------- 멤버 변수 ----------------
+
+    std::string name;    // 캐릭터 이름
+    int level;            // 현재 레벨
+    int hp;                // 현재 체력
+    int maxHp;            // 최대 체력 (레벨업/전직으로 증가)
+    int attack;           // 공격력 (레벨업/전직으로 증가)
+    int exp;               // 현재 경험치 (0 ~ EXP_PER_LEVEL)
+    Job job;               // 현재 직업 (enum 값)
+    std::string jobName; // 현재 직업 이름 (한글 문자열, 출력용)
+    std::string item;    // 직업 전용 지급 무기 이름
+
 };
