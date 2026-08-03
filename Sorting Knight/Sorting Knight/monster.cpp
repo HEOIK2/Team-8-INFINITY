@@ -25,23 +25,23 @@ Monster* CreateMonster(MonsterType type, int playerlevel) {
 		break;
 
 	case MonsterType::PAPER:
-		monster = new Monster("종이박스", MonsterType::PAPER, 40 + 3 * (playerlevel), 10 + 1 * (playerlevel), 15, 10);
+		monster = new Monster("냉장고 종이박스", MonsterType::PAPER, 40 + 3 * (playerlevel), 10 + 1 * (playerlevel), 15, 10);
 		break;
 
 	case MonsterType::PLASTIC:
-		monster = new Monster("플라스틱", MonsterType::PLASTIC, 45 + 3 * (playerlevel), 10 + 1 * (playerlevel), 20, 20);
+		monster = new Monster("오염된 플라스틱 포크", MonsterType::PLASTIC, 45 + 3 * (playerlevel), 10 + 1 * (playerlevel), 20, 20);
 		break;
 
 	case MonsterType::GLASS:
-		monster = new Monster("깨진맥주잔", MonsterType::GLASS, 40 + 3 * (playerlevel), 20 + 1 * (playerlevel), 20, 15);
+		monster = new Monster("깨진 맥주잔", MonsterType::GLASS, 40 + 3 * (playerlevel), 20 + 1 * (playerlevel), 20, 15);
 		break;
 
 	case MonsterType::ALUMINUM:
-		monster = new Monster("알루미늄방망이", MonsterType::ALUMINUM, 120 + 3 * (playerlevel), 30 + 1 * (playerlevel), 50, 40);
+		monster = new Monster("찌그러진 알루미늄방망이", MonsterType::ALUMINUM, 120 + 3 * (playerlevel), 30 + 1 * (playerlevel), 50, 40);
 		break;
 
 	case MonsterType::IRON:
-		monster = new Monster("철", MonsterType::IRON, 150 + 3 * (playerlevel), 40 + 1 * (playerlevel), 100, 70);
+		monster = new Monster("녹슨 쇠파이프", MonsterType::IRON, 150 + 3 * (playerlevel), 40 + 1 * (playerlevel), 100, 70);
 		break;
 	}
 	return monster;
