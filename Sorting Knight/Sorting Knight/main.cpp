@@ -173,6 +173,7 @@ int main() {
             std::cout << "1. 전투" << std::endl;
             std::cout << "2. 상점" << std::endl;
             std::cout << "3. 인벤토리" << std::endl;
+            std::cout << "4. 플레이어 스탯" << std::endl;
             std::cout << "0. 종료 (타이틀로 돌아가기)" << std::endl;
             std::cout << "===================================" << std::endl;
             std::cout << "선택: ";
@@ -190,6 +191,9 @@ int main() {
                 break;
             case 3:
                 OpenInventory(); // 인벤토리 호출 (예시함수)
+                break;
+            case 4: 
+				player->PrintStatus(); // 상태창 호출 (예시함수)               
                 break;
             case 0:
                 std::cout << "\n타이틀 화면으로 돌아갑니다..." << std::endl;

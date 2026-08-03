@@ -160,7 +160,7 @@ std::string Player::JobToString(Job job)
 // ============================================================
 void Player::PrintStatus() const
 {
-    std::cout << "===== 플레이어 상태 =====\n";
+    std::cout << "\n===== 플레이어 상태 =====\n";
     std::cout << "이름   : " << name << "\n";
     std::cout << "직업   : " << jobName << "\n";
     std::cout << "레벨   : " << level << (IsMaxLevel() ? " (MAX)" : "") << "\n";
