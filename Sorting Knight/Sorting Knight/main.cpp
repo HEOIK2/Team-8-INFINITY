@@ -94,20 +94,20 @@ Player* InitializeGame() {
 }
 
 // 직업별 초기 아이템 지급
-void GiveInitialItems(Player* player, std::vector<std::pair<Item, int>>& items, ItemManager& itemManager) {
+void GiveInitialItems(Player* player, Inventory& inventory, ItemManager& itemManager) {
    
     switch (player->GetJob()) {
     case Job::Cleaner:
-        items.push_back({ itemManager.GetItem("대나무 빗자루 (C)"), 1 });
+        inventory.AddItem(itemManager.GetItem("대나무 빗자루 (C)"), 1);
         break;
     case Job::StreetCleaner:
-        items.push_back({ itemManager.GetItem("나무 젓가락 (C)"), 1 });
+        inventory.AddItem(itemManager.GetItem("나무 젓가락 (C)"), 1);
         break;
     case Job::RecycleExpert:
-        items.push_back({ itemManager.GetItem("평범한 가위 (C)"), 1 });
+        inventory.AddItem(itemManager.GetItem("평범한 가위 (C)"), 1);
         break;
     case Job::RecycleTech:
-        items.push_back({ itemManager.GetItem("분리수거 집게 (C)"), 1 });
+        inventory.AddItem(itemManager.GetItem("분리수거 집게 (C)"), 1);
         break;
     default:
         break;
@@ -154,6 +154,7 @@ int main() {
         // 
         // 2 - 0. 아이템 목록 (전투에서 사용할 아이템)
         std::vector<std::pair<Item, int>> myItems;
+		Inventory inventory; // 인벤토리 인스턴스 생성
         ItemManager itemManager; // 아이템 매니저 인스턴스 생성
 
         // 2 - 1. InitializeGame은 생성된 Player*를 반환합니다.
@@ -163,7 +164,7 @@ int main() {
             continue;
         }
         // 2 - 2. 초기 아이템 지급 (예시)
-		GiveInitialItems(player, myItems, itemManager);
+		GiveInitialItems(player, inventory, itemManager);
     
 
         // 3. [Inner Loop] 인게임 메인 메뉴 루프
@@ -190,7 +191,7 @@ int main() {
                 EnterShopMenu(); // 상점 호출 (예시함수)
                 break;
             case 3:
-                OpenInventory(); // 인벤토리 호출 (예시함수)
+                inventory.Show(); // 인벤토리 호출 (예시함수)
                 break;
             case 4: 
 				player->PrintStatus(); // 상태창 호출 (예시함수)               
