@@ -149,9 +149,6 @@
     </ClCompile>
     <ClCompile Include="monster.cpp" />
     <ClCompile Include="player.cpp" />
-    <ClCompile Include="rainbowtest.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="shop.cpp" />
     <ClCompile Include="test_main.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
