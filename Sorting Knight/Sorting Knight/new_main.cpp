@@ -127,16 +127,16 @@ Player* InitializeGame() {
 void GiveInitialItems(Player* player, ItemManager& itemManager) {
     switch (player->GetJob()) {
     case Job::Cleaner:
-        player->GetInventory().AddItem(itemManager.GetItem("대나무 빗자루 (C)"), 1);
+        player->GetInventory().AddItem(itemManager.GetItem("대나무 빗자루"), 1);
         break;
     case Job::StreetCleaner:
-        player->GetInventory().AddItem(itemManager.GetItem("나무 젓가락 (C)"), 1);
+        player->GetInventory().AddItem(itemManager.GetItem("나무 젓가락"), 1);
         break;
     case Job::RecycleExpert:
-        player->GetInventory().AddItem(itemManager.GetItem("평범한 가위 (C)"), 1);
+        player->GetInventory().AddItem(itemManager.GetItem("평범한 가위"), 1);
         break;
     case Job::RecycleTech:
-        player->GetInventory().AddItem(itemManager.GetItem("분리수거 집게 (C)"), 1);
+        player->GetInventory().AddItem(itemManager.GetItem("분리수거 집게"), 1);
         break;
     default:
         break;
