@@ -1,10 +1,11 @@
-﻿#include <iostream>
+﻿ #include <iostream>
 #include <string>
 #include <vector>
 #include <map>
 #include <algorithm>
 #include <ctime>
 #include <cstdlib>
+#include <windows.h>
 
 #include "main.h"
 #include "type.h"
@@ -16,7 +17,8 @@
 #include "monster.h"
 #include "battle.h"
 #include "shop.h"
-
+#include "UI.h"
+#include "gameLog.h"
 
 
 // [헬퍼 함수] 입력 오류(문자 입력 등) 방지
@@ -58,25 +60,45 @@ void EnterShopMenu() {
 }
 
 // 전투 호출
-void EnterBattleMenu() {
+void EnterBattle() {
 
+    Player* testPlayer = new Player("테스트", Job::Cleaner); // 이 아래 다 테스트용입니다
+    testPlayer->SetLevel(5); 
+
+    std::vector<std::pair<Item, int>> testItems;
+    testItems.push_back({ Item("나무 젓가락", "기본 무기", "나무 젓가락으로 공격!", ItemRarity::N, { MonsterType::PAPER }, { MonsterType::IRON }, 100, 5), 100 });
+    testItems.push_back({ Item("포션", "체력 회복", "포션을 마셨다!", ItemRarity::N, {}, {}, 0, 10, ItemCategory::CONSUMABLE, 50), 3 });
+
+    int selectedStage = 0;
+    Monster* monster = StageMonster(testPlayer->GetLevel(), selectedStage);
+
+    bool isWin = StartBattle(testPlayer, monster, testItems);
+
+    if (isWin) {
+
+        ClearStage(selectedStage);
+    }
+
+    delete testPlayer;
+    delete monster;
 }
 
 // 인벤토리
 void OpenInventory() {
 
 }
-std::vector<std::pair<Item, int>> myItems;
+
 
 // 프로그램 진입점 (main 함수)
 
 int main() {
+    SetConsoleOutputCP(CP_UTF8);
+    SetConsoleCP(CP_UTF8);
+
     bool isProgramRunning = true;
 
     // [Outer Loop] 타이틀 화면 ↔ 메인 게임
     while (isProgramRunning) {
-		Player* player = new Player("플레이어", Job::Cleaner); // 임시로 기본 캐릭터 생성 (이름/직업은 나중에 입력받도록 수정 가능)
-		Monster* monster = new Monster("몬스터", MonsterType::NONE , 30, 10,10,10); // 임시로 기본 몬스터 생성 (이름/레벨/체력/공격력)
 
         // 1. 타이틀 화면 선택
         int titleChoice = ShowTitleMenu();
@@ -108,12 +130,10 @@ int main() {
             int mainChoice;
             std::cin >> mainChoice;
             ClearInputBuffer();
-            
+
             switch (mainChoice) {
             case 1:
-				 // 전투에 사용할 아이템 목록 (예시)
-                // StartBattle(Player* player, Monster* monster, std::vector<std::pair<Item, int>>& items)
-                StartBattle(player, monster, {myItems}); // 전투 호출 (예시함수)
+                EnterBattle(); // 전투 호출 (예시함수)
                 break;
             case 2:
                 EnterShopMenu(); // 상점 호출 (예시함수)
