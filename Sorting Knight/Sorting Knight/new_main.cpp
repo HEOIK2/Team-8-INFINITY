@@ -22,7 +22,7 @@
 
 // ── 입력 오류 방지 ────────────────────────────────────────
 void ClearInputBuffer() {
-    if (std::cin.fail()) { // ◀◀ 원인!
+    if (std::cin.fail()) { 
         std::cin.clear();
         std::cin.ignore(1000, '\n');
     }
