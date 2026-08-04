@@ -136,61 +136,70 @@ bool StartBattle(Player* player, Monster* monster) {
         const std::vector<std::pair<Item, int>>& inventoryItems = player->GetInventory().GetItems();
 
         // 1. 왼쪽 영역 (스탯) 데이터 구축
+        // 1. 왼쪽 영역 (스탯) 데이터 구축 - 텍스트 길이 압축
         std::vector<std::string> leftPane = {
             "",
             Color(monster->getName(), "91"),
-            "HP  " + Color(MakeGauge(monster->getHp(), monster->getMaxHp(), 15), "91") + "  "
-                   + std::to_string(monster->getHp()) + " / " + std::to_string(monster->getMaxHp()),
+            // HP 게이지 칸 수를 15 -> 10칸으로 줄여 공간 확보
+            "HP " + Color(MakeGauge(monster->getHp(), monster->getMaxHp(), 10), "91") + " "
+                   + std::to_string(monster->getHp()) + "/" + std::to_string(monster->getMaxHp()),
             "ATK " + std::to_string(monster->getAtk()),
             "",
-            Color(player->GetName() + "   Lv." + std::to_string(player->GetLevel()), "92"),
-            "HP  " + Color(MakeGauge(player->GetHp(), player->GetMaxHp(), 15), "92") + "  "
-                   + std::to_string(player->GetHp()) + " / " + std::to_string(player->GetMaxHp()),
+            Color(player->GetName() + " Lv." + std::to_string(player->GetLevel()), "92"),
+            "HP " + Color(MakeGauge(player->GetHp(), player->GetMaxHp(), 10), "92") + " "
+                   + std::to_string(player->GetHp()) + "/" + std::to_string(player->GetMaxHp()),
             "ATK " + std::to_string(player->GetAttack())
         };
 
-        // 2. 오른쪽 영역 (사용할 아이템 - 6개 초과 시 2열 배치 적용!)
+        // 2. 오른쪽 영역 (아이템 목록)
         std::vector<std::string> rightPane = {
             "",
             Color("──  사용할 아이템  ──", "90")
         };
 
         int itemCount = inventoryItems.size();
-        int rows = itemCount; // 기본적으로는 아이템 개수만큼 줄을 씁니다.
+        int rows = itemCount;
 
-        // ★ 6개가 넘어가면 오른쪽 열로 넘기기 위한 계산
         if (itemCount > 6) {
-            if (itemCount <= 12) rows = 6; // 12개까지는 무조건 왼쪽 6줄, 오른쪽 나머지
-            else rows = (itemCount + 1) / 2; // 13개 이상일 경우엔 반반으로 균등 분배
+            if (itemCount <= 12) rows = 6;
+            else rows = (itemCount + 1) / 2;
         }
 
         for (int r = 0; r < rows; ++r) {
-            // 첫 번째 열 (왼쪽 아이템)
+            // 첫 번째 열
             int idx1 = r;
-            std::string item1 = std::to_string(idx1 + 1) + ". " + inventoryItems[idx1].first.GetName() + " [" + inventoryItems[idx1].first.GetRarityString() + "등급]";
-            if (inventoryItems[idx1].first.GetCategory() == ItemCategory::CONSUMABLE) {
-                item1 += " x" + std::to_string(inventoryItems[idx1].second);
+            std::string item1 = std::to_string(idx1 + 1) + ". " + inventoryItems[idx1].first.GetName();
+            if (inventoryItems[idx1].first.GetCategory() == ItemCategory::WEAPON) {
+                // 무기 속성 추가
+                item1 += " [" + inventoryItems[idx1].first.GetRarityString() + "등급] " + Color(inventoryItems[idx1].first.GetPropertyString(), "90");
+            }
+            else {
+                // 소비템 [등급] 삭제 및 효과 추가
+                item1 += " x" + std::to_string(inventoryItems[idx1].second) + " " + Color(inventoryItems[idx1].first.GetEffectString(), "92");
             }
             std::string line = "  " + item1;
 
-            // 두 번째 열 (오른쪽 아이템)
+            // 두 번째 열 
             int idx2 = r + rows;
             if (idx2 < itemCount) {
-                // 첫 번째 열의 아이템 이름 길이를 계산해서 2열의 시작 위치를 칼같이 맞춥니다.
                 int w1 = DisplayWidth(line);
-                int pad = 34 - w1; // 1열의 고정 너비를 34칸으로 설정
-                if (pad < 2) pad = 2; // 이름이 너무 길어도 최소 2칸 띄어쓰기 보장
+                // 1열의 고정 너비를 44칸으로 넉넉하게 확장 (속성 텍스트 공간 확보)
+                int pad = 44 - w1;
+                if (pad < 2) pad = 2;
 
-                std::string item2 = std::to_string(idx2 + 1) + ". " + inventoryItems[idx2].first.GetName() + " [" + inventoryItems[idx2].first.GetRarityString() + "등급]";
-                if (inventoryItems[idx2].first.GetCategory() == ItemCategory::CONSUMABLE) {
-                    item2 += " x" + std::to_string(inventoryItems[idx2].second);
+                std::string item2 = std::to_string(idx2 + 1) + ". " + inventoryItems[idx2].first.GetName();
+                if (inventoryItems[idx2].first.GetCategory() == ItemCategory::WEAPON) {
+                    item2 += " [" + inventoryItems[idx2].first.GetRarityString() + "등급] " + Color(inventoryItems[idx2].first.GetPropertyString(), "90");
                 }
-                line += std::string(pad, ' ') + item2; // 여백을 채우고 2열 아이템을 붙임
+                else {
+                    item2 += " x" + std::to_string(inventoryItems[idx2].second) + " " + Color(inventoryItems[idx2].first.GetEffectString(), "92");
+                }
+                line += std::string(pad, ' ') + item2;
             }
             rightPane.push_back(line);
         }
 
-        // 3. 좌우 데이터를 합쳐서 최종 body 완성!
+        // 3. 좌우 데이터를 합쳐서 최종 body 완성
         std::vector<std::string> body;
         size_t maxLines = std::max(leftPane.size(), rightPane.size());
 
@@ -200,15 +209,12 @@ bool StartBattle(Player* player, Monster* monster) {
 
             int currentWidth = DisplayWidth(l);
 
-            // ★ 수정됨: 도형이 1칸이 되었으므로, 왼쪽 기준 너비를 42로 맞춥니다.
-            int pad1 = 42 - currentWidth;
+            // ★ 왼쪽 창을 28칸으로 훅 당겨서 압축! 속성 텍스트가 들어갈 넉넉한 공간 확보
+            int pad1 = 28 - currentWidth;
             if (pad1 < 1) pad1 = 1;
 
-            // 가운데 세로 구분선
             std::string separator = Color("│", "90");
-
-            // 구분선부터 오른쪽 아이템까지의 간격
-            int pad2 = 4;
+            int pad2 = 2; // 간격 최소화
 
             body.push_back("  " + l + std::string(pad1, ' ') + separator + std::string(pad2, ' ') + r);
         }

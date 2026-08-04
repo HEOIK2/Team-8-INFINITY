@@ -110,9 +110,17 @@ namespace {
             else {
                 for (size_t i = 0; i < stock.size(); ++i) {
                     const Item& item = stock[i];
-                    body.push_back("  " + std::to_string(i + 1) + ". " + item.GetName()
-                        + "   [" + item.GetRarityString() + "등급]   "
-                        + std::to_string(item.GetPrice()) + "G");
+                    std::string line = "  " + std::to_string(i + 1) + ". " + item.GetName();
+
+                    if (item.GetCategory() == ItemCategory::WEAPON) {
+                        // ★ 무기: 기존대로 등급을 표시하고 그 옆에 속성 추가
+                        line += " [" + item.GetRarityString() + "등급] " + Color(item.GetPropertyString(), "90") + "   " + std::to_string(item.GetPrice()) + "G";
+                    }
+                    else {
+                        // ★ 소비템: [N등급] 삭제! 대신 초록색으로 효과를 표시
+                        line += " " + Color(item.GetEffectString(), "92") + "   " + std::to_string(item.GetPrice()) + "G";
+                    }
+                    body.push_back(line);
                 }
             }
             body.push_back("");

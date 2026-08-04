@@ -209,12 +209,21 @@ void ShowInventoryScreen(const Inventory& inv) {
     else {
         int i = 1;
         for (const auto& slot : items) {
-            std::string line = "  " + std::to_string(i) + ". " + slot.first.GetName();
-            if (slot.first.GetCategory() == ItemCategory::CONSUMABLE) {
-                line += " x" + std::to_string(slot.second);
+            const Item& item = slot.first;
+            std::string line = "  " + std::to_string(i) + ". " + item.GetName();
+
+            if (item.GetCategory() == ItemCategory::WEAPON) {
+                // ★ 무기: 등급과 함께 속성 정보(강/약)를 표시합니다.
+                line += " [" + item.GetRarityString() + "등급] "
+                    + Color(item.GetPropertyString(), "90") + "   "
+                    + std::to_string(item.GetPrice()) + "G";
             }
-            line += "   [" + slot.first.GetRarityString() + "등급]  "
-                + std::to_string(slot.first.GetPrice()) + "G";
+            else {
+                // ★ 소비 아이템: N등급을 삭제하고 수량 옆에 효과를 표시합니다.
+                line += " x" + std::to_string(slot.second) + " "
+                    + Color(item.GetEffectString(), "92") + "   "
+                    + std::to_string(item.GetPrice()) + "G";
+            }
             body.push_back(line);
             i++;
         }
