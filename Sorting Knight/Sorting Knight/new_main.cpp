@@ -27,23 +27,94 @@ void ClearInputBuffer() {
     }
 }
 
-// ── 프롤로그 ─────────────────────────────────────────────
+// ── 타이핑 효과 보조 함수 (좌표 지정 기능 추가) ──
+void TypeTextAt(int row, int col, const std::string& text, const std::string& colorCode = "37", int delay = 40) {
+    // 지정된 좌표로 커서 이동 후 색상 적용
+    std::cout << "\033[" << row << ";" << col << "H";
+    std::cout << "\033[" << colorCode << "m";
+
+    for (size_t i = 0; i < text.length(); ++i) {
+        std::cout << text[i];
+
+        // UTF-8 인코딩에서 한글이 깨지지 않도록 바이트 계산
+        bool isLastByte = (i + 1 == text.length()) || ((text[i + 1] & 0xC0) != 0x80);
+        if (isLastByte) {
+            std::cout << std::flush;
+            // 쉼표나 마침표에서는 타자기처럼 잠시 쉬어갑니다.
+            if (text[i] == '.' || text[i] == ',') Sleep(delay * 4);
+            else Sleep(delay);
+        }
+    }
+    std::cout << "\033[0m"; // 색상 초기화
+}
+
+// ── 프롤로그 (UI 테두리 유지 + 시네마틱 타자 연출) ─────────────────────────
 void ShowIntro() {
+    // 1. 기존 UI 테두리를 그리기 위해, 텍스트가 들어갈 만큼의 빈 공간을 넘깁니다.
     std::vector<std::string> body = {
         "", "",
-        Color("분리배출에 관한 법률이 폐지되었다.", "37"),
+        "                                                              ", // 20XX년
         "",
-        Color("사람들은 더 이상 쓰레기를 나누지 않았고,", "90"),
-        Color("나눠지지 않은 것들은 스스로 형태를 갖추기 시작했다.", "90"),
+        "                                                              ", // 30년
+        "                                                              ",
+        "                                                              ",
         "",
-        Color("재활용 기사단은 해체되었다. 예산이 없었다.", "90"),
+        "                                                              ", // 법률 폐지
+        "                                                              ",
+        "                                                              ",
         "",
-        Color("남은 건 한 명. 마지막 공익근무요원.", "93"),
+        "                                                              ", // 소집해제
+        "                                                              ",
+        "",
+        "                                                              ", // 묵묵히
+        "",
+        "                                                              ", // 최후의 1인
+        "                                                              ",
         "", ""
     };
     std::vector<std::string> art = {};
     std::vector<std::string> footer = { "[ Enter: 계속 ]" };
+
+    // 화면에 빈 껍데기 박스를 먼저 그립니다.
     DrawScreen("프롤로그", body, art, footer);
+
+    // 2. 그려진 박스 안쪽 좌표로 커서를 옮겨 타자 효과를 시작합니다.
+    // (보통 DrawScreen의 테두리 위쪽 여백을 고려해 시작 Y좌표를 5로 잡습니다.)
+    int startY = 5;
+    int startX = 6; // 왼쪽 테두리(│) 안쪽 여백 X좌표
+
+    // 강조 1: 시작 연도 (노란색, 매우 느리게)
+    TypeTextAt(startY + 2, startX, "20XX년.", "93", 120);
+    Sleep(600);
+
+    TypeTextAt(startY + 4, startX, "재활용 공익근무요원으로 근무한 지 어언 30년이 되었다.", "90", 40);
+    Sleep(400);
+
+    TypeTextAt(startY + 5, startX, "10년이면 강산도 변한다는 말이 있지.", "90", 40);
+    TypeTextAt(startY + 6, startX, "30년이 지난 지금, 많은 것들이 바뀌었다.", "90", 40);
+    Sleep(400);
+
+    // 강조 2: 세계관의 핵심 설정 (흰색, 단호하게)
+    TypeTextAt(startY + 8, startX, "이미 분리배출에 관한 법률은 폐지된 지 오래다.", "37", 60);
+    TypeTextAt(startY + 9, startX, "사람들은 점점 쓰레기를 나누지 않았고,", "90", 40);
+    TypeTextAt(startY + 10, startX, "재활용센터엔 더 이상 예산이 책정되지 않게 되었다.", "90", 40);
+    Sleep(600);
+
+    TypeTextAt(startY + 12, startX, "돈을 좇아 요원들은 하나둘 소집해제를 하기 시작했고,", "90", 40);
+    TypeTextAt(startY + 13, startX, "머지않아 재활용센터엔 아무도 남지 않게 되었다.....", "90", 50);
+    Sleep(1000); // 극적인 정적
+
+    // 강조 3: 반전 (밝은 회색, 약간 느리게)
+    TypeTextAt(startY + 15, startX, "모두가 끝났다고 생각했을 때, 묵묵히 사회 복무를 이어가는 한 남자가 있었다.", "37", 60);
+    Sleep(800);
+
+    // 강조 4: 클라이맥스 (밝은 청록색 -> 노란색)
+    TypeTextAt(startY + 17, startX, "최후의 한 명. 마지막 재활용 공익근무요원.", "96", 80);
+    Sleep(600);
+    TypeTextAt(startY + 18, startX, "일명 \"재 공\"이라 불린 남자의 이야기다.", "93", 100);
+
+    // 3. 연출이 끝나면 커서를 푸터(입력 대기 위치)로 이동시킵니다.
+    std::cout << "\033[37;15H";
     std::cin.ignore();
     std::cin.get();
 }
@@ -61,7 +132,7 @@ Player* InitializeGame() {
         };
         std::vector<std::string> art = {};
         std::vector<std::string> footer = { "이름: " };
-        DrawScreen("신규 요원 등록", body, art, footer);
+        DrawScreen("요원 프로필 등록", body, art, footer);
         std::cout << "\033[37;11H";
 
         if (std::cin >> name) {
@@ -76,7 +147,7 @@ Player* InitializeGame() {
     // 직업 입력
     while (true) {
         std::vector<std::string> body = {
-            "", name + " 요원, 배치 부서를 선택하십시오.", "",
+            "", name + " 요원, 근무 부서 중인 부서를 기입하십시오.", "",
             "  1. 일반쓰레기 수거반   — 대나무 빗자루 (C)",
             "  2. 도로교통 미화반     — 분리수거 집게 (C)",
             "  3. 분리배출 지원반     — 평범한 가위 (C)",
@@ -86,7 +157,7 @@ Player* InitializeGame() {
         std::vector<std::string> footer = { "부서 번호(1-4): " };
 
         std::vector<std::string> art = {};
-        DrawScreen("부서 배치", body, art, footer);
+        DrawScreen("부서 기입", body, art, footer);
         std::cout << "\033[37;20H";
 
         if (std::cin >> cnt) {
