@@ -19,10 +19,9 @@
 #include "shop.h"
 #include "ui.h"
 
-
 // ── 입력 오류 방지 ────────────────────────────────────────
 void ClearInputBuffer() {
-    if (std::cin.fail()) { 
+    if (std::cin.fail()) {
         std::cin.clear();
         std::cin.ignore(1000, '\n');
     }
@@ -47,31 +46,6 @@ void ShowIntro() {
     DrawScreen("프롤로그", body, art, footer);
     std::cin.ignore();
     std::cin.get();
-}
-
-// ── 타이틀 메뉴 ──────────────────────────────────────────
-int ShowTitleMenu() {
-    std::vector<std::string> body = {
-        "", "",
-        Color("        RECYCLING KNIGHT", "36"),
-        Color("        재활용 공익근무요원 : 요원의 마지막 기록", "90"),
-        "", "",
-        "        1. 게임 시작",
-        "        2. 게임 종료",
-        ""
-    };
-    std::vector<std::string> art = {};
-    std::vector<std::string> footer = {
-        Color("폐지된 법을 집행하러 갈 시간입니다.", "90"),
-        "", "선택: "
-    };
-    
-    DrawScreen("타이틀", body, art, footer);
-    std::cout << "\033[37;11H";
-    int choice;
-    std::cin >> choice;
-    ClearInputBuffer();
-    return choice;
 }
 
 // ── 캐릭터 생성 ──────────────────────────────────────────
@@ -111,7 +85,6 @@ Player* InitializeGame() {
         };
         std::vector<std::string> footer = { "부서 번호(1-4): " };
 
-        // (UI 분할선이 적용된 DrawScreen 호출, art가 필요하다면 빈 벡터를 추가하세요)
         std::vector<std::string> art = {};
         DrawScreen("부서 배치", body, art, footer);
         std::cout << "\033[37;20H";
@@ -162,7 +135,7 @@ int ShowMainMenu(Player* player) {
         "HP  " + Color(MakeGauge(player->GetHp(), player->GetMaxHp(), 20), "92") + "  "
                + std::to_string(player->GetHp()) + "/" + std::to_string(player->GetMaxHp()),
         "ATK " + std::to_string(player->GetAttack())
-               + "     Gold " + std::to_string(player->GetGold()) + "G",
+               + "      Gold " + std::to_string(player->GetGold()) + "G",
         "",
         "  1. 전투",
         "  2. 상점",
@@ -173,15 +146,8 @@ int ShowMainMenu(Player* player) {
         ""
     };
 
-    // ★ 빈칸 아래쪽에 들어갈 아스키 아트
     std::vector<std::string> art = {
-        "",
-        Color(R"(         __ )", "90"),
-        Color(R"(        /  \       [ 경고: 미분류 폐기물 감지 ] )", "93"),
-        Color(R"(       /____\      오늘도 무사히 분리수거를 완료하십시오. )", "90"),
-        Color(R"(       |    | )", "90"),
-        Color(R"(       |____| )", "90"),
-        ""
+     
     };
 
     std::vector<std::string> footer = {
@@ -189,7 +155,6 @@ int ShowMainMenu(Player* player) {
         "", "선택: "
     };
 
-    // ★ 순서 변경: title, body, art, footer
     DrawScreen("메인 메뉴", body, art, footer);
     std::cout << "\033[37;11H";
     int choice;
@@ -198,47 +163,96 @@ int ShowMainMenu(Player* player) {
     return choice;
 }
 
-// ── 인벤토리 화면 ────────────────────────────────────────
-void ShowInventoryScreen(const Inventory& inv) {
-    const std::vector<std::pair<Item, int>>& items = inv.GetItems();
-
-    std::vector<std::string> body = { "" };
-    if (items.empty()) {
-        body.push_back(Color("  (비어 있음)", "90"));
+// ── 등급 색상 반환 보조 함수 ────────────────────────────────
+std::string GetRarityColor(ItemRarity r) {
+    switch (r) {
+    case ItemRarity::C: return "37"; // 흰색
+    case ItemRarity::B: return "93"; // 밝은 파랑
+    case ItemRarity::A: return "94"; // 밝은 보라(자홍)
+    case ItemRarity::S: return "95"; // 밝은 노랑
+    default: return "37";
     }
-    else {
-        int i = 1;
-        for (const auto& slot : items) {
-            const Item& item = slot.first;
-            std::string line = "  " + std::to_string(i) + ". " + item.GetName();
+}
 
-            if (item.GetCategory() == ItemCategory::WEAPON) {
-                // ★ 무기: 등급과 함께 속성 정보(강/약)를 표시합니다.
-                line += " [" + item.GetRarityString() + "등급] "
-                    + Color(item.GetPropertyString(), "90") + "   "
-                    + std::to_string(item.GetPrice()) + "G";
+// ── 인벤토리 화면 (사용 기능 및 색상 추가) ────────────────────────────────────────
+void ShowInventoryScreen(Player* player) {
+    std::string notice = "";
+
+    while (true) {
+        const std::vector<std::pair<Item, int>>& items = player->GetInventory().GetItems();
+        std::vector<std::string> body = { "" };
+
+        if (items.empty()) {
+            body.push_back(Color("  (비어 있음)", "90"));
+        }
+        else {
+            int i = 1;
+            for (const auto& slot : items) {
+                const Item& item = slot.first;
+                // ★ 수정됨: 이름은 여기서 더하지 않고 번호만 남깁니다.
+                std::string line = "  " + std::to_string(i) + ". ";
+
+                if (item.GetCategory() == ItemCategory::WEAPON) {
+                    // ★ 수정됨: 이름과 [등급]을 한 덩어리로 묶어서 칠합니다!
+                    std::string nameAndRarity = item.GetName() + " [" + item.GetRarityString() + "등급]";
+                    line += Color(nameAndRarity, GetRarityColor(item.GetRarity()).c_str()) + " "
+                        + Color(item.GetPropertyString(), "90") + "   "
+                        + std::to_string(item.GetPrice()) + "G";
+                }
+                else {
+                    line += item.GetName() + " x" + std::to_string(slot.second) + " "
+                        + Color(item.GetEffectString(), "92") + "   "
+                        + std::to_string(item.GetPrice()) + "G";
+                }
+                body.push_back(line);
+                i++;
             }
-            else {
-                // ★ 소비 아이템: N등급을 삭제하고 수량 옆에 효과를 표시합니다.
-                line += " x" + std::to_string(slot.second) + " "
-                    + Color(item.GetEffectString(), "92") + "   "
-                    + std::to_string(item.GetPrice()) + "G";
+        }
+        body.push_back("");
+
+        std::vector<std::string> art = {
+        
+            ""
+        };
+
+        std::vector<std::string> footer = {
+            "소지 " + std::to_string(player->GetInventory().GetTotalItemCount())
+                    + "/" + std::to_string(Inventory::MAX_ITEM_COUNT),
+            notice,
+            "번호 선택 (0: 돌아가기): "
+        };
+
+        DrawScreen("인벤토리", body, art, footer);
+        std::cout << "\033[37;27H";
+        notice = "";
+
+        int choice;
+        if (!(std::cin >> choice)) {
+            ClearInputBuffer();
+            notice = Color("[!] 잘못된 입력입니다.", "91");
+            continue;
+        }
+        ClearInputBuffer();
+
+        if (choice == 0) break;
+
+        int index = choice - 1;
+        if (index < 0 || index >= (int)items.size()) {
+            notice = Color("[!] 존재하지 않는 번호입니다.", "91");
+            continue;
+        }
+
+        const Item& selectedItem = items[index].first;
+        if (selectedItem.GetCategory() == ItemCategory::CONSUMABLE) {
+            UseResult res = player->GetInventory().UseItem(selectedItem.GetName(), *player);
+            if (res == UseResult::SUCCESS) {
+                notice = Color("[사용 완료] " + selectedItem.GetName() + "을(를) 사용했습니다.", "92");
             }
-            body.push_back(line);
-            i++;
+        }
+        else {
+            notice = Color("[!] 무기/장비는 여기서 사용할 수 없습니다.", "91");
         }
     }
-    body.push_back("");
-    std::vector<std::string> art = {};
-    std::vector<std::string> footer = {
-        "소지 " + std::to_string(inv.GetTotalItemCount())
-                + "/" + std::to_string(Inventory::MAX_ITEM_COUNT),
-        "", "[ Enter: 돌아가기 ]"
-    };
-    DrawScreen("인벤토리", body, art, footer);
-    
-    std::cin.ignore();
-    std::cin.get();
 }
 
 // ── 근무 기록부(스탯) ────────────────────────────────────
@@ -274,7 +288,7 @@ void ShowStatusScreen(Player* player) {
 
     std::vector<std::string> footer = { "[ Enter: 돌아가기 ]" };
     DrawScreen("근무 기록부", body, art, footer);
-	std::cin.ignore();
+    std::cin.ignore();
     std::cin.get();
 }
 
@@ -323,10 +337,10 @@ void ShowDebugMenu(Player* player) {
             notice = Color("[지급 완료] 10000G", "92");
         }
         else if (choice == 3) {
-			player->GetInventory().AddItem(ItemManager().GetItem("소형 블랙홀 압축기"), 1);		
+            player->GetInventory().AddItem(ItemManager().GetItem("소형 블랙홀 압축기"), 1);
             player->GetInventory().AddItem(ItemManager().GetItem("클린 월드 엔드 캐논"), 1);
             player->GetInventory().AddItem(ItemManager().GetItem("플라즈마 용융 토치"), 1);
-            notice = Color("[지급 완료] 플라즈마 용융 토치", "92");
+            notice = Color("[지급 완료] 최강 무기 세트", "92");
         }
         else if (choice == 4) {
             break;
@@ -347,11 +361,7 @@ int main() {
     bool isProgramRunning = true;
 
     while (isProgramRunning) {
-        // 1. 첫 화면 (아스키 아트) 출력. 이 함수 안에 std::cin.get()이 있어서 엔터를 기다립니다.
         ShowMainTitleArt();
-
-        // 2. 불필요한 두 번째 타이틀 메뉴 제거 완료
-        // 엔터를 누르면 바로 프롤로그로 직행!
         ShowIntro();
 
         ItemManager itemManager;
@@ -361,7 +371,6 @@ int main() {
         GiveInitialItems(player, itemManager);
         InitShop(player, &itemManager);
 
-        // 이전 회차의 킬 카운트 및 스테이지 잠금 상태 리셋
         ResetBattleStats();
 
         bool inMainMenu = true;
@@ -371,7 +380,6 @@ int main() {
             switch (mainChoice) {
             case 1:
                 EnterBattle(player);
-                // 전투 후 체력이 0 이하라면 강제로 타이틀로(유령 요원 방지)
                 if (player->GetHp() <= 0) {
                     inMainMenu = false;
                 }
@@ -380,7 +388,8 @@ int main() {
                 EnterShopMenu();
                 break;
             case 3:
-                ShowInventoryScreen(player->GetInventory());
+                // ★ 인벤토리 함수에 맞게 player 객체 자체를 전달하도록 수정됨!
+                ShowInventoryScreen(player);
                 break;
             case 4:
                 ShowStatusScreen(player);
@@ -389,7 +398,7 @@ int main() {
                 ShowDebugMenu(player);
                 break;
             case 0:
-                inMainMenu = false; // 0번 누르면 다시 첫 아스키 아트 화면으로 돌아감
+                inMainMenu = false;
                 break;
             default:
                 break;

@@ -54,6 +54,16 @@ namespace {
     Player* g_player = nullptr;
     ItemManager* g_itemManager = nullptr;
 
+    std::string GetShopRarityColor(ItemRarity r) {
+        switch (r) {
+        case ItemRarity::C: return "37";
+        case ItemRarity::B: return "93";
+        case ItemRarity::A: return "94";
+        case ItemRarity::S: return "95";
+        default: return "37";
+        }
+    }
+
     // 상점에서는 C등급(최하 등급)만 판매. B/A/S 등급은 "등급 합성"으로만 획득 가능.
     const std::vector<std::string> weaponItemNames = {
         "평범한 가위", "작업용 쇠지렛대", "대나무 빗자루",
@@ -110,19 +120,21 @@ namespace {
             else {
                 for (size_t i = 0; i < stock.size(); ++i) {
                     const Item& item = stock[i];
-                    std::string line = "  " + std::to_string(i + 1) + ". " + item.GetName();
+                    std::string line = "  " + std::to_string(i + 1) + ". ";
 
                     if (item.GetCategory() == ItemCategory::WEAPON) {
-                        // ★ 무기: 기존대로 등급을 표시하고 그 옆에 속성 추가
-                        line += " [" + item.GetRarityString() + "등급] " + Color(item.GetPropertyString(), "90") + "   " + std::to_string(item.GetPrice()) + "G";
+                        // 아이템 이름 + [등급] 전체 색칠
+                        std::string nameAndRarity = item.GetName() + " [" + item.GetRarityString() + "등급]";
+                        line += Color(nameAndRarity, GetShopRarityColor(item.GetRarity()).c_str()) + " "
+                            + Color(item.GetPropertyString(), "90") + "   " + std::to_string(item.GetPrice()) + "G";
                     }
                     else {
-                        // ★ 소비템: [N등급] 삭제! 대신 초록색으로 효과를 표시
-                        line += " " + Color(item.GetEffectString(), "92") + "   " + std::to_string(item.GetPrice()) + "G";
+                        line += item.GetName() + " " + Color(item.GetEffectString(), "92") + "   " + std::to_string(item.GetPrice()) + "G";
                     }
                     body.push_back(line);
                 }
-            }
+            } // ★ 여기에 있어야 할 중괄호가 빠져서 에러가 났었습니다! (복구 완료)
+
             body.push_back("");
             body.push_back("  0. 이전 메뉴로");
             body.push_back("");
@@ -164,7 +176,7 @@ namespace {
                 Color("  ※ 수량을 입력하십시오.", "90"),
                 ""
             };
-            
+
             std::vector<std::string> qFooter = {
                 "예산 " + Color(std::to_string(player->GetGold()) + "G", "93"),
                 "",
@@ -243,13 +255,14 @@ namespace {
             { ItemRarity::A, ItemRarity::S }
         };
 
-        auto rarityChar = [](ItemRarity r) -> char {
+        // ★ [등급] 괄호 전체에 색을 입히는 함수로 교체 완료!
+        auto coloredBracket = [](ItemRarity r) -> std::string {
             switch (r) {
-            case ItemRarity::C: return 'C';
-            case ItemRarity::B: return 'B';
-            case ItemRarity::A: return 'A';
-            case ItemRarity::S: return 'S';
-            default: return '?';
+            case ItemRarity::C: return Color("[C등급]", "37");
+            case ItemRarity::B: return Color("[B등급]", "93");
+            case ItemRarity::A: return Color("[A등급]", "94");
+            case ItemRarity::S: return Color("[S등급]", "95");
+            default: return "[?등급]";
             }
             };
 
@@ -262,12 +275,13 @@ namespace {
                 ItemRarity to = steps[i].second;
 
                 int have = CountByRarity(player, from);
-                int reqCount = GetUpgradeRequirement(from); // ★ 현재 등급에 맞는 필요 개수 불러오기
+                int reqCount = GetUpgradeRequirement(from);
                 bool canUpgrade = have >= reqCount;
 
-                std::string line = "  " + std::to_string(i + 1) + ". ["
-                    + std::string(1, rarityChar(from)) + "등급 -> "
-                    + std::string(1, rarityChar(to)) + "등급]    재료 "
+                // ★ 합성 경로 출력: [C등급] -> [B등급] 형태로 변경
+                std::string line = "  " + std::to_string(i + 1) + ". "
+                    + coloredBracket(from) + " -> "
+                    + coloredBracket(to) + "    재료 "
                     + std::to_string(have) + "/" + std::to_string(reqCount);
                 line += canUpgrade ? Color("   [가능]", "92") : Color("   [재료 부족]", "90");
                 body.push_back(line);
@@ -282,8 +296,6 @@ namespace {
                 "선택: "
             };
 
-            // ★ 이전에 만든 art가 있다면 DrawScreen 파라미터에 추가해주시고, 없다면 기존 방식대로 출력하세요.
-            // (shop.cpp에서 아트를 넣으셨다면 body, art, footer 로 넘겨주시면 됩니다.)
             std::vector<std::string> art = {
                 "",
                 Color(R"(        [  보 급 소  ] )", "96"),
@@ -314,11 +326,13 @@ namespace {
 
             ItemRarity from = steps[index].first;
             ItemRarity to = steps[index].second;
-            int reqCount = GetUpgradeRequirement(from); // ★ 선택한 합성의 필요 개수
+            int reqCount = GetUpgradeRequirement(from);
 
             if (!ConsumeByRarity(player, from, reqCount)) {
-                notice = Color("[!] 재료가 부족합니다. ("
-                    + std::string(1, rarityChar(from)) + "등급 " + std::to_string(reqCount) + "개 필요)", "91");
+                // ★ 재료 부족 에러 메시지 괄호 찐빠 해결 완료!
+                notice = Color("[!] 재료가 부족합니다. (", "91")
+                    + coloredBracket(from)
+                    + Color(" " + std::to_string(reqCount) + "개 필요)", "91");
                 continue;
             }
 

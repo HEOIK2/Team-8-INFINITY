@@ -168,14 +168,18 @@ bool StartBattle(Player* player, Monster* monster) {
         for (int r = 0; r < rows; ++r) {
             // 첫 번째 열
             int idx1 = r;
-            std::string item1 = std::to_string(idx1 + 1) + ". " + inventoryItems[idx1].first.GetName();
+            std::string item1 = std::to_string(idx1 + 1) + ". ";
             if (inventoryItems[idx1].first.GetCategory() == ItemCategory::WEAPON) {
-                // 무기 속성 추가
-                item1 += " [" + inventoryItems[idx1].first.GetRarityString() + "등급] " + Color(inventoryItems[idx1].first.GetPropertyString(), "90");
+                std::string rColor = (inventoryItems[idx1].first.GetRarity() == ItemRarity::S) ? "95" : // ★ 보라
+                    (inventoryItems[idx1].first.GetRarity() == ItemRarity::A) ? "94" : // ★ 파랑
+                    (inventoryItems[idx1].first.GetRarity() == ItemRarity::B) ? "93" : "37"; // ★ 노랑
+
+                // ★ 수정됨: 이름과 [등급]을 묶어서 색칠
+                std::string nameAndRarity = inventoryItems[idx1].first.GetName() + " [" + inventoryItems[idx1].first.GetRarityString() + "등급]";
+                item1 += Color(nameAndRarity, rColor.c_str()) + " " + Color(inventoryItems[idx1].first.GetPropertyString(), "90");
             }
             else {
-                // 소비템 [등급] 삭제 및 효과 추가
-                item1 += " x" + std::to_string(inventoryItems[idx1].second) + " " + Color(inventoryItems[idx1].first.GetEffectString(), "92");
+                item1 += inventoryItems[idx1].first.GetName() + " x" + std::to_string(inventoryItems[idx1].second) + " " + Color(inventoryItems[idx1].first.GetEffectString(), "92");
             }
             std::string line = "  " + item1;
 
@@ -183,16 +187,21 @@ bool StartBattle(Player* player, Monster* monster) {
             int idx2 = r + rows;
             if (idx2 < itemCount) {
                 int w1 = DisplayWidth(line);
-                // 1열의 고정 너비를 44칸으로 넉넉하게 확장 (속성 텍스트 공간 확보)
                 int pad = 44 - w1;
                 if (pad < 2) pad = 2;
 
-                std::string item2 = std::to_string(idx2 + 1) + ". " + inventoryItems[idx2].first.GetName();
+                std::string item2 = std::to_string(idx2 + 1) + ". ";
                 if (inventoryItems[idx2].first.GetCategory() == ItemCategory::WEAPON) {
-                    item2 += " [" + inventoryItems[idx2].first.GetRarityString() + "등급] " + Color(inventoryItems[idx2].first.GetPropertyString(), "90");
+                    std::string rColor = (inventoryItems[idx2].first.GetRarity() == ItemRarity::S) ? "95" :
+                        (inventoryItems[idx2].first.GetRarity() == ItemRarity::A) ? "94" :
+                        (inventoryItems[idx2].first.GetRarity() == ItemRarity::B) ? "93" : "37";
+
+                    // ★ 수정됨: 이름과 [등급]을 묶어서 색칠
+                    std::string nameAndRarity = inventoryItems[idx2].first.GetName() + " [" + inventoryItems[idx2].first.GetRarityString() + "등급]";
+                    item2 += Color(nameAndRarity, rColor.c_str()) + " " + Color(inventoryItems[idx2].first.GetPropertyString(), "90");
                 }
                 else {
-                    item2 += " x" + std::to_string(inventoryItems[idx2].second) + " " + Color(inventoryItems[idx2].first.GetEffectString(), "92");
+                    item2 += inventoryItems[idx2].first.GetName() + " x" + std::to_string(inventoryItems[idx2].second) + " " + Color(inventoryItems[idx2].first.GetEffectString(), "92");
                 }
                 line += std::string(pad, ' ') + item2;
             }
