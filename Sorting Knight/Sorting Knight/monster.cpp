@@ -8,6 +8,7 @@ Monster::Monster(std::string name, MonsterType property, int hp, int atk, int ex
 	this->name = name;
 	this->property = property;
 	this->hp = hp;
+	this->maxHp = hp;
 	this->atk = atk;
 	this->expReward = expReward;
 	this->goldReward = goldReward;

@@ -11,6 +11,7 @@ private:
     MonsterType property; // 몬스터 속성 (type.h에 정의됨)
     int hp;
     int atk;
+    int maxHp;
     int expReward;
     int goldReward;
 
@@ -24,7 +25,7 @@ public:
 
     MonsterType getProperty() { return property; }
     void setProperty(MonsterType property) { this->property = property; }
-
+    int getMaxHp() { return maxHp; }
     int getHp() { return hp; }
     void setHp(int hp) { this->hp = hp; }
 

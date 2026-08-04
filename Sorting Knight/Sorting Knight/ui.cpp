@@ -117,14 +117,13 @@ static std::wstring ToWide(const std::string& s) {
 	return r;
 }
 
+// 글자 하나가 콘솔에서 몇 칸을 먹는지 반환해주는 함수.
 static int CharWidth(wchar_t ch) {
-	if ((ch >= 0x1100 && ch <= 0x115F) ||
-		(ch >= 0x2500 && ch <= 0x257F) ||
-		(ch >= 0x2580 && ch <= 0x259F) ||
-		(ch >= 0x25A0 && ch <= 0x25FF) ||
-		(ch >= 0x2E80 && ch <= 0xA4CF) ||
-		(ch >= 0xAC00 && ch <= 0xD7A3) ||
-		(ch >= 0xFF00 && ch <= 0xFF60)) {
+	if ((ch >= 0x1100 && ch <= 0x115F) ||   // 한글 자모
+		(ch == 0x203B) ||                   // ★ 추가: 당구장 마크(※)는 2칸으로 계산!
+		(ch >= 0x2E80 && ch <= 0xA4CF) ||   // CJK 기호·한자
+		(ch >= 0xAC00 && ch <= 0xD7A3) ||   // 한글 완성형 (가~힣)
+		(ch >= 0xFF00 && ch <= 0xFF60)) {   // 전각 영숫자
 		return 2;
 	}
 	return 1;
