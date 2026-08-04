@@ -502,7 +502,7 @@ void EnterEnding(Player* player) {
     TypeTextAt(startY + 1, startX, "폐기처리장의 마지막 잔재가 조용히 흩어진다.", "90", 30);
     Sleep(300);
 
-    TypeTextAt(startY + 3, startX, "더 이상 처리할 것이 남지 않았다.", "90", 25);
+    TypeTextAt(startY + 3, startX, "하지만 \"재공\"은 멈추지 않는다. 오늘도 분리수거를 위해 묵묵히 임무를 완수하며 복무한다.", "90", 25);
     Sleep(300);
 
     TypeTextAt(startY + 5, startX, "- 최종 민원 처리 대장 -", "93", 40);
