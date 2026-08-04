@@ -3,6 +3,8 @@
 #include <vector>
 
 class Inventory;   // 전방 선언
+
+void TypeTextAt(int row, int col, const std::string& text, const std::string& colorCode = "37", int delay = 40);
 void ShowInventoryScreen(const Inventory& inv);
 
 void UI_Init();

@@ -10,6 +10,8 @@ class Item;
 
 Monster* StageMonster(int playerLevel, int& selectedStage);
 
+bool IsGameCleared();
+
 bool StartBattle(Player* player, Monster* monster); // 전투시작
 
 void EnterBattle(Player* player);  //전투처리

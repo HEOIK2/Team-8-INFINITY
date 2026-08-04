@@ -28,7 +28,7 @@ void ClearInputBuffer() {
 }
 
 // ── 타이핑 효과 보조 함수 (좌표 지정 기능 추가) ──
-void TypeTextAt(int row, int col, const std::string& text, const std::string& colorCode = "37", int delay = 40) {
+void TypeTextAt(int row, int col, const std::string& text, const std::string& colorCode, int delay) {
     // 지정된 좌표로 커서 이동 후 색상 적용
     std::cout << "\033[" << row << ";" << col << "H";
     std::cout << "\033[" << colorCode << "m";
@@ -82,26 +82,26 @@ void ShowIntro() {
     TypeTextAt(startY + 2, startX, "20XX년.", "93", 50);
     Sleep(250);
 
-    TypeTextAt(startY + 4, startX, "재활용 공익근무요원으로 근무한 지 어언 30년이 되었다.", "90", 15);
+    TypeTextAt(startY + 4, startX, "재활용 공익근무요원 제도가 도입된 지 어언 30년.", "90", 15);
     Sleep(150);
 
     TypeTextAt(startY + 5, startX, "10년이면 강산도 변한다는 말이 있지.", "90", 15);
     TypeTextAt(startY + 6, startX, "30년이 지난 지금, 많은 것들이 바뀌었다.", "90", 15);
     Sleep(150);
 
-    TypeTextAt(startY + 8, startX, "이미 분리배출에 관한 법률은 폐지된 지 오래다.", "37", 20);
-    TypeTextAt(startY + 9, startX, "사람들은 점점 쓰레기를 나누지 않았고,", "90", 15);
-    TypeTextAt(startY + 10, startX, "재활용센터엔 더 이상 예산이 책정되지 않게 되었다.", "90", 15);
+    TypeTextAt(startY + 8, startX, "??? : [생활폐기물 분리배출 등에 관한 법률]이 폐지되었음을 알린다.", "37", 20);
+    TypeTextAt(startY + 9, startX, "그날부터 수많은 폐기물들이 분리수거되지 못한채 버려졌고 , ", "90", 15);
+    TypeTextAt(startY + 10, startX, "그렇게 버려진 폐기물들은 소멸되지 못한채 자아를 가지기 시작한다.", "90", 15);
     Sleep(250);
 
-    TypeTextAt(startY + 12, startX, "돈을 좇아 요원들은 하나둘 소집해제를 하기 시작했고,", "90", 15);
+    TypeTextAt(startY + 12, startX, "분리수거에 신물이 난 요원들은 하나둘 소집해제를 하기 시작했고,", "90", 15);
     TypeTextAt(startY + 13, startX, "머지않아 재활용센터엔 아무도 남지 않게 되었다.....", "90", 20);
     Sleep(400); // 극적인 정적은 좀 남겨둠
 
-    TypeTextAt(startY + 15, startX, "모두가 끝났다고 생각했을 때, 묵묵히 사회 복무를 이어가는 한 남자가 있었다.", "37", 20);
+    TypeTextAt(startY + 15, startX, "라고 모두가 알고 있을 때, 묵묵히 사회 복무를 이어가는 한 남자가 있었다.", "37", 20);
     Sleep(300);
 
-    TypeTextAt(startY + 17, startX, "최후의 한 명. 마지막 재활용 공익근무요원.", "96", 30);
+    TypeTextAt(startY + 17, startX, "폐지된 법을 여전히 집행하는 마지막이자 유일한 재활용 공익근무요원.", "96", 30);
     Sleep(250);
     TypeTextAt(startY + 18, startX, "일명 \"재 공\"이라 불린 남자의 이야기다.", "93", 40);
 
@@ -444,6 +444,10 @@ int main() {
                 EnterBattle(player);
                 if (player->GetHp() <= 0) {
                     inMainMenu = false;
+                }
+                if (IsGameCleared()) { 
+                    inMainMenu = false;
+                    isProgramRunning = false;    // 바깥 while 루프도 종료 → 프로그램 완전 종료
                 }
                 break;
             case 2:

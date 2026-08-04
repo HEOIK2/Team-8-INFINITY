@@ -1,4 +1,5 @@
-﻿#include "battle.h"
+﻿#define NOMINMAX
+#include "battle.h"
 #include "Player.h"
 #include "monster.h"
 #include "Item.h"
@@ -10,9 +11,11 @@
 #include <vector>
 #include <algorithm>
 #include <cstdlib>
+#include <windows.h>
 
 static bool stage2Entered = false;
 static bool stage3Entered = false;
+static bool gameCleared = false;
 
 // 처치 집계 (몬스터 이름 -> 처치 수)
 static std::map<std::string, int> monsterkillCount;
@@ -91,6 +94,72 @@ std::map<std::string, int> GetMonsterKillCount() {
 	return monsterkillCount;
 }
 
+bool IsGameCleared() {
+    return gameCleared;
+}
+
+// ── 구역 진입 연출 (중간보스 / 최종보스) ──────────────────────
+void ShowStageIntro(int stage, const std::string& monsterName) {
+    std::vector<std::string> body(20, "");
+    std::vector<std::string> art = {};
+    std::string title;
+    std::vector<std::string> footer;
+
+    if (stage == 2) {
+        title = "구역 진입 - 분리수거장";
+        footer = { "[ Enter: 진입 ]" };
+    }
+    else {
+        title = "구역 진입 - 폐기처리장";
+        footer = { "[ Enter: 최후의 임무 ]" };
+    }
+
+    DrawScreen(title, body, art, footer);
+
+    int startY = 5;
+    int startX = 6;
+
+    if (stage == 2) {
+        TypeTextAt(startY + 2, startX, "분리수거장 안쪽 깊숙한 곳.", "90", 20);
+        Sleep(200);
+
+        TypeTextAt(startY + 4, startX, "찌그러진 캔들이 산처럼 쌓여 이상한 진동을 내고 있다.", "90", 15);
+        Sleep(200);
+
+        TypeTextAt(startY + 6, startX, "누군가... 아니, 무언가가 오랫동안 압축되지 못한 채", "90", 15);
+        TypeTextAt(startY + 7, startX, "그 안에서 스스로 뭉쳐버린 듯하다.", "90", 15);
+        Sleep(300);
+
+        TypeTextAt(startY + 9, startX, "쿠구구구...", "37", 50);
+        Sleep(400);
+
+        TypeTextAt(startY + 11, startX, "[ " + monsterName + " ] 이(가) 그 형체를 드러냈다.", "91", 40);
+        Sleep(250);
+    }
+    else if (stage == 3) {
+        TypeTextAt(startY + 2, startX, "폐기처리장. 이 구역의 가장 깊은 곳.", "90", 20);
+        Sleep(200);
+
+        TypeTextAt(startY + 4, startX, "녹슨 철제 잔해들이 겹겹이 쌓여 거대한 그림자를 드리운다.", "90", 15);
+        Sleep(200);
+
+        TypeTextAt(startY + 6, startX, "30년간 아무도 손대지 못한 채 방치된 폐기물들이", "90", 15);
+        TypeTextAt(startY + 7, startX, "하나의 의지를 가진 듯 꿈틀거리기 시작한다.", "90", 15);
+        Sleep(300);
+
+        TypeTextAt(startY + 9, startX, "이 곳을 정리하면, 진짜 마지막이다.", "37", 30);
+        Sleep(400);
+
+        TypeTextAt(startY + 11, startX, "[ " + monsterName + " ]", "93", 60);
+        TypeTextAt(startY + 12, startX, "재활용의 역사가 남긴 최후의 잔재가 눈을 뜬다.", "96", 40);
+        Sleep(300);
+    }
+
+    std::cout << "\033[37;18H";
+    std::cin.ignore();
+    std::cin.get();
+}
+
 Monster* StageMonster(int playerLevel, int& selectedStage) {
 
     MonsterType randomPool[] = { MonsterType::NONE, MonsterType::PAPER, MonsterType::PLASTIC, MonsterType::GLASS };
@@ -135,7 +204,7 @@ Monster* StageMonster(int playerLevel, int& selectedStage) {
             selectedStage = 1;
             return CreateMonster(selectedType, playerLevel);
 
-        case 2:
+        case 2: {
             if (playerLevel < 5) {
                 notice = "아직 분리수거할 수 없는 구역입니다.";
                 continue;
@@ -146,9 +215,12 @@ Monster* StageMonster(int playerLevel, int& selectedStage) {
             }
             selectedType = MonsterType::ALUMINUM;
             selectedStage = 2;
-            return CreateMonster(selectedType, playerLevel);
+            Monster* boss2 = CreateMonster(selectedType, playerLevel);
+            ShowStageIntro(2, boss2->getName());   // ★ 진입 연출
+            return boss2;
+        }
 
-        case 3:
+        case 3: {
             if (playerLevel < 10) {
                 notice = "아직 분리수거할 수 없는 구역입니다.";
                 continue;
@@ -159,7 +231,10 @@ Monster* StageMonster(int playerLevel, int& selectedStage) {
             }
             selectedType = MonsterType::IRON;
             selectedStage = 3;
-            return CreateMonster(selectedType, playerLevel);
+            Monster* boss3 = CreateMonster(selectedType, playerLevel);
+            ShowStageIntro(3, boss3->getName());   // ★ 진입 연출
+            return boss3;
+        }
 
         default:
             notice = "잘못된 선택입니다.";
@@ -178,6 +253,7 @@ void EnterBattle(Player* player) {
         ClearStage(selectedStage);
         if (selectedStage == 3) {
             EnterEnding(player);
+            gameCleared = true;
         }
     }
     delete monster;
@@ -276,7 +352,7 @@ bool StartBattle(Player* player, Monster* monster) {
 
             int currentWidth = DisplayWidth(l);
 
-            // ★ 왼쪽 창을 28칸으로 훅 당겨서 압축! 속성 텍스트가 들어갈 넉넉한 공간 확보
+            // 
             int pad1 = 28 - currentWidth;
             if (pad1 < 1) pad1 = 1;
 
@@ -287,13 +363,20 @@ bool StartBattle(Player* player, Monster* monster) {
         }
         body.push_back("");
 
-        // ★ 부활한 art 영역! (나중에 몬스터 타입에 따라 아트를 다르게 바꿀 수도 있습니다)
-        std::vector<std::string> art = MakeArtWithDialogue(GetMonsterArt(monster->getName()), "", 114);
-        art.insert(art.begin(), 1, "");
-        art.push_back("");
+        // 
+        std::vector<std::string> art = {
+           
+        };
 
-        // 푸터 영역 (로그 출력)
-        std::vector<std::string> footer = battleLog;
+        // 푸터 영역 (로그 출력) - 항상 4줄 고정
+        std::vector<std::string> footer;
+        int emptyLines = 4 - (int)battleLog.size();
+        for (int i = 0; i < emptyLines; ++i) {
+            footer.push_back(""); // 로그가 4줄 미만이면 위쪽을 빈 줄로 채움
+        }
+        for (const auto& log : battleLog) {
+            footer.push_back(log);
+        }
         footer.push_back("");
         footer.push_back("아이템 번호: ");
 
@@ -327,21 +410,29 @@ bool StartBattle(Player* player, Monster* monster) {
             std::vector<MonsterType> strong = selectedItem.GetStrongAgainst();
             std::vector<MonsterType> weak = selectedItem.GetWeakAgainst();
 
+            std::string effectText;
+            std::string effectColor;
+
             if (std::find(strong.begin(), strong.end(), monsterType) != strong.end()) {
                 damage = damage * 1.5;
-                AddLog(Color("> 효과가 굉장했다!", "96"));
+                effectText = "효과가 굉장했다!";
+                effectColor = "96";
             }
             else if (std::find(weak.begin(), weak.end(), monsterType) != weak.end()) {
                 damage = damage / 1.5;
-                AddLog(Color("> 효과가 별로다...", "90"));
+                effectText = "효과가 별로다...";
+                effectColor = "90";
             }
             else {
-                AddLog("> 효과는 보통이다.");
+                effectText = "효과는 보통이다.";
+                effectColor = "93";
             }
 
             int finalDamage = (int)damage;
             monster->setHp(monster->getHp() - finalDamage);
-            AddLog(Color("> " + std::to_string(finalDamage) + " 피해!", "93"));
+
+            // ★ 상성 결과 + 데미지를 한 줄로 합침
+            AddLog(Color("> " + effectText + " (" + std::to_string(finalDamage) + " 피해!)", effectColor.c_str()));
         }
         else {
             if (selectedItem.GetHealHP() > 0) {
@@ -385,8 +476,9 @@ bool StartBattle(Player* player, Monster* monster) {
             "", ""
         };
         std::vector<std::string> art = {};
-        std::vector<std::string> footer = { "[ Enter: 계속 ]" };
+        std::vector<std::string> footer = { "[ Enter: 타이틀로 돌아가기 ]" };
         DrawScreen("게임 오버", body, art, footer);
+
         std::cin.ignore();
         std::cin.get();
         return false;
@@ -463,36 +555,52 @@ void ClearStage(int stage) {
 // ── 엔딩 : 최종 민원 처리 대장 ────────────────────────────
 void EnterEnding(Player* player) {
 
-    std::vector<std::string> body = {
-        "",
-        Color("  - 최종 민원 처리 대장 -", "93"),
-        "",
-        "  담당자   " + player->GetName()
-                     + " (" + player->GetJobName()
-                     + ", Lv." + std::to_string(player->GetLevel()) + ")",
-        "",
-        Color("  ── 처리 내역 ──", "90"),
-        ""
-    };
-
-    for (const auto& pair : monsterkillCount) {
-        body.push_back("    " + pair.first + "   x" + std::to_string(pair.second));
-    }
-
-    body.push_back("");
-    body.push_back(Color("  누적 처리 실적   " + std::to_string(totalWinCount) + "건", "96"));
-    body.push_back("");
-    body.push_back(Color("  폐기처리장 완전 정화 완료. 수고하셨습니다.", "92"));
-    body.push_back("");
-
-    std::vector<std::string> footer = {
-        Color("※ 분리배출에 관한 법률은 여전히 폐지 상태입니다.", "90"),
-        "",
-        "[ Enter: 계속 ]"
-    };
-
+    std::vector<std::string> body(20, "");
     std::vector<std::string> art = {};
+    std::vector<std::string> footer = { "[ Enter: 계속 ]" };
+
     DrawScreen("엔딩 - 업무 보고", body, art, footer);
+
+    int startY = 5;
+    int startX = 6;
+
+    TypeTextAt(startY + 1, startX, "폐기처리장의 마지막 잔재가 조용히 흩어진다.", "90", 30);
+    Sleep(300);
+
+    TypeTextAt(startY + 3, startX, "하지만 \"재공\"은 멈추지 않는다. 오늘도 분리수거를 위해 묵묵히 임무를 완수하며 복무한다.", "90", 25);
+    Sleep(300);
+
+    TypeTextAt(startY + 5, startX, "- 최종 민원 처리 대장 -", "93", 40);
+    Sleep(400);
+
+    std::string profile = "담당자   " + player->GetName()
+        + " (" + player->GetJobName()
+        + ", Lv." + std::to_string(player->GetLevel()) + ")";
+    TypeTextAt(startY + 7, startX, profile, "37", 20);
+    Sleep(300);
+
+    TypeTextAt(startY + 9, startX, "── 처리 내역 ──", "90", 20);
+    Sleep(200);
+
+    int lineOffset = 11;
+    for (const auto& pair : monsterkillCount) {
+        std::string line = "  " + pair.first + "   x" + std::to_string(pair.second);
+        TypeTextAt(startY + lineOffset, startX, line, "37", 15);
+        lineOffset++;
+    }
+    Sleep(300);
+
+    lineOffset++;
+    TypeTextAt(startY + lineOffset, startX,
+        "누적 처리 실적   " + std::to_string(totalWinCount) + "건", "96", 30);
+    Sleep(500);
+
+    lineOffset += 2;
+    TypeTextAt(startY + lineOffset, startX,
+        "폐기처리장 완전 정화 완료. 수고하셨습니다.", "92", 40);
+    Sleep(600);
+
+    std::cout << "\033[37;24H";
     std::cin.ignore();
     std::cin.get();
 }
@@ -501,6 +609,7 @@ void EnterEnding(Player* player) {
 void ResetBattleStats() {
     stage2Entered = false;
     stage3Entered = false;
+    gameCleared = false;
     monsterkillCount.clear(); // 몬스터 처치 기록 맵 비우기
     totalWinCount = 0;        // 누적 처리 실적 0으로 리셋
     battleLog.clear();        // 이전 게임의 전투 로그도 비워주기
