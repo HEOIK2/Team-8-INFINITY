@@ -118,7 +118,7 @@ namespace {
             body.push_back("");
             body.push_back("  0. 이전 메뉴로");
             body.push_back("");
-
+            std::vector<std::string> art = {};
             std::vector<std::string> footer = {
                 "예산 " + Color(std::to_string(player->GetGold()) + "G", "93")
                 + "      적재 " + std::to_string(player->GetInventory().GetTotalItemCount())
@@ -127,7 +127,7 @@ namespace {
                 "물품 번호: "
             };
 
-            DrawScreen(title, body, footer);
+            DrawScreen(title, body, art, footer);
             std::cout << "\033[37;15H";
             notice = "";
 
@@ -156,12 +156,13 @@ namespace {
                 Color("  ※ 수량을 입력하십시오.", "90"),
                 ""
             };
+            
             std::vector<std::string> qFooter = {
                 "예산 " + Color(std::to_string(player->GetGold()) + "G", "93"),
                 "",
                 "수량: "
             };
-            DrawScreen("구매 신청", qBody, qFooter);
+            DrawScreen("구매 신청", qBody, art, qFooter);
             std::cout << "\033[37;15H";
 
             int count;
@@ -266,7 +267,8 @@ namespace {
                 "선택: "
             };
 
-            DrawScreen("등급 합성", body, footer);
+            std::vector<std::string> art = {};
+            DrawScreen("등급 합성", body, art, footer);
             std::cout << "\033[37;11H";
             notice = "";
 
@@ -336,7 +338,8 @@ void EnterShopMenu() {
             "선택: "
         };
 
-        DrawScreen("보급소", body, footer);
+        std::vector<std::string> art = {};
+        DrawScreen("보급소", body, art, footer);
         std::cout << "\033[37;11H";
         notice = "";
 

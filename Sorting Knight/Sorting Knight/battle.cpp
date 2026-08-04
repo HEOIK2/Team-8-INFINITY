@@ -45,12 +45,13 @@ Monster* StageMonster(int playerLevel, int& selectedStage) {
             Color("  ※ 권장 레벨 미달 구역은 출입이 제한됩니다.", "90"),
             ""
         };
+        std::vector<std::string> art = {};
         std::vector<std::string> footer = {
             notice.empty() ? "" : Color(notice, "91"),
             "",
             "입장 구역: "
         };
-        DrawScreen("구역 선택", body, footer);
+        DrawScreen("구역 선택", body, art, footer);
         std::cout << "\033[37;14H";        
 
         int stageChoice;
@@ -151,12 +152,12 @@ bool StartBattle(Player* player, Monster* monster) {
             body.push_back(line);
         }
         body.push_back("");
-
+        std::vector<std::string> art = {};
         std::vector<std::string> footer = battleLog;
         footer.push_back("");
         footer.push_back("아이템 번호: ");
 
-        DrawScreen("전투 - " + monster->getName(), body, footer);
+        DrawScreen("전투 - " + monster->getName(), body, art, footer);
         std::cout << "\033[37;16H";
 
         int choice;
@@ -240,8 +241,9 @@ bool StartBattle(Player* player, Monster* monster) {
             Color("        규정 제17조에 의거, 후임은 배정되지 않습니다.", "90"),
             "", ""
         };
+        std::vector<std::string> art = {};
         std::vector<std::string> footer = { "[ Enter: 계속 ]" };
-        DrawScreen("게임 오버", body, footer);
+        DrawScreen("게임 오버", body, art, footer);
         std::cin.ignore();
         std::cin.get();
         return false;
@@ -293,13 +295,13 @@ bool StartBattle(Player* player, Monster* monster) {
         body.push_back("");
         body.push_back(Color("  누적 처리 실적  " + std::to_string(totalWinCount) + "건", "90"));
         body.push_back("");
-
+        std::vector<std::string> art = {};
         std::vector<std::string> footer = {
             Color("규정 제4조에 의거, 처리 완료.", "90"),
             "",
             "[ Enter: 계속 ]"
         };
-        DrawScreen("처리 완료", body, footer);
+        DrawScreen("처리 완료", body, art, footer);
         std::cin.ignore();
         std::cin.get();
         return true;
@@ -346,7 +348,8 @@ void EnterEnding(Player* player) {
         "[ Enter: 계속 ]"
     };
 
-    DrawScreen("엔딩 - 업무 보고", body, footer);
+    std::vector<std::string> art = {};
+    DrawScreen("엔딩 - 업무 보고", body, art, footer);
     std::cin.ignore();
     std::cin.get();
 }

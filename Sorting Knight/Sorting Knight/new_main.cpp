@@ -42,8 +42,9 @@ void ShowIntro() {
         Color("남은 건 한 명. 마지막 공익근무요원.", "93"),
         "", ""
     };
+    std::vector<std::string> art = {};
     std::vector<std::string> footer = { "[ Enter: 계속 ]" };
-    DrawScreen("프롤로그", body, footer);
+    DrawScreen("프롤로그", body, art, footer);
     std::cin.ignore();
     std::cin.get();
 }
@@ -59,11 +60,13 @@ int ShowTitleMenu() {
         "        2. 게임 종료",
         ""
     };
+    std::vector<std::string> art = {};
     std::vector<std::string> footer = {
         Color("폐지된 법을 집행하러 갈 시간입니다.", "90"),
         "", "선택: "
     };
-    DrawScreen("타이틀", body, footer);
+    
+    DrawScreen("타이틀", body, art, footer);
     std::cout << "\033[37;11H";
     int choice;
     std::cin >> choice;
@@ -82,8 +85,9 @@ Player* InitializeGame() {
             "", "당신의 이름을 입력하십시오.", "",
             Color("※ 근무일지에 기재될 성명입니다.", "90"), ""
         };
+        std::vector<std::string> art = {};
         std::vector<std::string> footer = { "이름: " };
-        DrawScreen("신규 요원 등록", body, footer);
+        DrawScreen("신규 요원 등록", body, art, footer);
         std::cout << "\033[37;11H";
 
         if (std::cin >> name) {
@@ -105,8 +109,9 @@ Player* InitializeGame() {
             "  4. 재활용기사          — 분리수거 집게 (C)",
             ""
         };
+        std::vector<std::string> art = {};
         std::vector<std::string> footer = { "부서 번호(1-4): " };
-        DrawScreen("부서 배치", body, footer);
+        DrawScreen("부서 배치", body, art, footer);
         std::cout << "\033[37;20H";
 
         if (std::cin >> cnt) {
@@ -147,6 +152,7 @@ void GiveInitialItems(Player* player, ItemManager& itemManager) {
     }
 }
 
+
 // ── 메인 메뉴 ────────────────────────────────────────────
 int ShowMainMenu(Player* player) {
     std::vector<std::string> body = {
@@ -165,11 +171,25 @@ int ShowMainMenu(Player* player) {
         "  0. 타이틀로",
         ""
     };
+
+    // ★ 빈칸 아래쪽에 들어갈 아스키 아트
+    std::vector<std::string> art = {
+        "",
+        Color(R"(         __ )", "90"),
+        Color(R"(        /  \       [ 경고: 미분류 폐기물 감지 ] )", "93"),
+        Color(R"(       /____\      오늘도 무사히 분리수거를 완료하십시오. )", "90"),
+        Color(R"(       |    | )", "90"),
+        Color(R"(       |____| )", "90"),
+        ""
+    };
+
     std::vector<std::string> footer = {
         Color("규정 제4조에 의거, 근무를 계속하십시오.", "90"),
         "", "선택: "
     };
-    DrawScreen("메인 메뉴", body, footer);
+
+    // ★ 순서 변경: title, body, art, footer
+    DrawScreen("메인 메뉴", body, art, footer);
     std::cout << "\033[37;11H";
     int choice;
     std::cin >> choice;
@@ -199,13 +219,13 @@ void ShowInventoryScreen(const Inventory& inv) {
         }
     }
     body.push_back("");
-
+    std::vector<std::string> art = {};
     std::vector<std::string> footer = {
         "소지 " + std::to_string(inv.GetTotalItemCount())
                 + "/" + std::to_string(Inventory::MAX_ITEM_COUNT),
         "", "[ Enter: 돌아가기 ]"
     };
-    DrawScreen("인벤토리", body, footer);
+    DrawScreen("인벤토리", body, art, footer);
     
     std::cin.ignore();
     std::cin.get();
@@ -247,6 +267,7 @@ void ShowDebugMenu(Player* player) {
             "  3. 나가기",
             ""
         };
+        std::vector<std::string> art = {};
         std::vector<std::string> footer = {
             "Lv." + std::to_string(player->GetLevel())
             + "    EXP " + std::to_string(player->GetExp())
@@ -255,7 +276,7 @@ void ShowDebugMenu(Player* player) {
             "선택: "
         };
 
-        DrawScreen("특별 감사 단말", body, footer);
+        DrawScreen("특별 감사 단말", body, art, footer);
         std::cout << "\033[37;11H";
         notice = "";
 
