@@ -103,14 +103,16 @@ Player* InitializeGame() {
     while (true) {
         std::vector<std::string> body = {
             "", name + " 요원, 배치 부서를 선택하십시오.", "",
-            "  1. 청소부              — 대나무 빗자루 (C)",
-            "  2. 환경미화원          — 나무 젓가락 (C)",
-            "  3. 분리수거전문가      — 평범한 가위 (C)",
-            "  4. 재활용기사          — 분리수거 집게 (C)",
+            "  1. 일반쓰레기 수거반   — 대나무 빗자루 (C)",
+            "  2. 도로교통 미화반     — 분리수거 집게 (C)",
+            "  3. 분리배출 지원반     — 평범한 가위 (C)",
+            "  4. 대형폐기물 철거반   — 작업용 쇠지렛대 (C)",
             ""
         };
-        std::vector<std::string> art = {};
         std::vector<std::string> footer = { "부서 번호(1-4): " };
+
+        // (UI 분할선이 적용된 DrawScreen 호출, art가 필요하다면 빈 벡터를 추가하세요)
+        std::vector<std::string> art = {};
         DrawScreen("부서 배치", body, art, footer);
         std::cout << "\033[37;20H";
 
@@ -124,34 +126,33 @@ Player* InitializeGame() {
     }
 
     switch (cnt) {
-    case 1: return new Player(name, Job::Cleaner);
-    case 2: return new Player(name, Job::StreetCleaner);
-    case 3: return new Player(name, Job::RecycleExpert);
-    case 4: return new Player(name, Job::RecycleTech);
-    default: return new Player(name, Job::Cleaner);
+    case 1: return new Player(name, Job::DeptGeneral);
+    case 2: return new Player(name, Job::DeptStreet);
+    case 3: return new Player(name, Job::DeptRecycle);
+    case 4: return new Player(name, Job::DeptDemolition);
+    default: return new Player(name, Job::DeptGeneral);
     }
 }
 
 // ── 직업별 초기 아이템 ────────────────────────────────────
 void GiveInitialItems(Player* player, ItemManager& itemManager) {
     switch (player->GetJob()) {
-    case Job::Cleaner:
+    case Job::DeptGeneral:
         player->GetInventory().AddItem(itemManager.GetItem("대나무 빗자루"), 1);
         break;
-    case Job::StreetCleaner:
-        player->GetInventory().AddItem(itemManager.GetItem("나무 젓가락"), 1);
+    case Job::DeptStreet:
+        player->GetInventory().AddItem(itemManager.GetItem("분리수거 집게"), 1);
         break;
-    case Job::RecycleExpert:
+    case Job::DeptRecycle:
         player->GetInventory().AddItem(itemManager.GetItem("평범한 가위"), 1);
         break;
-    case Job::RecycleTech:
-        player->GetInventory().AddItem(itemManager.GetItem("분리수거 집게"), 1);
+    case Job::DeptDemolition: // 신설된 철거반에게 쇠지렛대 지급!
+        player->GetInventory().AddItem(itemManager.GetItem("작업용 쇠지렛대"), 1);
         break;
     default:
         break;
     }
 }
-
 
 // ── 메인 메뉴 ────────────────────────────────────────────
 int ShowMainMenu(Player* player) {

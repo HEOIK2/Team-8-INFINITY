@@ -29,9 +29,9 @@ public:
         ));
 
         RegisterItem(Item(
-            "나무 젓가락", "일회용 나무 젓가락입니다.",
-            "콕! 쓰레기를 집어 올립니다!",
-            ItemRarity::C, { MonsterType::PLASTIC }, { MonsterType::IRON, MonsterType::ALUMINUM }, 12, 25
+            "작업용 쇠지렛대", "다목적 철거용 쇠지렛대(빠루)입니다.",
+            "쾅! 지렛대의 원리로 단단한 쓰레기를 뜯어냅니다!",
+            ItemRarity::C, { MonsterType::IRON, MonsterType::GLASS }, { MonsterType::PAPER, MonsterType::ALUMINUM }, 13, 25
         ));
 
         RegisterItem(Item(

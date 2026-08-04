@@ -76,19 +76,19 @@ void Player::ApplyJob(Job newJob)
 
     switch (job)
     {
-    case Job::Cleaner:
+    case Job::DeptGeneral:
         attack += 15;
         maxHp += 35;
         break;
-    case Job::StreetCleaner:
+    case Job::DeptStreet:
         attack += 10;
         maxHp += 40;
         break;
-    case Job::RecycleExpert:
+    case Job::DeptRecycle:
         attack += 35;
         maxHp += 15;
         break;
-    case Job::RecycleTech:
+    case Job::DeptDemolition:
         attack += 20;
         maxHp += 30;
         break;
@@ -96,9 +96,9 @@ void Player::ApplyJob(Job newJob)
         break;
     }
 
-    hp = maxHp; // 직업 적용 후 체력을 최대치로 맞춰줌
+    hp = maxHp;
 
-    std::cout << "[" << name << "] " << jobName << "(으)로 시작합니다! "
+    std::cout << "[" << name << "] " << jobName << "에 배치되었습니다! "
         << "(공격력: " << attack << ", 최대 체력: " << maxHp << ")\n";
 }
 
@@ -144,11 +144,11 @@ std::string Player::JobToString(Job job)
 {
     switch (job)
     {
-    case Job::Cleaner:          return "청소부";
-    case Job::StreetCleaner:    return "환경미화원";
-    case Job::RecycleExpert:    return "분리수거전문가";
-    case Job::RecycleTech:      return "재활용기사";
-    default:                    return "무직";
+    case Job::DeptGeneral:      return "일반쓰레기 수거반";
+    case Job::DeptStreet:       return "도로교통 미화반";
+    case Job::DeptRecycle:      return "분리배출 지원반";
+    case Job::DeptDemolition:   return "대형폐기물 철거반";
+    default:                    return "대기발령";
     }
 }
 
