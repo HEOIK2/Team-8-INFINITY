@@ -269,21 +269,29 @@ bool StartBattle(Player* player, Monster* monster) {
             std::vector<MonsterType> strong = selectedItem.GetStrongAgainst();
             std::vector<MonsterType> weak = selectedItem.GetWeakAgainst();
 
+            std::string effectText;
+            std::string effectColor;
+
             if (std::find(strong.begin(), strong.end(), monsterType) != strong.end()) {
                 damage = damage * 1.5;
-                AddLog(Color("> 효과가 굉장했다!", "96"));
+                effectText = "효과가 굉장했다!";
+                effectColor = "96";
             }
             else if (std::find(weak.begin(), weak.end(), monsterType) != weak.end()) {
                 damage = damage / 1.5;
-                AddLog(Color("> 효과가 별로다...", "90"));
+                effectText = "효과가 별로다...";
+                effectColor = "90";
             }
             else {
-                AddLog("> 효과는 보통이다.");
+                effectText = "효과는 보통이다.";
+                effectColor = "93";
             }
 
             int finalDamage = (int)damage;
             monster->setHp(monster->getHp() - finalDamage);
-            AddLog(Color("> " + std::to_string(finalDamage) + " 피해!", "93"));
+
+            // ★ 상성 결과 + 데미지를 한 줄로 합침
+            AddLog(Color("> " + effectText + " (" + std::to_string(finalDamage) + " 피해!)", effectColor.c_str()));
         }
         else {
             if (selectedItem.GetHealHP() > 0) {
@@ -327,8 +335,9 @@ bool StartBattle(Player* player, Monster* monster) {
             "", ""
         };
         std::vector<std::string> art = {};
-        std::vector<std::string> footer = { "[ Enter: 계속 ]" };
+        std::vector<std::string> footer = { "[ Enter: 타이틀로 돌아가기 ]" };
         DrawScreen("게임 오버", body, art, footer);
+
         std::cin.ignore();
         std::cin.get();
         return false;
