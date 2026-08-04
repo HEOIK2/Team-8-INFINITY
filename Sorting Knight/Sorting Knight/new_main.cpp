@@ -50,7 +50,6 @@ void TypeTextAt(int row, int col, const std::string& text, const std::string& co
 
 // ── 프롤로그 (UI 테두리 유지 + 시네마틱 타자 연출) ─────────────────────────
 void ShowIntro() {
-    // 1. 기존 UI 테두리를 그리기 위해, 텍스트가 들어갈 만큼의 빈 공간을 넘깁니다.
     std::vector<std::string> body = {
         "", "",
         "                                                              ", // 20XX년
@@ -75,45 +74,37 @@ void ShowIntro() {
     std::vector<std::string> art = {};
     std::vector<std::string> footer = { "[ Enter: 계속 ]" };
 
-    // 화면에 빈 껍데기 박스를 먼저 그립니다.
     DrawScreen("프롤로그", body, art, footer);
 
-    // 2. 그려진 박스 안쪽 좌표로 커서를 옮겨 타자 효과를 시작합니다.
-    // (보통 DrawScreen의 테두리 위쪽 여백을 고려해 시작 Y좌표를 5로 잡습니다.)
     int startY = 5;
-    int startX = 6; // 왼쪽 테두리(│) 안쪽 여백 X좌표
+    int startX = 6;
 
-    // 강조 1: 시작 연도 (노란색, 매우 느리게)
-    TypeTextAt(startY + 2, startX, "20XX년.", "93", 120);
-    Sleep(600);
+    TypeTextAt(startY + 2, startX, "20XX년.", "93", 50);
+    Sleep(250);
 
-    TypeTextAt(startY + 4, startX, "재활용 공익근무요원으로 근무한 지 어언 30년이 되었다.", "90", 40);
-    Sleep(400);
+    TypeTextAt(startY + 4, startX, "재활용 공익근무요원으로 근무한 지 어언 30년이 되었다.", "90", 15);
+    Sleep(150);
 
-    TypeTextAt(startY + 5, startX, "10년이면 강산도 변한다는 말이 있지.", "90", 40);
-    TypeTextAt(startY + 6, startX, "30년이 지난 지금, 많은 것들이 바뀌었다.", "90", 40);
-    Sleep(400);
+    TypeTextAt(startY + 5, startX, "10년이면 강산도 변한다는 말이 있지.", "90", 15);
+    TypeTextAt(startY + 6, startX, "30년이 지난 지금, 많은 것들이 바뀌었다.", "90", 15);
+    Sleep(150);
 
-    // 강조 2: 세계관의 핵심 설정 (흰색, 단호하게)
-    TypeTextAt(startY + 8, startX, "이미 분리배출에 관한 법률은 폐지된 지 오래다.", "37", 60);
-    TypeTextAt(startY + 9, startX, "사람들은 점점 쓰레기를 나누지 않았고,", "90", 40);
-    TypeTextAt(startY + 10, startX, "재활용센터엔 더 이상 예산이 책정되지 않게 되었다.", "90", 40);
-    Sleep(600);
+    TypeTextAt(startY + 8, startX, "이미 분리배출에 관한 법률은 폐지된 지 오래다.", "37", 20);
+    TypeTextAt(startY + 9, startX, "사람들은 점점 쓰레기를 나누지 않았고,", "90", 15);
+    TypeTextAt(startY + 10, startX, "재활용센터엔 더 이상 예산이 책정되지 않게 되었다.", "90", 15);
+    Sleep(250);
 
-    TypeTextAt(startY + 12, startX, "돈을 좇아 요원들은 하나둘 소집해제를 하기 시작했고,", "90", 40);
-    TypeTextAt(startY + 13, startX, "머지않아 재활용센터엔 아무도 남지 않게 되었다.....", "90", 50);
-    Sleep(1000); // 극적인 정적
+    TypeTextAt(startY + 12, startX, "돈을 좇아 요원들은 하나둘 소집해제를 하기 시작했고,", "90", 15);
+    TypeTextAt(startY + 13, startX, "머지않아 재활용센터엔 아무도 남지 않게 되었다.....", "90", 20);
+    Sleep(400); // 극적인 정적은 좀 남겨둠
 
-    // 강조 3: 반전 (밝은 회색, 약간 느리게)
-    TypeTextAt(startY + 15, startX, "모두가 끝났다고 생각했을 때, 묵묵히 사회 복무를 이어가는 한 남자가 있었다.", "37", 60);
-    Sleep(800);
+    TypeTextAt(startY + 15, startX, "모두가 끝났다고 생각했을 때, 묵묵히 사회 복무를 이어가는 한 남자가 있었다.", "37", 20);
+    Sleep(300);
 
-    // 강조 4: 클라이맥스 (밝은 청록색 -> 노란색)
-    TypeTextAt(startY + 17, startX, "최후의 한 명. 마지막 재활용 공익근무요원.", "96", 80);
-    Sleep(600);
-    TypeTextAt(startY + 18, startX, "일명 \"재 공\"이라 불린 남자의 이야기다.", "93", 100);
+    TypeTextAt(startY + 17, startX, "최후의 한 명. 마지막 재활용 공익근무요원.", "96", 30);
+    Sleep(250);
+    TypeTextAt(startY + 18, startX, "일명 \"재 공\"이라 불린 남자의 이야기다.", "93", 40);
 
-    // 3. 연출이 끝나면 커서를 푸터(입력 대기 위치)로 이동시킵니다.
     std::cout << "\033[37;15H";
     std::cin.ignore();
     std::cin.get();
