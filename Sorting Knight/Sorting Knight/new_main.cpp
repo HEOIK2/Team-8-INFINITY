@@ -337,17 +337,11 @@ int main() {
     bool isProgramRunning = true;
 
     while (isProgramRunning) {
+        // 1. 첫 화면 (아스키 아트) 출력. 이 함수 안에 std::cin.get()이 있어서 엔터를 기다립니다.
         ShowMainTitleArt();
 
-        int titleChoice = ShowTitleMenu();
-        if (titleChoice == 2) {
-            isProgramRunning = false;
-            break;
-        }
-        else if (titleChoice != 1) {
-            continue;
-        }
-
+        // 2. 불필요한 두 번째 타이틀 메뉴 제거 완료
+        // 엔터를 누르면 바로 프롤로그로 직행!
         ShowIntro();
 
         ItemManager itemManager;
@@ -357,6 +351,7 @@ int main() {
         GiveInitialItems(player, itemManager);
         InitShop(player, &itemManager);
 
+        // 이전 회차의 킬 카운트 및 스테이지 잠금 상태 리셋
         ResetBattleStats();
 
         bool inMainMenu = true;
@@ -366,6 +361,10 @@ int main() {
             switch (mainChoice) {
             case 1:
                 EnterBattle(player);
+                // 전투 후 체력이 0 이하라면 강제로 타이틀로(유령 요원 방지)
+                if (player->GetHp() <= 0) {
+                    inMainMenu = false;
+                }
                 break;
             case 2:
                 EnterShopMenu();
@@ -380,7 +379,7 @@ int main() {
                 ShowDebugMenu(player);
                 break;
             case 0:
-                inMainMenu = false;
+                inMainMenu = false; // 0번 누르면 다시 첫 아스키 아트 화면으로 돌아감
                 break;
             default:
                 break;

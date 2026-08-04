@@ -327,6 +327,8 @@ bool StartBattle(Player* player, Monster* monster) {
         int gainedGold = monster->getGoldReward();
         player->AddGold(gainedGold);
 
+        player->SetHp(player->GetMaxHp());
+
         std::string dropText = "";
         int dropChance = rand() % 100;
         if (dropChance < 30) {
