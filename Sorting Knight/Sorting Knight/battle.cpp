@@ -1,4 +1,5 @@
-﻿#include "battle.h"
+﻿#define NOMINMAX
+#include "battle.h"
 #include "Player.h"
 #include "monster.h"
 #include "Item.h"
@@ -10,9 +11,11 @@
 #include <vector>
 #include <algorithm>
 #include <cstdlib>
+#include <windows.h>
 
 static bool stage2Entered = false;
 static bool stage3Entered = false;
+static bool gameCleared = false;
 
 // 처치 집계 (몬스터 이름 -> 처치 수)
 static std::map<std::string, int> monsterkillCount;
@@ -31,6 +34,72 @@ static void AddLog(const std::string& msg) {
 // 몬스터 킬 카운트 반환
 std::map<std::string, int> GetMonsterKillCount() {
 	return monsterkillCount;
+}
+
+bool IsGameCleared() {
+    return gameCleared;
+}
+
+// ── 구역 진입 연출 (중간보스 / 최종보스) ──────────────────────
+void ShowStageIntro(int stage, const std::string& monsterName) {
+    std::vector<std::string> body(20, "");
+    std::vector<std::string> art = {};
+    std::string title;
+    std::vector<std::string> footer;
+
+    if (stage == 2) {
+        title = "구역 진입 - 분리수거장";
+        footer = { "[ Enter: 진입 ]" };
+    }
+    else {
+        title = "구역 진입 - 폐기처리장";
+        footer = { "[ Enter: 최후의 임무 ]" };
+    }
+
+    DrawScreen(title, body, art, footer);
+
+    int startY = 5;
+    int startX = 6;
+
+    if (stage == 2) {
+        TypeTextAt(startY + 2, startX, "분리수거장 안쪽 깊숙한 곳.", "90", 20);
+        Sleep(200);
+
+        TypeTextAt(startY + 4, startX, "찌그러진 캔들이 산처럼 쌓여 이상한 진동을 내고 있다.", "90", 15);
+        Sleep(200);
+
+        TypeTextAt(startY + 6, startX, "누군가... 아니, 무언가가 오랫동안 압축되지 못한 채", "90", 15);
+        TypeTextAt(startY + 7, startX, "그 안에서 스스로 뭉쳐버린 듯하다.", "90", 15);
+        Sleep(300);
+
+        TypeTextAt(startY + 9, startX, "쿠구구구...", "37", 50);
+        Sleep(400);
+
+        TypeTextAt(startY + 11, startX, "[ " + monsterName + " ] 이(가) 그 형체를 드러냈다.", "91", 40);
+        Sleep(250);
+    }
+    else if (stage == 3) {
+        TypeTextAt(startY + 2, startX, "폐기처리장. 이 구역의 가장 깊은 곳.", "90", 20);
+        Sleep(200);
+
+        TypeTextAt(startY + 4, startX, "녹슨 철제 잔해들이 겹겹이 쌓여 거대한 그림자를 드리운다.", "90", 15);
+        Sleep(200);
+
+        TypeTextAt(startY + 6, startX, "30년간 아무도 손대지 못한 채 방치된 폐기물들이", "90", 15);
+        TypeTextAt(startY + 7, startX, "하나의 의지를 가진 듯 꿈틀거리기 시작한다.", "90", 15);
+        Sleep(300);
+
+        TypeTextAt(startY + 9, startX, "이 곳을 정리하면, 진짜 마지막이다.", "37", 30);
+        Sleep(400);
+
+        TypeTextAt(startY + 11, startX, "[ " + monsterName + " ]", "93", 60);
+        TypeTextAt(startY + 12, startX, "재활용의 역사가 남긴 최후의 잔재가 눈을 뜬다.", "96", 40);
+        Sleep(300);
+    }
+
+    std::cout << "\033[37;18H";
+    std::cin.ignore();
+    std::cin.get();
 }
 
 Monster* StageMonster(int playerLevel, int& selectedStage) {
@@ -77,7 +146,7 @@ Monster* StageMonster(int playerLevel, int& selectedStage) {
             selectedStage = 1;
             return CreateMonster(selectedType, playerLevel);
 
-        case 2:
+        case 2: {
             if (playerLevel < 5) {
                 notice = "아직 분리수거할 수 없는 구역입니다.";
                 continue;
@@ -88,9 +157,12 @@ Monster* StageMonster(int playerLevel, int& selectedStage) {
             }
             selectedType = MonsterType::ALUMINUM;
             selectedStage = 2;
-            return CreateMonster(selectedType, playerLevel);
+            Monster* boss2 = CreateMonster(selectedType, playerLevel);
+            ShowStageIntro(2, boss2->getName());   // ★ 진입 연출
+            return boss2;
+        }
 
-        case 3:
+        case 3: {
             if (playerLevel < 10) {
                 notice = "아직 분리수거할 수 없는 구역입니다.";
                 continue;
@@ -101,7 +173,10 @@ Monster* StageMonster(int playerLevel, int& selectedStage) {
             }
             selectedType = MonsterType::IRON;
             selectedStage = 3;
-            return CreateMonster(selectedType, playerLevel);
+            Monster* boss3 = CreateMonster(selectedType, playerLevel);
+            ShowStageIntro(3, boss3->getName());   // ★ 진입 연출
+            return boss3;
+        }
 
         default:
             notice = "잘못된 선택입니다.";
@@ -120,6 +195,7 @@ void EnterBattle(Player* player) {
         ClearStage(selectedStage);
         if (selectedStage == 3) {
             EnterEnding(player);
+            gameCleared = true;
         }
     }
     delete monster;
@@ -452,6 +528,7 @@ void EnterEnding(Player* player) {
 void ResetBattleStats() {
     stage2Entered = false;
     stage3Entered = false;
+    gameCleared = false;
     monsterkillCount.clear(); // 몬스터 처치 기록 맵 비우기
     totalWinCount = 0;        // 누적 처리 실적 0으로 리셋
     battleLog.clear();        // 이전 게임의 전투 로그도 비워주기

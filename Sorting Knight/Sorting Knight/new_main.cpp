@@ -28,7 +28,7 @@ void ClearInputBuffer() {
 }
 
 // ── 타이핑 효과 보조 함수 (좌표 지정 기능 추가) ──
-void TypeTextAt(int row, int col, const std::string& text, const std::string& colorCode = "37", int delay = 40) {
+void TypeTextAt(int row, int col, const std::string& text, const std::string& colorCode, int delay) {
     // 지정된 좌표로 커서 이동 후 색상 적용
     std::cout << "\033[" << row << ";" << col << "H";
     std::cout << "\033[" << colorCode << "m";
@@ -444,7 +444,10 @@ int main() {
                 EnterBattle(player);
                 if (player->GetHp() <= 0) {
                     inMainMenu = false;
-                   
+                }
+                if (IsGameCleared()) { 
+                    inMainMenu = false;
+                    isProgramRunning = false;    // 바깥 while 루프도 종료 → 프로그램 완전 종료
                 }
                 break;
             case 2:
