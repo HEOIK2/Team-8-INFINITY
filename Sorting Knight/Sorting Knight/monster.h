@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include <iostream>
 #include <string>
+#include <vector>
 #include "type.h"
 
 class Player;
@@ -39,3 +40,4 @@ public:
 };
 
 Monster* CreateMonster(MonsterType, int playerlevel);
+std::vector<std::string> GetMonsterArt(const std::string& name); // 몬스터 아스키아트
