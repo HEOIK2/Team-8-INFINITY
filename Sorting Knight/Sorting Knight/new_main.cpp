@@ -204,7 +204,7 @@ int ShowMainMenu(Player* player) {
         "  3. 인벤토리",
         "  4. 근무 기록부",
         Color("  9. ???", "90"),
-        "  0. 타이틀로",
+        "  0. 게임 종료",
         ""
     };
 
@@ -461,6 +461,7 @@ int main() {
                 break;
             case 0:
                 inMainMenu = false;
+                isProgramRunning = false;
                 break;
             default:
                 break;
