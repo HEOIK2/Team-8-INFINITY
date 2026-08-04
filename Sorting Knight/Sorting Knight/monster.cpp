@@ -59,7 +59,7 @@ Monster* CreateMonster(MonsterType type, int playerlevel) {
 
 	case MonsterType::IRON:
 		// 최종 보스 (권장 Lv 10). 10렙 기준 골드 1100.
-		monster = new Monster("전손 소나타", MonsterType::IRON,
+		monster = new Monster("전손 01년식 뉴 EF 쏘나타", MonsterType::IRON,
 			800 + 60 * (playerlevel), 70 + 10 * (playerlevel),
 			150 + 40 * (playerlevel), 100 + 100 * (playerlevel));
 		break;
@@ -167,7 +167,7 @@ std::vector<std::string> GetMonsterArt(const std::string& name) {
             "                                     (___)                                      "
         };
     }
-    if (name == "전손 소나타") {
+    if (name == "전손 01년식 뉴 EF 쏘나타") {
         return {
             "                                 .--------.                                     ",
             "                            ____/          \\____                                ",

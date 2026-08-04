@@ -62,6 +62,23 @@ static std::vector<std::string> MakeArtWithDialogue(const std::vector<std::strin
     return result;
 }
 
+// 새로 만드는 함수: 아트 전체를 박스 가운데로 오도록 왼쪽에 공백을 붙여줌
+static std::vector<std::string> CenterArtLines(const std::vector<std::string>& art, int contentWidth) {
+    int artWidth = 0;
+    for (const auto& line : art) {
+        int w = DisplayWidth(line);
+        if (w > artWidth) { artWidth = w; }
+    }
+    int leftPad = (contentWidth - artWidth) / 2;
+    if (leftPad < 0) { leftPad = 0; }
+
+    std::vector<std::string> result;
+    for (const auto& line : art) {
+        result.push_back(std::string(leftPad, ' ') + line);
+    }
+    return result;
+}
+
 // 새로 만드는 함수: 구역 선택 화면에 보여줄 아트
 static std::vector<std::string> GetZoneSelectArt() {
     return {
@@ -114,7 +131,7 @@ void ShowStageIntro(int stage, const std::string& monsterName) {
         footer = { "[ Enter: 최후의 임무 ]" };
     }
 
-    DrawScreen(title, body, art, footer);
+    DrawScreen(Color(title, "91"), body, art, footer);
 
     int startY = 5;
     int startX = 6;
@@ -170,7 +187,7 @@ Monster* StageMonster(int playerLevel, int& selectedStage) {
     while (true) {
         std::vector<std::string> body = {
             "",
-            "  1. 쓰레기장",
+            "  " + Color("1", "96") + ". 쓰레기장",
             Color("  2. 분리수거장      (권장 레벨 5)",  playerLevel >= 5 ? "37" : "90"),
             Color("  3. 폐기처리장      (권장 레벨 10)", playerLevel >= 10 ? "37" : "90"),
             "",
@@ -183,7 +200,7 @@ Monster* StageMonster(int playerLevel, int& selectedStage) {
             "",
             "입장 구역: "
         };
-        DrawScreen("구역 선택", body, art, footer);
+        DrawScreen(Color("구역 선택", "93"), body, art, footer);
         std::cout << "\033[37;14H";        
 
         int stageChoice;
@@ -304,9 +321,9 @@ bool StartBattle(Player* player, Monster* monster) {
             int idx1 = r;
             std::string item1 = std::to_string(idx1 + 1) + ". ";
             if (inventoryItems[idx1].first.GetCategory() == ItemCategory::WEAPON) {
-                std::string rColor = (inventoryItems[idx1].first.GetRarity() == ItemRarity::S) ? "95" :
-                    (inventoryItems[idx1].first.GetRarity() == ItemRarity::A) ? "94" :
-                    (inventoryItems[idx1].first.GetRarity() == ItemRarity::B) ? "93" : "37";
+                std::string rColor = (inventoryItems[idx1].first.GetRarity() == ItemRarity::S) ? "93" :
+                    (inventoryItems[idx1].first.GetRarity() == ItemRarity::A) ? "95" :
+                    (inventoryItems[idx1].first.GetRarity() == ItemRarity::B) ? "94" : "37";
 
                 std::string nameAndRarity = inventoryItems[idx1].first.GetName() + " [" + inventoryItems[idx1].first.GetRarityString() + "등급]";
                 // ★ 수정됨: 뒤에 붙어있던 속성(강/약) 텍스트를 지워서 공간 확보!
@@ -326,9 +343,9 @@ bool StartBattle(Player* player, Monster* monster) {
 
                 std::string item2 = std::to_string(idx2 + 1) + ". ";
                 if (inventoryItems[idx2].first.GetCategory() == ItemCategory::WEAPON) {
-                    std::string rColor = (inventoryItems[idx2].first.GetRarity() == ItemRarity::S) ? "95" :
-                        (inventoryItems[idx2].first.GetRarity() == ItemRarity::A) ? "94" :
-                        (inventoryItems[idx2].first.GetRarity() == ItemRarity::B) ? "93" : "37";
+                    std::string rColor = (inventoryItems[idx2].first.GetRarity() == ItemRarity::S) ? "93" :
+                        (inventoryItems[idx2].first.GetRarity() == ItemRarity::A) ? "95" :
+                        (inventoryItems[idx2].first.GetRarity() == ItemRarity::B) ? "94" : "37";
 
                     std::string nameAndRarity = inventoryItems[idx2].first.GetName() + " [" + inventoryItems[idx2].first.GetRarityString() + "등급]";
                     // ★ 수정됨: 두 번째 열도 속성 텍스트 제거
@@ -363,10 +380,8 @@ bool StartBattle(Player* player, Monster* monster) {
         }
         body.push_back("");
 
-        // 
-        std::vector<std::string> art = {
-           
-        };
+        // 몬스터 아스키 아트 (monster.cpp의 GetMonsterArt와 연결, 중앙 정렬)
+        std::vector<std::string> art = CenterArtLines(GetMonsterArt(monster->getName()), 114);
 
         // 푸터 영역 (로그 출력) - 항상 4줄 고정
         std::vector<std::string> footer;
@@ -381,7 +396,7 @@ bool StartBattle(Player* player, Monster* monster) {
         footer.push_back("아이템 번호: ");
 
         // ★ 4개짜리 DrawScreen 호출로 변경! (body, art, footer 순서)
-        DrawScreen("전투 - " + monster->getName(), body, art, footer);
+        DrawScreen(Color("전투 - " + monster->getName(), "91"), body, art, footer);
 
         // ★ 입력 커서 위치 조정 (아트가 들어가면서 줄이 늘어났으므로 15H -> 22H 쯤으로 내려줍니다)
         std::cout << "\033[37;22H";
@@ -448,8 +463,17 @@ bool StartBattle(Player* player, Monster* monster) {
                 AddLog(Color("> 최대 체력 " + std::to_string(selectedItem.GetBuffMaxHP()) + " 증가!", "92"));
             }
             if (selectedItem.GetGainLevel() > 0) {
-                player->SetLevel(player->GetLevel() + selectedItem.GetGainLevel());
-                AddLog(Color("> 레벨 " + std::to_string(selectedItem.GetGainLevel()) + " 업!", "93"));
+                if (player->IsMaxLevel()) {
+                    AddLog(Color("> 이미 최대 레벨이라 효과가 없다...", "90"));
+                }
+                else {
+                    // 최대 레벨을 넘지 않도록 1레벨씩 올림
+                    int gain = selectedItem.GetGainLevel();
+                    while (gain-- > 0 && !player->IsMaxLevel()) {
+                        player->SetLevel(player->GetLevel() + 1);
+                    }
+                    AddLog(Color("> 레벨 " + std::to_string(selectedItem.GetGainLevel()) + " 업!", "93"));
+                }
             }
         }
 
@@ -477,7 +501,7 @@ bool StartBattle(Player* player, Monster* monster) {
         };
         std::vector<std::string> art = {};
         std::vector<std::string> footer = { "[ Enter: 타이틀로 돌아가기 ]" };
-        DrawScreen("게임 오버", body, art, footer);
+        DrawScreen(Color("게임 오버", "91"), body, art, footer);
 
         std::cin.ignore();
         std::cin.get();
@@ -515,10 +539,10 @@ bool StartBattle(Player* player, Monster* monster) {
             "",
             Color("  " + monster->getName() + " 처리 완료.", "93"),
             "",
-            "  EXP   +" + std::to_string(gainedExp)
+            "  EXP   " + Color("+" + std::to_string(gainedExp), "96")
                         + "     (" + std::to_string(player->GetExp()) + "/100)",
-            "  Gold  +" + std::to_string(gainedGold)
-                        + "     (보유 " + std::to_string(player->GetGold()) + "G)",
+            "  Gold  " + Color("+" + std::to_string(gainedGold), "93")
+                        + "     (보유 " + Color(std::to_string(player->GetGold()) + "G", "93") + ")",
             ""
         };
         if (!dropText.empty()) {
@@ -536,7 +560,7 @@ bool StartBattle(Player* player, Monster* monster) {
             "",
             "[ Enter: 계속 ]"
         };
-        DrawScreen("처리 완료", body, art, footer);
+        DrawScreen(Color("처리 완료", "92"), body, art, footer);
         std::cin.ignore();
         std::cin.get();
         return true;
@@ -552,57 +576,138 @@ void ClearStage(int stage) {
 }
 
 
-// ── 엔딩 : 최종 민원 처리 대장 ────────────────────────────
+// ── 엔딩 : 4단 연출 (보스 소멸 → 에필로그 → 처리 대장 → THE END) ──
 void EnterEnding(Player* player) {
+    const std::string bossName = "전손 01년식 뉴 EF 쏘나타";
 
-    std::vector<std::string> body(20, "");
-    std::vector<std::string> art = {};
-    std::vector<std::string> footer = { "[ Enter: 계속 ]" };
+    // ── 1단계: 보스 소멸 연출 ────────────────────────────
+    {
+        std::vector<std::string> body(2, "");
+        std::vector<std::string> art = CenterArtLines(GetMonsterArt(bossName), 114);
+        std::vector<std::string> footer = { "" };
+        DrawScreen(Color("최종 임무 - " + bossName, "91"), body, art, footer);
 
-    DrawScreen("엔딩 - 업무 보고", body, art, footer);
+        // 굉음 플래시: 색을 바꿔가며 번쩍임
+        const char* flashColors[] = { "91", "93", "97", "91", "93", "97" };
+        for (int i = 0; i < 6; ++i) {
+            std::cout << "\033[22;46H" << Color("콰 과 과 과 광 !!!", flashColors[i]) << std::flush;
+            Sleep(140);
+            std::cout << "\033[22;46H" << "                      " << std::flush;
+            Sleep(80);
+        }
 
-    int startY = 5;
-    int startX = 6;
-
-    TypeTextAt(startY + 1, startX, "폐기처리장의 마지막 잔재가 조용히 흩어진다.", "90", 30);
-    Sleep(300);
-
-    TypeTextAt(startY + 3, startX, "하지만 \"재공\"은 멈추지 않는다. 오늘도 분리수거를 위해 묵묵히 임무를 완수하며 복무한다.", "90", 25);
-    Sleep(300);
-
-    TypeTextAt(startY + 5, startX, "- 최종 민원 처리 대장 -", "93", 40);
-    Sleep(400);
-
-    std::string profile = "담당자   " + player->GetName()
-        + " (" + player->GetJobName()
-        + ", Lv." + std::to_string(player->GetLevel()) + ")";
-    TypeTextAt(startY + 7, startX, profile, "37", 20);
-    Sleep(300);
-
-    TypeTextAt(startY + 9, startX, "── 처리 내역 ──", "90", 20);
-    Sleep(200);
-
-    int lineOffset = 11;
-    for (const auto& pair : monsterkillCount) {
-        std::string line = "  " + pair.first + "   x" + std::to_string(pair.second);
-        TypeTextAt(startY + lineOffset, startX, line, "37", 15);
-        lineOffset++;
+        TypeTextAt(24, 8, "낡은 엔진이 마지막 굉음을 토해내며, 거대한 고철 덩어리가 천천히 무너져 내린다.", "37", 25);
+        Sleep(400);
+        TypeTextAt(26, 8, "30년 묵은 폐기물의 왕은, 그렇게 한 줌의 재활용 자원으로 돌아갔다.", "90", 25);
+        Sleep(600);
+        TypeTextAt(29, 8, "[ Enter: 계속 ]", "90", 10);
+        std::cin.get();
     }
-    Sleep(300);
 
-    lineOffset++;
-    TypeTextAt(startY + lineOffset, startX,
-        "누적 처리 실적   " + std::to_string(totalWinCount) + "건", "96", 30);
-    Sleep(500);
+    // ── 2단계: 에필로그 나레이션 ─────────────────────────
+    {
+        std::vector<std::string> body(20, "");
+        std::vector<std::string> art = {};
+        std::vector<std::string> footer = { "" };
+        DrawScreen(Color("엔딩 - 그 후", "93"), body, art, footer);
 
-    lineOffset += 2;
-    TypeTextAt(startY + lineOffset, startX,
-        "폐기처리장 완전 정화 완료. 수고하셨습니다.", "92", 40);
-    Sleep(600);
+        int y = 7, x = 8;
+        TypeTextAt(y, x, "폐기처리장의 마지막 잔재가 조용히 흩어진다.", "90", 30);
+        Sleep(350);
+        TypeTextAt(y + 2, x, "아무도 알아주지 않는 싸움이었다.", "90", 25);
+        TypeTextAt(y + 3, x, "훈장도, 포상도, 소집해제 명령서도 오지 않았다.", "90", 25);
+        Sleep(350);
+        TypeTextAt(y + 5, x, "하지만 \"재공\"은 멈추지 않는다.", "37", 30);
+        TypeTextAt(y + 6, x, "내일도, 모레도, 분리수거는 계속되어야 하니까.", "37", 30);
+        Sleep(400);
+        TypeTextAt(y + 9, x, "지구가 깨끗해지는 그날까지, 요원의 근무는 끝나지 않는다.", "96", 40);
+        Sleep(500);
+        TypeTextAt(y + 12, x, "[ Enter: 계속 ]", "90", 10);
+        std::cin.get();
+    }
 
-    std::cout << "\033[37;24H";
-    std::cin.ignore();
-    std::cin.get();
+    // ── 3단계: 최종 민원 처리 대장 ───────────────────────
+    {
+        std::vector<std::string> body(20, "");
+        std::vector<std::string> art = {};
+        std::vector<std::string> footer = { "" };
+        DrawScreen(Color("엔딩 - 업무 보고", "93"), body, art, footer);
+
+        int startY = 5;
+        int startX = 6;
+
+        TypeTextAt(startY + 1, startX, "- 최종 민원 처리 대장 -", "93", 40);
+        Sleep(400);
+
+        std::string profile = "담당자   " + player->GetName()
+            + " (" + player->GetJobName()
+            + ", Lv." + std::to_string(player->GetLevel()) + ")";
+        TypeTextAt(startY + 3, startX, profile, "37", 20);
+        Sleep(300);
+
+        TypeTextAt(startY + 5, startX, "── 처리 내역 ──", "90", 20);
+        Sleep(200);
+
+        int lineOffset = 7;
+        for (const auto& pair : monsterkillCount) {
+            std::string line = "  " + pair.first + "   x" + std::to_string(pair.second);
+            TypeTextAt(startY + lineOffset, startX, line, "37", 15);
+            lineOffset++;
+        }
+        Sleep(300);
+
+        lineOffset++;
+        TypeTextAt(startY + lineOffset, startX,
+            "누적 처리 실적   " + std::to_string(totalWinCount) + "건", "96", 30);
+        Sleep(500);
+
+        lineOffset += 2;
+        TypeTextAt(startY + lineOffset, startX,
+            "폐기처리장 완전 정화 완료. 수고하셨습니다.", "92", 40);
+        Sleep(600);
+
+        lineOffset += 3;
+        TypeTextAt(startY + lineOffset, startX, "[ Enter: 계속 ]", "90", 10);
+        std::cin.get();
+    }
+
+    // ── 4단계: THE END + 크레딧 ──────────────────────────
+    {
+        const std::string pad(29, ' ');
+        std::vector<std::string> body = {
+            "", "", "",
+            pad + Color("████████╗██╗  ██╗███████╗    ███████╗███╗   ██╗██████╗ ", "92"),
+            pad + Color("╚══██╔══╝██║  ██║██╔════╝    ██╔════╝████╗  ██║██╔══██╗", "92"),
+            pad + Color("   ██║   ███████║█████╗      █████╗  ██╔██╗ ██║██║  ██║", "92"),
+            pad + Color("   ██║   ██╔══██║██╔══╝      ██╔══╝  ██║╚██╗██║██║  ██║", "92"),
+            pad + Color("   ██║   ██║  ██║███████╗    ███████╗██║ ╚████║██████╔╝", "92"),
+            pad + Color("   ╚═╝   ╚═╝  ╚═╝╚══════╝    ╚══════╝╚═╝  ╚═══╝╚═════╝ ", "92"),
+            ""
+        };
+        std::vector<std::string> art = {};
+        std::vector<std::string> footer = { "" };
+        DrawScreen(Color("엔딩", "92"), body, art, footer);
+
+        auto centerCol = [](const std::string& text) {
+            return 3 + (114 - DisplayWidth(text)) / 2;
+            };
+
+        std::string line1 = "재활용 공익근무요원 : 요원의 마지막 기록";
+        std::string line2 = "기획 · 개발   TEAM 8 - INFINITY";
+        std::string line3 = "Thank You For Playing!";
+
+        Sleep(400);
+        TypeTextAt(16, centerCol(line1), line1, "96", 30);
+        Sleep(400);
+        TypeTextAt(19, centerCol(line2), line2, "37", 30);
+        Sleep(400);
+        TypeTextAt(22, centerCol(line3), line3, "93", 40);
+        Sleep(600);
+
+        std::string prompt = "[ Enter: 게임 종료 ]";
+        TypeTextAt(26, centerCol(prompt), prompt, "90", 10);
+        std::cin.get();
+    }
 }
 
 // 타이틀로 돌아가기 전에 전투 관련 스탯을 초기화하는 함수

@@ -74,7 +74,7 @@ void ShowIntro() {
     std::vector<std::string> art = {};
     std::vector<std::string> footer = { "[ Enter: 계속 ]" };
 
-    DrawScreen("프롤로그", body, art, footer);
+    DrawScreen(Color("프롤로그", "93"), body, art, footer);
 
     int startY = 5;
     int startX = 6;
@@ -110,6 +110,54 @@ void ShowIntro() {
     std::cin.get();
 }
 
+// ── 표시 폭 기준 가운데 정렬 (한글 2칸, 색상 코드 무시) ──
+static std::string PadCenter(const std::string& s, int width) {
+    int w = DisplayWidth(s);
+    int left = (width - w) / 2;
+    if (left < 0) { left = 0; }
+    int right = width - w - left;
+    if (right < 0) { right = 0; }
+    return std::string(left, ' ') + s + std::string(right, ' ');
+}
+
+// ── 요원 프로필 아트: 출입증 명찰 ─────────────────────────
+// name이 비어 있으면 빈 명찰, 이름이 있으면 명찰 안에 이름을 새겨준다.
+static std::vector<std::string> GetNameTagArt(const std::string& name) {
+    // 출입증 (내부 폭 30) + 이름 칸 (내부 폭 22)
+    const int cardW = 30;
+    const int tagW = 22;
+    auto cardLine = [&](const std::string& inner) {
+        return "|" + PadCenter(inner, cardW) + "|";
+        };
+
+    std::string tagTop = "+" + std::string(tagW, '-') + "+";
+    std::string tagMid = "|" + PadCenter(name.empty() ? "" : Color(name, "96"), tagW) + "|";
+    std::string tagBot = "+" + std::string(tagW, '-') + "+";
+
+    std::vector<std::string> card = {
+        PadCenter("____", cardW + 2),                    // 목걸이 끈 고리
+        PadCenter("|  |", cardW + 2),
+        "." + std::string(cardW, '=') + ".",
+        cardLine(Color("재활용센터 출입증", "93")),
+        "|" + std::string(cardW, '-') + "|",
+        cardLine(""),
+        cardLine(tagTop),
+        cardLine(tagMid),
+        cardLine(tagBot),
+        cardLine(Color("SORTING  KNIGHT", "90")),
+        cardLine(""),
+        "'" + std::string(cardW, '=') + "'",
+    };
+
+    // 화면 중앙 배치
+    const int leftPad = (114 - (cardW + 2)) / 2;
+    std::vector<std::string> result;
+    for (const auto& line : card) {
+        result.push_back(std::string(leftPad, ' ') + line);
+    }
+    return result;
+}
+
 // ── 캐릭터 생성 ──────────────────────────────────────────
 Player* InitializeGame() {
     std::string name;
@@ -121,9 +169,9 @@ Player* InitializeGame() {
             "", "당신의 이름을 입력하십시오.", "",
             Color("※ 근무일지에 기재될 성명입니다.", "90"), ""
         };
-        std::vector<std::string> art = {};
+        std::vector<std::string> art = GetNameTagArt("");  // 빈 명찰
         std::vector<std::string> footer = { "이름: " };
-        DrawScreen("요원 프로필 등록", body, art, footer);
+        DrawScreen(Color("요원 프로필 등록", "96"), body, art, footer);
         std::cout << "\033[37;11H";
 
         if (std::cin >> name) {
@@ -139,16 +187,16 @@ Player* InitializeGame() {
     while (true) {
         std::vector<std::string> body = {
             "", name + " 요원, 근무 중인 부서를 기입하십시오.", "",
-            "  1. 일반쓰레기 수거반   — 대나무 빗자루 (C)",
-            "  2. 도로교통 미화반     — 분리수거 집게 (C)",
-            "  3. 분리배출 지원반     — 평범한 가위 (C)",
-            "  4. 대형폐기물 철거반   — 작업용 쇠지렛대 (C)",
+            "  " + Color("1", "96") + ". " + Color("일반쓰레기 수거반", "97") + "   — " + Color("대나무 빗자루 (C)", "93"),
+            "  " + Color("2", "96") + ". " + Color("도로교통 미화반  ", "97") + "   — " + Color("분리수거 집게 (C)", "93"),
+            "  " + Color("3", "96") + ". " + Color("분리배출 지원반  ", "97") + "   — " + Color("평범한 가위 (C)", "93"),
+            "  " + Color("4", "96") + ". " + Color("대형폐기물 철거반", "97") + "   — " + Color("작업용 쇠지렛대 (C)", "93"),
             ""
         };
         std::vector<std::string> footer = { "부서 번호(1-4): " };
 
-        std::vector<std::string> art = {};
-        DrawScreen("부서 기입", body, art, footer);
+        std::vector<std::string> art = GetNameTagArt(name);  // 명찰에 입력받은 이름 표시
+        DrawScreen(Color("부서 기입", "96"), body, art, footer);
         std::cout << "\033[37;20H";
 
         if (std::cin >> cnt) {
@@ -193,18 +241,18 @@ void GiveInitialItems(Player* player, ItemManager& itemManager) {
 int ShowMainMenu(Player* player) {
     std::vector<std::string> body = {
         "",
-        player->GetName() + "   Lv." + std::to_string(player->GetLevel()),
+        Color(player->GetName(), "97") + "   " + Color("Lv." + std::to_string(player->GetLevel()), "96"),
         "HP  " + Color(MakeGauge(player->GetHp(), player->GetMaxHp(), 20), "92") + "  "
-               + std::to_string(player->GetHp()) + "/" + std::to_string(player->GetMaxHp()),
-        "ATK " + std::to_string(player->GetAttack())
-               + "      Gold " + std::to_string(player->GetGold()) + "G",
+               + Color(std::to_string(player->GetHp()) + "/" + std::to_string(player->GetMaxHp()), "92"),
+        "ATK " + Color(std::to_string(player->GetAttack()), "91")
+               + "      Gold " + Color(std::to_string(player->GetGold()) + "G", "93"),
         "",
-        "  1. 전투",
-        "  2. 상점",
-        "  3. 인벤토리",
-        "  4. 근무 기록부",
+        "  " + Color("1", "96") + ". 전투",
+        "  " + Color("2", "96") + ". 상점",
+        "  " + Color("3", "96") + ". 인벤토리",
+        "  " + Color("4", "96") + ". 근무 기록부",
         Color("  9. ???", "90"),
-        "  0. 게임 종료",
+        Color("  0. 게임 종료", "90"),
         ""
     };
 
@@ -217,10 +265,14 @@ int ShowMainMenu(Player* player) {
         "", "선택: "
     };
 
-    DrawScreen("메인 메뉴", body, art, footer);
+    DrawScreen(Color("메인 메뉴", "96"), body, art, footer);
     std::cout << "\033[37;11H";
     int choice;
-    std::cin >> choice;
+    if (!(std::cin >> choice)) {
+        if (std::cin.eof()) { return 0; }  // 입력 스트림이 닫히면 안전하게 종료
+        ClearInputBuffer();
+        return -1;  // 문자 등 잘못된 입력 → 메뉴 다시 표시
+    }
     ClearInputBuffer();
     return choice;
 }
@@ -228,10 +280,10 @@ int ShowMainMenu(Player* player) {
 // ── 등급 색상 반환 보조 함수 ────────────────────────────────
 std::string GetRarityColor(ItemRarity r) {
     switch (r) {
-    case ItemRarity::C: return "37"; // 흰색
-    case ItemRarity::B: return "93"; // 밝은 파랑
-    case ItemRarity::A: return "94"; // 밝은 보라(자홍)
-    case ItemRarity::S: return "95"; // 밝은 노랑
+    case ItemRarity::C: return "37"; // 흰색 (일반)
+    case ItemRarity::B: return "94"; // 밝은 파랑 (레어)
+    case ItemRarity::A: return "95"; // 밝은 보라 (에픽)
+    case ItemRarity::S: return "93"; // 금색 (전설)
     default: return "37";
     }
 }
@@ -259,12 +311,12 @@ void ShowInventoryScreen(Player* player) {
                     std::string nameAndRarity = item.GetName() + " [" + item.GetRarityString() + "등급]";
                     line += Color(nameAndRarity, GetRarityColor(item.GetRarity()).c_str()) + " "
                         + Color(item.GetPropertyString(), "90") + "   "
-                        + std::to_string(item.GetPrice()) + "G";
+                        + Color(std::to_string(item.GetPrice()) + "G", "93");
                 }
                 else {
                     line += item.GetName() + " x" + std::to_string(slot.second) + " "
                         + Color(item.GetEffectString(), "92") + "   "
-                        + std::to_string(item.GetPrice()) + "G";
+                        + Color(std::to_string(item.GetPrice()) + "G", "93");
                 }
                 body.push_back(line);
                 i++;
@@ -284,7 +336,7 @@ void ShowInventoryScreen(Player* player) {
             "번호 선택 (0: 돌아가기): "
         };
 
-        DrawScreen("인벤토리", body, art, footer);
+        DrawScreen(Color("인벤토리", "96"), body, art, footer);
         std::cout << "\033[37;27H";
         notice = "";
 
@@ -321,16 +373,16 @@ void ShowInventoryScreen(Player* player) {
 void ShowStatusScreen(Player* player) {
     std::vector<std::string> body = {
         "",
-        "  이름      " + player->GetName(),
-        "  레벨      Lv." + std::to_string(player->GetLevel()),
+        "  이름      " + Color(player->GetName(), "97"),
+        "  레벨      " + Color("Lv." + std::to_string(player->GetLevel()), "96"),
         "",
         "  HP        " + Color(MakeGauge(player->GetHp(), player->GetMaxHp(), 20), "92") + "  "
-                       + std::to_string(player->GetHp()) + "/" + std::to_string(player->GetMaxHp()),
+                       + Color(std::to_string(player->GetHp()) + "/" + std::to_string(player->GetMaxHp()), "92"),
         "  EXP       " + Color(MakeGauge(player->GetExp(), 100, 20), "96") + "  "
-                       + std::to_string(player->GetExp()) + "/100",
+                       + Color(std::to_string(player->GetExp()) + "/100", "96"),
         "",
-        "  공격력    " + std::to_string(player->GetAttack()),
-        "  골드      " + std::to_string(player->GetGold()) + "G",
+        "  공격력    " + Color(std::to_string(player->GetAttack()), "91"),
+        "  골드      " + Color(std::to_string(player->GetGold()) + "G", "93"),
         "",
     };
     std::vector<std::string> art = {
@@ -349,7 +401,7 @@ void ShowStatusScreen(Player* player) {
     }
 
     std::vector<std::string> footer = { "[ Enter: 돌아가기 ]" };
-    DrawScreen("근무 기록부", body, art, footer);
+    DrawScreen(Color("근무 기록부", "92"), body, art, footer);
     std::cin.ignore();
     std::cin.get();
 }
@@ -365,7 +417,7 @@ void ShowDebugMenu(Player* player) {
             "",
             "  1. 경험치 1000 지급",
             "  2. 10000G 지급",
-            "  3. 최강 무기 획득",
+            "  3. 등급별 무기 세트 획득 (C~S, 11종)",
             "  4. 나가기",
             ""
         };
@@ -378,7 +430,7 @@ void ShowDebugMenu(Player* player) {
             "선택: "
         };
 
-        DrawScreen("특별 감사 단말", body, art, footer);
+        DrawScreen(Color("특별 감사 단말", "90"), body, art, footer);
         std::cout << "\033[37;11H";
         notice = "";
 
@@ -399,10 +451,22 @@ void ShowDebugMenu(Player* player) {
             notice = Color("[지급 완료] 10000G", "92");
         }
         else if (choice == 3) {
-            player->GetInventory().AddItem(ItemManager().GetItem("소형 블랙홀 압축기"), 1);
-            player->GetInventory().AddItem(ItemManager().GetItem("클린 월드 엔드 캐논"), 1);
-            player->GetInventory().AddItem(ItemManager().GetItem("플라즈마 용융 토치"), 1);
-            notice = Color("[지급 완료] 최강 무기 세트", "92");
+            // 시연용: C~S 전 등급 무기 세트 (총 11개, 12개 미만 유지)
+            ItemManager cheatItems;
+            const std::vector<std::string> cheatWeapons = {
+                // C등급 x2
+                "두꺼운 고무장갑", "평범한 가위",
+                // B등급 x3
+                "네오디뮴 자석 석궁", "고압 세척건", "신문지 해머",
+                // A등급 x3
+                "초음파 유리 분쇄기", "고온 유기물 분해기", "레이저 라벨 절단포",
+                // S등급 x3
+                "플라즈마 용융 토치", "클린 월드 엔드 캐논", "소형 블랙홀 압축기"
+            };
+            for (const auto& weaponName : cheatWeapons) {
+                player->GetInventory().AddItem(cheatItems.GetItem(weaponName), 1);
+            }
+            notice = Color("[지급 완료] C~S 등급별 무기 세트 (11종)", "92");
         }
         else if (choice == 4) {
             break;
