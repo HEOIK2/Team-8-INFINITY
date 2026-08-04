@@ -294,7 +294,7 @@ bool StartBattle(Player* player, Monster* monster) {
 
             int currentWidth = DisplayWidth(l);
 
-            // ★ 왼쪽 창을 28칸으로 훅 당겨서 압축! 속성 텍스트가 들어갈 넉넉한 공간 확보
+            // 
             int pad1 = 28 - currentWidth;
             if (pad1 < 1) pad1 = 1;
 
@@ -305,13 +305,20 @@ bool StartBattle(Player* player, Monster* monster) {
         }
         body.push_back("");
 
-        // ★ 부활한 art 영역! (나중에 몬스터 타입에 따라 아트를 다르게 바꿀 수도 있습니다)
+        // 
         std::vector<std::string> art = {
            
         };
 
-        // 푸터 영역 (로그 출력)
-        std::vector<std::string> footer = battleLog;
+        // 푸터 영역 (로그 출력) - 항상 4줄 고정
+        std::vector<std::string> footer;
+        int emptyLines = 4 - (int)battleLog.size();
+        for (int i = 0; i < emptyLines; ++i) {
+            footer.push_back(""); // 로그가 4줄 미만이면 위쪽을 빈 줄로 채움
+        }
+        for (const auto& log : battleLog) {
+            footer.push_back(log);
+        }
         footer.push_back("");
         footer.push_back("아이템 번호: ");
 
