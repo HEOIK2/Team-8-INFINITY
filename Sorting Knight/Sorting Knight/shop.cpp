@@ -85,6 +85,151 @@ namespace {
         return result;
     }
 
+    // 새로 만드는 함수: 상점 화면에 보여줄 상인 아스키 아트
+    std::vector<std::string> GetShopKeeperArt() {
+        return {
+          "   /\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\              ",
+            "        |                                  |        ",
+            "        |            [ S H O P ]           |        ",
+            "        |                                  |        ",
+            "       [i]                                \\%/      ",
+            "        |   ~\\|/~~~~~~\\|/~~~~~~\\|/~~~~  |        ",
+            "        |                                  |        ",
+            "        |           \\(^ ▽ ^ )            |        ",
+            "        |            |      |\\            |       ",
+            "        |            |______| \\           |       ",
+            "     ========================================     ",
+            "      |  (8)(8)   [|||||]   (8)(8)    ($)  |      ",
+            "      |  (8)(8)   [|||||]   (8)(8)         |      ",
+            "      |                                    |      ",
+            "      |====================================|      ",
+            "      |      |                      |      |      ",
+            "      |      |                      |      |      ",
+            "      ======================================      ",
+        };
+    }
+
+    // 새로 만드는 함수: 장비 보급 화면에 보여줄 아트
+    std::vector<std::string> GetWeaponMerchantArt() {
+        return {
+            "   /\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\",
+            "        |                                |        ",
+            "        |          [ S H O P ]           |        ",
+            "        |                                |        ",
+            "      [i]                                \\%/      ",
+            "        |   ~\\|/~~~~~~\\|/~~~~~~\\|/~~~~   |        ",
+            "        |                                |        ",
+            "        |   8<      /====--    //|||||   |        ", // 가위, 쇠지렛대, 빗자루
+            "        |  / |      |         //  |||    |        ",
+            "        |  \\\\ /      |  .==.  //    |     |        ", // 집게, 고무장갑
+            "     ========================================     ",
+            "      |  (8)(8)   [|||||]   (8)(8)    ($)  |      ",
+            "      |  (8)(8)   [|||||]   (8)(8)         |      ",
+            "      |                                    |      ",
+            "      |====================================|      ",
+            "      |      |                      |      |      ",
+            "      |      |                      |      |      ",
+            "      ======================================      ",
+        };
+    }
+
+
+    // 새로 만드는 함수: 소모품 상점
+    std::vector<std::string> GetPotionMerchantArt() {
+        return {
+            "   /\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\",
+            "        |          [ S H O P ]           |        ",
+            "      [i]                                \\%/      ",
+            "        |   ~\\|/~~~~~~\\|/~~~~~~\\|/~~~~   |        ",
+            "        |     .-.         _        ====  |        ",
+            "        |    | U |       (_)       |  |  |        ",
+            "        |    |___|      ( + )      '=='  |        ",
+            "     ========================================     ",
+            "      |  (8)(8)   [|||||]   (8)(8)    ($)  |      ",
+            "      |  (8)(8)   [|||||]   (8)(8)         |      ",
+            "      |====================================|      ",
+            "      |      |                      |      |      ",
+            "      |      |                      |      |      ",
+            "      ======================================      ",
+        };
+    }
+
+
+    // 새로 만드는 구조체: 상황별 대사 묶음
+    struct ShopDialogue {
+        std::string entry;
+        std::string buySuccess;
+        std::string notEnoughGold;
+        std::string notEnoughSpace;
+    };
+
+    // 새로 만드는 변수: 장비 상점 대사
+    const ShopDialogue weaponShopDialogue = {
+        "\"그놈들을 상대하려면, 보통 물건으로는 힘들다네.\"",
+        "\"좋은 선택이야. 원 주인은 몰랐던 가치지.\"",
+        "\"외상은 사절이야. 나라도 망했는데.\"",
+        "\"자네도 슬슬 버리는 법을 배워야지.\""
+    };
+
+    
+    // 새로 만드는 변수: 포션 상점 대사
+    const ShopDialogue potionShopDialogue = {
+        "\"마실 땐 아끼지 말고 마셔. 목숨은 1개라네.\"",
+        "\"좋은 선택이야. 원 주인은 몰랐던 가치지.\"",
+        "\"외상은 사절이야. 나라도 망했는데.\"",
+        "\"자네도 슬슬 버리는 법을 배워야지.\""
+    };
+
+
+
+    // 새로 만드는 함수 : 아트 전체를 박스 가운데로 오도록 왼쪽에 공백을 붙여줌
+        std::vector<std::string> CenterArt(const std::vector<std::string>& art, int contentWidth) {
+        int maxWidth = 0;
+        for (const auto& line : art) {
+            int w = DisplayWidth(line);
+            if (w > maxWidth) { maxWidth = w; }
+        }
+        int leftPad = (contentWidth - maxWidth) / 2;
+        if (leftPad < 0) { leftPad = 0; }
+
+        std::vector<std::string> result;
+        for (const auto& line : art) {
+            result.push_back(std::string(leftPad, ' ') + line);
+        }
+        return result;
+    }
+
+        // 새로 만드는 함수: 아트를 오른쪽 끝으로 밀고, 왼쪽엔 대사 한 줄을 세로 중간쯤에 넣어줌
+        std::vector<std::string> MakeArtWithDialogue(const std::vector<std::string>& art, const std::string& dialogue, int contentWidth) {
+            int artWidth = 0;
+            for (const auto& line : art) {
+                int w = DisplayWidth(line);
+                if (w > artWidth) { artWidth = w; }
+            }
+            int leftGap = contentWidth - artWidth;   // 아트 왼쪽에 남는 공간 (대사 넣을 자리)
+            if (leftGap < 0) { leftGap = 0; }
+
+            const int textLeftMargin = 4;
+            int dialogueRow = (int)art.size() / 2;   // 대사를 넣을 줄 (아트 세로 중간)
+
+            std::vector<std::string> result;
+            for (size_t i = 0; i < art.size(); ++i) {
+                std::string prefix;
+                if ((int)i == dialogueRow) {
+                    std::string indented = std::string(textLeftMargin, ' ') + dialogue;
+                    int textWidth = DisplayWidth(indented);
+                    int pad = leftGap - textWidth;
+                    if (pad < 0) { pad = 0; }
+                    prefix = indented + std::string(pad, ' ');
+                }
+                else {
+                    prefix = std::string(leftGap, ' ');   // ← 새로 추가된 부분: 대사가 없는 줄은 이만큼 공백을 채워서 아트를 오른쪽으로 밀어줌
+                }
+                result.push_back(prefix + art[i]);
+            }
+            return result;
+        }
+
     void ClearCinError() {
         if (std::cin.fail()) {
             std::cin.clear();
@@ -107,12 +252,11 @@ namespace {
     }
 
     // ── 구매 화면 ──────────────────────────────────────────
-    void BuyMenu(Player* player, Shop& shop, const std::string& title) {
+    void BuyMenu(Player* player, Shop& shop, const std::string& title, const std::vector<std::string>& shopArt, const ShopDialogue& dialogue) {
         std::string notice = "";
-
+        std::string currentLine = dialogue.entry;   // 새로 추가: 지금 보여줄 대사 (처음엔 입장 대사)
         while (true) {
             const auto& stock = shop.GetStock();
-
             std::vector<std::string> body = { "" };
             if (stock.empty()) {
                 body.push_back(Color("  (재고 없음)", "90"));
@@ -121,9 +265,7 @@ namespace {
                 for (size_t i = 0; i < stock.size(); ++i) {
                     const Item& item = stock[i];
                     std::string line = "  " + std::to_string(i + 1) + ". ";
-
                     if (item.GetCategory() == ItemCategory::WEAPON) {
-                        // 아이템 이름 + [등급] 전체 색칠
                         std::string nameAndRarity = item.GetName() + " [" + item.GetRarityString() + "등급]";
                         line += Color(nameAndRarity, GetShopRarityColor(item.GetRarity()).c_str()) + " "
                             + Color(item.GetPropertyString(), "90") + "   " + std::to_string(item.GetPrice()) + "G";
@@ -133,12 +275,12 @@ namespace {
                     }
                     body.push_back(line);
                 }
-            } // ★ 여기에 있어야 할 중괄호가 빠져서 에러가 났었습니다! (복구 완료)
-
+            }
             body.push_back("");
             body.push_back("  0. 이전 메뉴로");
             body.push_back("");
-            std::vector<std::string> art = {};
+            std::vector<std::string> art = MakeArtWithDialogue(shopArt, currentLine, 114);   // 새로 추가: 대사 얹은 아트
+            art.insert(art.begin(), 1, "");   // 아트 위에 빈 줄 1개
             std::vector<std::string> footer = {
                 "예산 " + Color(std::to_string(player->GetGold()) + "G", "93")
                 + "      적재 " + std::to_string(player->GetInventory().GetTotalItemCount())
@@ -146,11 +288,9 @@ namespace {
                 notice,
                 "물품 번호: "
             };
-
             DrawScreen(title, body, art, footer);
             std::cout << "\033[37;15H";
             notice = "";
-
             int choice;
             if (!(std::cin >> choice)) {
                 ClearCinError();
@@ -158,15 +298,12 @@ namespace {
                 continue;
             }
             ClearCinError();
-
             if (choice == 0) { break; }
-
             int index = choice - 1;
             if (index < 0 || index >= (int)stock.size()) {
                 notice = Color("[!] 잘못된 선택입니다.", "91");
                 continue;
             }
-
             const std::string itemName = stock[index].GetName();
             std::vector<std::string> qBody = {
                 "",
@@ -176,7 +313,6 @@ namespace {
                 Color("  ※ 수량을 입력하십시오.", "90"),
                 ""
             };
-
             std::vector<std::string> qFooter = {
                 "예산 " + Color(std::to_string(player->GetGold()) + "G", "93"),
                 "",
@@ -184,7 +320,6 @@ namespace {
             };
             DrawScreen("구매 신청", qBody, art, qFooter);
             std::cout << "\033[37;15H";
-
             int count;
             if (!(std::cin >> count)) {
                 ClearCinError();
@@ -196,9 +331,16 @@ namespace {
                 notice = Color("[!] 1개 이상 입력하십시오.", "91");
                 continue;
             }
-
             BuyResult result = shop.Buy(*player, itemName, count);
             notice = BuyResultText(result, itemName);
+
+            // 새로 추가: 구매 결과에 따라 대사도 같이 바꿔줌
+            switch (result) {
+            case BuyResult::SUCCESS: currentLine = dialogue.buySuccess; break;
+            case BuyResult::NOT_ENOUGH_GOLD: currentLine = dialogue.notEnoughGold; break;
+            case BuyResult::NOT_ENOUGH_SPACE: currentLine = dialogue.notEnoughSpace; break;
+            default: break;
+            }
         }
     }
 
@@ -377,7 +519,10 @@ void EnterShopMenu() {
             "선택: "
         };
 
-        std::vector<std::string> art = {};
+        std::vector<std::string> art = MakeArtWithDialogue(GetShopKeeperArt(), "\"어서 오게. 버려진 것에도 값은 있지.\"", 114);
+        art.insert(art.begin(), 3, "");
+
+
         DrawScreen("보급소", body, art, footer);
         std::cout << "\033[37;11H";
         notice = "";
@@ -391,8 +536,8 @@ void EnterShopMenu() {
         ClearCinError();
 
         switch (choice) {
-        case 1: BuyMenu(player, weaponShop, "장비 보급"); break;
-        case 2: BuyMenu(player, consumableShop, "소모품 보급"); break;
+        case 1: BuyMenu(player, weaponShop, "장비 보급", GetWeaponMerchantArt(), weaponShopDialogue); break;
+        case 2: BuyMenu(player, consumableShop, "소모품 보급", GetPotionMerchantArt(), potionShopDialogue); break;
         case 3: RarityUpgradeMenu(player, itemManager); break;
         case 0: inShop = false; break;
         default: notice = Color("[!] 잘못된 선택입니다.", "91"); break;
