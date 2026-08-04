@@ -82,7 +82,7 @@ void ShowIntro() {
     TypeTextAt(startY + 2, startX, "20XX년.", "93", 50);
     Sleep(250);
 
-    TypeTextAt(startY + 4, startX, "재활용 공익근무요원으로 근무한 지 어언 30년이 되었다.", "90", 15);
+    TypeTextAt(startY + 4, startX, "재활용 공익근무요원 제도가 도입된 지 어언 30년이 되었다.", "90", 15);
     Sleep(150);
 
     TypeTextAt(startY + 5, startX, "10년이면 강산도 변한다는 말이 있지.", "90", 15);
