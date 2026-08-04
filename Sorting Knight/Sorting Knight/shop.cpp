@@ -185,7 +185,14 @@ namespace {
     // ── 등급 합성 ──────────────────────────────────────────
     // 같은 등급의 무기 5개(종류 무관)를 소모해 다음 등급 무기 1개를 무작위로 획득.
     // 등급 순서: C(최하) -> B -> A -> S(최고)
-    const int UPGRADE_REQUIRE_COUNT = 5;
+    int GetUpgradeRequirement(ItemRarity rarity) {
+        switch (rarity) {
+        case ItemRarity::C: return 4; // C -> B: 4개 필요
+        case ItemRarity::B: return 3; // B -> A: 3개 필요
+        case ItemRarity::A: return 2; // A -> S: 2개 필요
+        default: return 999;
+        }
+    }
 
     // 보유한 무기 중 해당 등급인 것들의 개수 합 (종류 무관)
     int CountByRarity(Player* player, ItemRarity rarity) {
@@ -199,8 +206,6 @@ namespace {
     }
 
     // 해당 등급 무기를 종류 무관하게 총 count개 제거.
-    // GetItems()는 내부 벡터의 참조라 순회 중 RemoveItem을 부르면 벡터가 변형됨
-    // -> 먼저 (이름, 개수) 스냅샷을 뜬 뒤 그 기준으로 제거.
     bool ConsumeByRarity(Player* player, ItemRarity rarity, int count) {
         if (CountByRarity(player, rarity) < count) {
             return false;
@@ -247,13 +252,15 @@ namespace {
             for (size_t i = 0; i < steps.size(); ++i) {
                 ItemRarity from = steps[i].first;
                 ItemRarity to = steps[i].second;
+
                 int have = CountByRarity(player, from);
-                bool canUpgrade = have >= UPGRADE_REQUIRE_COUNT;
+                int reqCount = GetUpgradeRequirement(from); // ★ 현재 등급에 맞는 필요 개수 불러오기
+                bool canUpgrade = have >= reqCount;
 
                 std::string line = "  " + std::to_string(i + 1) + ". ["
                     + std::string(1, rarityChar(from)) + "등급 -> "
                     + std::string(1, rarityChar(to)) + "등급]    재료 "
-                    + std::to_string(have) + "/" + std::to_string(UPGRADE_REQUIRE_COUNT);
+                    + std::to_string(have) + "/" + std::to_string(reqCount);
                 line += canUpgrade ? Color("   [가능]", "92") : Color("   [재료 부족]", "90");
                 body.push_back(line);
             }
@@ -262,12 +269,21 @@ namespace {
             body.push_back("");
 
             std::vector<std::string> footer = {
-                Color("※ 같은 등급 무기 5개(종류 무관)를 소모해 다음 등급 무기 1개를 무작위로 얻습니다.", "90"),
+                Color("※ 지정된 개수의 하위 등급 무기를 소모해 상위 등급 무기를 무작위로 얻습니다.", "90"),
                 notice,
                 "선택: "
             };
 
-            std::vector<std::string> art = {};
+            // ★ 이전에 만든 art가 있다면 DrawScreen 파라미터에 추가해주시고, 없다면 기존 방식대로 출력하세요.
+            // (shop.cpp에서 아트를 넣으셨다면 body, art, footer 로 넘겨주시면 됩니다.)
+            std::vector<std::string> art = {
+                "",
+                Color(R"(        [  보 급 소  ] )", "96"),
+                Color(R"(       ====╦════════ )", "90"),
+                Color(R"(         _//_        )", "90"),
+                Color(R"(        [____]       )", "90"),
+                ""
+            };
             DrawScreen("등급 합성", body, art, footer);
             std::cout << "\033[37;11H";
             notice = "";
@@ -290,10 +306,11 @@ namespace {
 
             ItemRarity from = steps[index].first;
             ItemRarity to = steps[index].second;
+            int reqCount = GetUpgradeRequirement(from); // ★ 선택한 합성의 필요 개수
 
-            if (!ConsumeByRarity(player, from, UPGRADE_REQUIRE_COUNT)) {
+            if (!ConsumeByRarity(player, from, reqCount)) {
                 notice = Color("[!] 재료가 부족합니다. ("
-                    + std::string(1, rarityChar(from)) + "등급 5개 필요)", "91");
+                    + std::string(1, rarityChar(from)) + "등급 " + std::to_string(reqCount) + "개 필요)", "91");
                 continue;
             }
 
