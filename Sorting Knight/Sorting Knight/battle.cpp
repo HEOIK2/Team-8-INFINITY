@@ -170,13 +170,13 @@ bool StartBattle(Player* player, Monster* monster) {
             int idx1 = r;
             std::string item1 = std::to_string(idx1 + 1) + ". ";
             if (inventoryItems[idx1].first.GetCategory() == ItemCategory::WEAPON) {
-                std::string rColor = (inventoryItems[idx1].first.GetRarity() == ItemRarity::S) ? "95" : // ★ 보라
-                    (inventoryItems[idx1].first.GetRarity() == ItemRarity::A) ? "94" : // ★ 파랑
-                    (inventoryItems[idx1].first.GetRarity() == ItemRarity::B) ? "93" : "37"; // ★ 노랑
+                std::string rColor = (inventoryItems[idx1].first.GetRarity() == ItemRarity::S) ? "95" :
+                    (inventoryItems[idx1].first.GetRarity() == ItemRarity::A) ? "94" :
+                    (inventoryItems[idx1].first.GetRarity() == ItemRarity::B) ? "93" : "37";
 
-                // ★ 수정됨: 이름과 [등급]을 묶어서 색칠
                 std::string nameAndRarity = inventoryItems[idx1].first.GetName() + " [" + inventoryItems[idx1].first.GetRarityString() + "등급]";
-                item1 += Color(nameAndRarity, rColor.c_str()) + " " + Color(inventoryItems[idx1].first.GetPropertyString(), "90");
+                // ★ 수정됨: 뒤에 붙어있던 속성(강/약) 텍스트를 지워서 공간 확보!
+                item1 += Color(nameAndRarity, rColor.c_str());
             }
             else {
                 item1 += inventoryItems[idx1].first.GetName() + " x" + std::to_string(inventoryItems[idx1].second) + " " + Color(inventoryItems[idx1].first.GetEffectString(), "92");
@@ -196,9 +196,9 @@ bool StartBattle(Player* player, Monster* monster) {
                         (inventoryItems[idx2].first.GetRarity() == ItemRarity::A) ? "94" :
                         (inventoryItems[idx2].first.GetRarity() == ItemRarity::B) ? "93" : "37";
 
-                    // ★ 수정됨: 이름과 [등급]을 묶어서 색칠
                     std::string nameAndRarity = inventoryItems[idx2].first.GetName() + " [" + inventoryItems[idx2].first.GetRarityString() + "등급]";
-                    item2 += Color(nameAndRarity, rColor.c_str()) + " " + Color(inventoryItems[idx2].first.GetPropertyString(), "90");
+                    // ★ 수정됨: 두 번째 열도 속성 텍스트 제거
+                    item2 += Color(nameAndRarity, rColor.c_str());
                 }
                 else {
                     item2 += inventoryItems[idx2].first.GetName() + " x" + std::to_string(inventoryItems[idx2].second) + " " + Color(inventoryItems[idx2].first.GetEffectString(), "92");
@@ -341,8 +341,6 @@ bool StartBattle(Player* player, Monster* monster) {
 
         int gainedGold = monster->getGoldReward();
         player->AddGold(gainedGold);
-
-        player->SetHp(player->GetMaxHp());
 
         std::string dropText = "";
         int dropChance = rand() % 100;

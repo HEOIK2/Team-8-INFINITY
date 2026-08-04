@@ -182,15 +182,15 @@ public:
         // 1. 전투 중 체력 회복
         RegisterItem(Item(
             "박카스", "피로를 회복해주는 드링크입니다.",
-            "벌컥벌컥! 체력이 50 회복되었습니다!",
+            "벌컥벌컥! 체력이 150 회복되었습니다!",
             ItemRarity::N, {}, {}, 0, 15,
-            ItemCategory::CONSUMABLE, 50, 0, 0, 0, false
+            ItemCategory::CONSUMABLE, 150, 0, 0, 0, false
         ));
         RegisterItem(Item(
             "응급 구급상자", "위급한 순간 체력을 대량으로 회복합니다.",
-            "치이익! 응급 처치 완료! (체력 150 회복)",
+            "치이익! 응급 처치 완료! (체력 350 회복)",
             ItemRarity::N, {}, {}, 0, 45,
-            ItemCategory::CONSUMABLE, 150, 0, 0, 0, false
+            ItemCategory::CONSUMABLE, 350, 0, 0, 0, false
         ));
 
         // 2. 전투 중 공격력 증가
@@ -210,15 +210,15 @@ public:
         // 3. 베이스 최대 체력 증가 (영구)
         RegisterItem(Item(
             "특제 단백질 보충제", "근육을 펌핑시켜 최대 체력을 영구적으로 늘려줍니다.",
-            "우와아아! 근육 펌핑! (최대체력 30 영구 증가)",
+            "우와아아! 근육 펌핑! (최대체력 50 영구 증가)",
             ItemRarity::N, {}, {}, 0, 150,
-            ItemCategory::CONSUMABLE, 0, 0, 30, 0, true
+            ItemCategory::CONSUMABLE, 0, 0, 50, 0, true
         ));
         RegisterItem(Item(
             "생명력의 영약", "생명력을 영구적으로 대폭 상승시킵니다.",
-            "몸이 가벼워집니다! (최대체력 100 영구 증가)",
-            ItemRarity::N, {}, {}, 0, 350,
-            ItemCategory::CONSUMABLE, 0, 0, 100, 0, true
+            "몸이 가벼워집니다! (최대체력 150 영구 증가)",
+            ItemRarity::N, {}, {}, 0, 400,
+            ItemCategory::CONSUMABLE, 0, 0, 200, 0, true
         ));
 
         // 4. 베이스 공격력 증가 (영구)
@@ -244,9 +244,9 @@ public:
         ));
         RegisterItem(Item(
             "기적의 엘릭서", "전설 속의 영약으로 모든 능력이 비약적으로 상승합니다.",
-            "몸이 완벽하게 재구성됩니다! (최대체력 200, 기본 공격력 50 영구 증가)",
-            ItemRarity::N, {}, {}, 0, 1000,
-            ItemCategory::CONSUMABLE, 0, 50, 200, 0, true // buffATK 50, buffMaxHP 200, isPermanent true
+            "몸이 완벽하게 재구성됩니다! (최대체력 300, 기본 공격력 100 영구 증가)",
+            ItemRarity::N, {}, {}, 0, 1200,
+            ItemCategory::CONSUMABLE, 0, 100, 300, 0, true // buffATK 100, buffMaxHP 300, isPermanent true
         ));
     }
 
