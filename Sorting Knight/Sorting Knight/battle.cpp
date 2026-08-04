@@ -31,6 +31,64 @@ static void AddLog(const std::string& msg) {
     }
 }
 
+// 새로 만드는 함수: 아트를 오른쪽 끝으로 밀고, 왼쪽엔 대사 한 줄을 세로 중간쯤에 넣어줌
+static std::vector<std::string> MakeArtWithDialogue(const std::vector<std::string>& art, const std::string& dialogue, int contentWidth) {
+    int artWidth = 0;
+    for (const auto& line : art) {
+        int w = DisplayWidth(line);
+        if (w > artWidth) { artWidth = w; }
+    }
+    int leftGap = contentWidth - artWidth;
+    if (leftGap < 0) { leftGap = 0; }
+
+    const int textLeftMargin = 4;
+    int dialogueRow = (int)art.size() / 2;
+
+    std::vector<std::string> result;
+    for (size_t i = 0; i < art.size(); ++i) {
+        std::string prefix;
+        if ((int)i == dialogueRow) {
+            std::string indented = std::string(textLeftMargin, ' ') + dialogue;
+            int textWidth = DisplayWidth(indented);
+            int pad = leftGap - textWidth;
+            if (pad < 0) { pad = 0; }
+            prefix = indented + std::string(pad, ' ');
+        }
+        else {
+            prefix = std::string(leftGap, ' ');
+        }
+        result.push_back(prefix + art[i]);
+    }
+    return result;
+}
+
+// 새로 만드는 함수: 구역 선택 화면에 보여줄 아트
+static std::vector<std::string> GetZoneSelectArt() {
+    return {
+       "                                                                                      ",
+            "                                                        [RECYCLING]              ",
+            "                                                      .------------.             ",
+            "                                                     /  ~ ~ TRASH ~ \\            ",
+            "                                                   .(  (o)   (o)  ).             ",
+            "                                                  /  ~ ~ ~ ~ ~ ~ ~  \\            ",
+            "                                                 |   /===========\\   |           ",
+            "                                                 |  |  ENTRANCE  |  |           ",
+            "                                                 |_ |___________| _|           ",
+            "                                                 /     /  \\     \\                ",
+            "                                   .--------.   /     /    \\     \\               ",
+            "                                   | TRASH  |  /     /      \\     \\              ",
+            "         .---.                     '---.----' /     /        \\     \\             ",
+            "        ( o-o )  /|                   |      /     /          \\     \\            ",
+            "        /|===|\\ / |                  /      /     /            \\     \\           ",
+            "       ( |(R)| )  |=================/======/     /              \\     \\_________ ",
+            " _______||___||__/________________/____________/_________________\\______________ "
+    };
+}
+
+
+
+
+
 // 몬스터 킬 카운트 반환
 std::map<std::string, int> GetMonsterKillCount() {
 	return monsterkillCount;
@@ -119,7 +177,7 @@ Monster* StageMonster(int playerLevel, int& selectedStage) {
             Color("  ※ 권장 레벨 미달 구역은 출입이 제한됩니다.", "90"),
             ""
         };
-        std::vector<std::string> art = {};
+        std::vector<std::string> art = MakeArtWithDialogue(GetZoneSelectArt(), "\"어떤 구역을 처리할까?\"", 114);;
         std::vector<std::string> footer = {
             notice.empty() ? "" : Color(notice, "91"),
             "",
