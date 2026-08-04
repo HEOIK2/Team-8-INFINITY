@@ -264,7 +264,8 @@ void ShowDebugMenu(Player* player) {
             "",
             "  1. 경험치 1000 지급",
             "  2. 10000G 지급",
-            "  3. 나가기",
+            "  3. 최강 무기 획득",
+            "  4. 나가기",
             ""
         };
         std::vector<std::string> art = {};
@@ -297,6 +298,12 @@ void ShowDebugMenu(Player* player) {
             notice = Color("[지급 완료] 10000G", "92");
         }
         else if (choice == 3) {
+			player->GetInventory().AddItem(ItemManager().GetItem("소형 블랙홀 압축기"), 1);		
+            player->GetInventory().AddItem(ItemManager().GetItem("클린 월드 엔드 캐논"), 1);
+            player->GetInventory().AddItem(ItemManager().GetItem("플라즈마 용융 토치"), 1);
+            notice = Color("[지급 완료] 플라즈마 용융 토치", "92");
+        }
+        else if (choice == 4) {
             break;
         }
         else {

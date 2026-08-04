@@ -16,37 +16,40 @@ public:
     }
 
     void InitializeItems() {
+        /* Item::Item(std::string name, std::string desc, std::string attackText, ItemRarity rarity,
+    std::vector<MonsterType> strong, std::vector<MonsterType> weak, int ATK, int price,
+    ItemCategory category, int healHP, int buffATK, int buffMaxHP, int gainLevel, bool isPermanent) */
         // ==========================================
         // 💚 [C 등급] - 기본 도구 (가격: 25원)
         // ==========================================
         RegisterItem(Item(
             "평범한 가위", "문구용 가위입니다.",
             "싹둑! 테이프와 박스를 절단합니다!",
-            ItemRarity::C, { MonsterType::PAPER }, { MonsterType::GLASS, MonsterType::IRON }, 30, 25
+            ItemRarity::C, { MonsterType::PAPER }, { MonsterType::GLASS, MonsterType::IRON }, 12, 25
         ));
 
         RegisterItem(Item(
             "나무 젓가락", "일회용 나무 젓가락입니다.",
             "콕! 쓰레기를 집어 올립니다!",
-            ItemRarity::C, { MonsterType::PLASTIC }, { MonsterType::IRON, MonsterType::ALUMINUM }, 28, 25
+            ItemRarity::C, { MonsterType::PLASTIC }, { MonsterType::IRON, MonsterType::ALUMINUM }, 12, 25
         ));
 
         RegisterItem(Item(
             "대나무 빗자루", "마당을 쓸어내는 빗자루입니다.",
             "쓱싹! 바닥의 쓰레기를 쓸어냅니다!",
-            ItemRarity::C, {}, {}, 35, 25
+            ItemRarity::C, {}, {}, 12, 25
         ));
 
         RegisterItem(Item(
             "분리수거 집게", "긴 철제 집게입니다.",
             "착! 찌그러진 캔을 집어 누릅니다!",
-            ItemRarity::C, { MonsterType::ALUMINUM }, { MonsterType::GLASS }, 38, 25
+            ItemRarity::C, { MonsterType::ALUMINUM }, { MonsterType::GLASS }, 12, 25
         ));
 
         RegisterItem(Item(
             "두꺼운 고무장갑", "분홍색 김장용 고무장갑입니다.",
             "찰싹! 유리 파편을 강하게 후려칩니다!",
-            ItemRarity::C, { MonsterType::GLASS }, { MonsterType::ALUMINUM }, 32, 25
+            ItemRarity::C, { MonsterType::GLASS }, { MonsterType::ALUMINUM }, 12, 25
         ));
 
         // ==========================================
@@ -55,49 +58,49 @@ public:
         RegisterItem(Item(
             "커터칼과 라벨 제거기", "비닐 라벨 제거용 도구입니다.",
             "슥-삭! 페트병 라벨을 베어냅니다!",
-            ItemRarity::B, { MonsterType::PLASTIC }, { MonsterType::IRON, MonsterType::GLASS }, 50, 100
+            ItemRarity::B, { MonsterType::PLASTIC }, { MonsterType::IRON, MonsterType::GLASS }, 31, 100
         ));
 
         RegisterItem(Item(
             "발로 밟는 캔 찌그러뜨리개", "발판형 캔 압축 장치입니다.",
             "콰직! 캔을 납작하게 만듭니다!",
-            ItemRarity::B, { MonsterType::ALUMINUM, MonsterType::PLASTIC }, { MonsterType::IRON }, 55, 100
+            ItemRarity::B, { MonsterType::ALUMINUM, MonsterType::PLASTIC }, { MonsterType::IRON }, 29, 100
         ));
 
         RegisterItem(Item(
             "네오디뮴 자석 석궁", "자력을 띤 석궁 장치입니다.",
             "철컥! 캔과 알루미늄을 강하게 끌어당깁니다!",
-            ItemRarity::B, { MonsterType::ALUMINUM }, { MonsterType::GLASS, MonsterType::PAPER }, 60, 100
+            ItemRarity::B, { MonsterType::ALUMINUM }, { MonsterType::GLASS, MonsterType::PAPER }, 28, 100
         ));
 
         RegisterItem(Item(
             "스티로폼 열선 절단기", "열선 절단 도구입니다.",
             "스르륵~ 열선으로 깔끔하게 절단합니다!",
-            ItemRarity::B, { MonsterType::PLASTIC }, { MonsterType::GLASS, MonsterType::ALUMINUM }, 58, 100
+            ItemRarity::B, { MonsterType::PLASTIC }, { MonsterType::GLASS, MonsterType::ALUMINUM }, 30, 100
         ));
 
         RegisterItem(Item(
             "고압 세척건", "강력 수압 세척기입니다.",
             "슈아아악! 고압 수압을 뿜어냅니다!",
-            ItemRarity::B, { MonsterType::PAPER }, { MonsterType::PLASTIC }, 52, 100
+            ItemRarity::B, { MonsterType::PAPER }, { MonsterType::PLASTIC }, 29, 100
         ));
 
         RegisterItem(Item(
             "신문지 해머", "굳힌 신문지 망치입니다.",
             "쿵! 단단한 유리 표면에 금을 냅니다!",
-            ItemRarity::B, {}, {}, 54, 100
+            ItemRarity::B, {}, {}, 35, 100
         ));
 
         RegisterItem(Item(
             "알루미늄 캔 분쇄기", "기어식 캔 분쇄기입니다.",
             "드르륵- 콰직! 캔을 구겨버립니다!",
-            ItemRarity::B, { MonsterType::ALUMINUM }, { MonsterType::PAPER }, 56, 100
+            ItemRarity::B, { MonsterType::ALUMINUM }, { MonsterType::PAPER }, 31, 100
         ));
 
         RegisterItem(Item(
             "산업용 강풍 핑퐁포", "대형 송풍 무기입니다.",
             "콰앙! 강풍으로 쓰레기를 밀어냅니다!",
-            ItemRarity::B, { MonsterType::PAPER, MonsterType::PLASTIC }, { MonsterType::IRON }, 62, 100
+            ItemRarity::B, { MonsterType::PAPER, MonsterType::PLASTIC }, { MonsterType::IRON }, 32, 100
         ));
 
         // ==========================================
@@ -106,49 +109,49 @@ public:
         RegisterItem(Item(
             "초음파 유리 분쇄기", "고주파 유리 분쇄 장비입니다.",
             "콰창! 초음파 진동으로 분쇄합니다!",
-            ItemRarity::A, { MonsterType::GLASS, MonsterType::ALUMINUM }, { MonsterType::PAPER }, 80, 250
+            ItemRarity::A, { MonsterType::GLASS, MonsterType::ALUMINUM }, { MonsterType::PAPER }, 56, 250
         ));
 
         RegisterItem(Item(
             "유압 박스 압축기", "폐지 압축 기계입니다.",
             "쿵-쾅! 유압 펜치로 박스를 눌러버립니다!",
-            ItemRarity::A, { MonsterType::PAPER, MonsterType::PLASTIC }, { MonsterType::IRON }, 85, 250
+            ItemRarity::A, { MonsterType::PAPER, MonsterType::PLASTIC }, { MonsterType::IRON }, 58, 250
         ));
 
         RegisterItem(Item(
             "고온 유기물 분해기", "플라스틱 용해 장비입니다.",
             "화아아악! 플라스틱을 녹여버립니다!",
-            ItemRarity::A, { MonsterType::PLASTIC }, { MonsterType::GLASS }, 88, 250
+            ItemRarity::A, { MonsterType::PLASTIC }, { MonsterType::GLASS }, 59, 250
         ));
 
         RegisterItem(Item(
             "산업용 회전 분쇄 칼날", "중공업용 파쇄기입니다.",
             "위잉- 콰쾅! 회전 칼날로 갈아버립니다!",
-            ItemRarity::A, { MonsterType::PLASTIC, MonsterType::ALUMINUM }, { MonsterType::IRON }, 82, 250
+            ItemRarity::A, { MonsterType::PLASTIC, MonsterType::ALUMINUM }, { MonsterType::IRON }, 56, 250
         ));
 
         RegisterItem(Item(
             "알루미늄 용해 용광로포", "캔 용해 정밀 포탑입니다.",
             "팟! 알루미늄을 녹여버립니다!",
-            ItemRarity::A, { MonsterType::ALUMINUM }, { MonsterType::GLASS }, 86, 250
+            ItemRarity::A, { MonsterType::ALUMINUM }, { MonsterType::GLASS }, 60, 250
         ));
 
         RegisterItem(Item(
             "레이저 라벨 절단포", "정밀 레이저 포탑입니다.",
             "찌이잉! 비닐과 종이를 소멸시킵니다!",
-            ItemRarity::A, { MonsterType::PAPER, MonsterType::PLASTIC }, { MonsterType::ALUMINUM }, 84, 250
+            ItemRarity::A, { MonsterType::PAPER, MonsterType::PLASTIC }, { MonsterType::ALUMINUM }, 57, 250
         ));
 
         RegisterItem(Item(
             "고주파 충격파 캐논", "충격파 발사 무기입니다.",
             "콰-앙! 진동 충격파를 발사합니다!",
-            ItemRarity::A, {}, {}, 87, 250
+            ItemRarity::A, {}, {}, 64, 250
         ));
 
         RegisterItem(Item(
             "폐지 고압 수압포", "초고압 수압포입니다.",
             "슈화아악! 물줄기로 구조를 해체합니다!",
-            ItemRarity::A, { MonsterType::PAPER }, { MonsterType::GLASS }, 83, 250
+            ItemRarity::A, { MonsterType::PAPER }, { MonsterType::GLASS }, 58, 250
         ));
 
         // ==========================================
@@ -157,19 +160,19 @@ public:
         RegisterItem(Item(
             "플라즈마 용융 토치", "철제 용해용 초고온 토치입니다.",
             "화아아악! IRON 속성의 철판을 녹여버립니다!",
-            ItemRarity::S, { MonsterType::IRON }, {}, 150, 500
+            ItemRarity::S, { MonsterType::IRON }, {}, 100, 500
         ));
 
         RegisterItem(Item(
             "클린 월드 엔드 캐논", "최종 정화 병기입니다.",
             "콰콰콰쾅! 궁극의 정화 레이저를 발사합니다!",
-            ItemRarity::S, {}, {}, 130, 500
+            ItemRarity::S, {}, {}, 150, 500
         ));
 
         RegisterItem(Item(
             "소형 블랙홀 압축기", "초중력 발생 장치입니다.",
             "쿠구구구... 초중력으로 쓰레기를 한 점으로 압축합니다!",
-            ItemRarity::S, { MonsterType::PAPER, MonsterType::PLASTIC, MonsterType::GLASS, MonsterType::ALUMINUM }, {}, 160, 500
+            ItemRarity::S, { MonsterType::PAPER, MonsterType::PLASTIC, MonsterType::GLASS, MonsterType::ALUMINUM }, {}, 98, 500
         ));
 
         // ==========================================

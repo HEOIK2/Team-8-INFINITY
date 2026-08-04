@@ -179,7 +179,7 @@ bool StartBattle(Player* player, Monster* monster) {
         AddLog("> " + selectedItem.GetAttackText());
 
         if (selectedItem.GetCategory() == ItemCategory::WEAPON) {
-            double damage = selectedItem.GetBaseATK();
+            double damage = player->GetAttack() + selectedItem.GetBaseATK();
             MonsterType monsterType = monster->getProperty();
             std::vector<MonsterType> strong = selectedItem.GetStrongAgainst();
             std::vector<MonsterType> weak = selectedItem.GetWeakAgainst();

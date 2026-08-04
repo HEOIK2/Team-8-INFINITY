@@ -127,8 +127,8 @@ void Player::LevelUp()
 {
     level++;
 
-    maxHp += level * 20;
-    attack += level * 5;
+    maxHp += 15;
+    attack += 3;
 
     hp = maxHp;
 
