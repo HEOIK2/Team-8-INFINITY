@@ -28,6 +28,11 @@ static void AddLog(const std::string& msg) {
     }
 }
 
+// 몬스터 킬 카운트 반환
+std::map<std::string, int> GetMonsterKillCount() {
+	return monsterkillCount;
+}
+
 Monster* StageMonster(int playerLevel, int& selectedStage) {
 
     MonsterType randomPool[] = { MonsterType::NONE, MonsterType::PAPER, MonsterType::PLASTIC, MonsterType::GLASS };
@@ -417,4 +422,13 @@ void EnterEnding(Player* player) {
     DrawScreen("엔딩 - 업무 보고", body, art, footer);
     std::cin.ignore();
     std::cin.get();
+}
+
+// 타이틀로 돌아가기 전에 전투 관련 스탯을 초기화하는 함수
+void ResetBattleStats() {
+    stage2Entered = false;
+    stage3Entered = false;
+    monsterkillCount.clear(); // 몬스터 처치 기록 맵 비우기
+    totalWinCount = 0;        // 누적 처리 실적 0으로 리셋
+    battleLog.clear();        // 이전 게임의 전투 로그도 비워주기
 }

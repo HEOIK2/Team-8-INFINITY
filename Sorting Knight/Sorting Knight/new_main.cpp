@@ -245,10 +245,25 @@ void ShowStatusScreen(Player* player) {
         "",
         "  공격력    " + std::to_string(player->GetAttack()),
         "  골드      " + std::to_string(player->GetGold()) + "G",
+        "",
+    };
+    std::vector<std::string> art = {
+           Color("  - 현재 민원 처리 대장 -", "93"),
+        "",
+         "  담당자   " + player->GetName()
+                     + " (" + player->GetJobName()
+                     + ", Lv." + std::to_string(player->GetLevel()) + ")",
+        "",
+            Color("  ── 처리 내역 ──", "90"),
         ""
     };
+
+    for (const auto& pair : GetMonsterKillCount()) {
+        art.push_back("    " + pair.first + "   x" + std::to_string(pair.second));
+    }
+
     std::vector<std::string> footer = { "[ Enter: 돌아가기 ]" };
-    DrawScreen("근무 기록부", body, footer);
+    DrawScreen("근무 기록부", body, art, footer);
 	std::cin.ignore();
     std::cin.get();
 }
@@ -341,6 +356,8 @@ int main() {
 
         GiveInitialItems(player, itemManager);
         InitShop(player, &itemManager);
+
+        ResetBattleStats();
 
         bool inMainMenu = true;
         while (inMainMenu) {
