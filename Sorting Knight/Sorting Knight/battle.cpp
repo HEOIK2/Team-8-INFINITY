@@ -490,36 +490,52 @@ void ClearStage(int stage) {
 // ── 엔딩 : 최종 민원 처리 대장 ────────────────────────────
 void EnterEnding(Player* player) {
 
-    std::vector<std::string> body = {
-        "",
-        Color("  - 최종 민원 처리 대장 -", "93"),
-        "",
-        "  담당자   " + player->GetName()
-                     + " (" + player->GetJobName()
-                     + ", Lv." + std::to_string(player->GetLevel()) + ")",
-        "",
-        Color("  ── 처리 내역 ──", "90"),
-        ""
-    };
-
-    for (const auto& pair : monsterkillCount) {
-        body.push_back("    " + pair.first + "   x" + std::to_string(pair.second));
-    }
-
-    body.push_back("");
-    body.push_back(Color("  누적 처리 실적   " + std::to_string(totalWinCount) + "건", "96"));
-    body.push_back("");
-    body.push_back(Color("  폐기처리장 완전 정화 완료. 수고하셨습니다.", "92"));
-    body.push_back("");
-
-    std::vector<std::string> footer = {
-        Color("※ 분리배출에 관한 법률은 여전히 폐지 상태입니다.", "90"),
-        "",
-        "[ Enter: 계속 ]"
-    };
-
+    std::vector<std::string> body(20, "");
     std::vector<std::string> art = {};
+    std::vector<std::string> footer = { "[ Enter: 계속 ]" };
+
     DrawScreen("엔딩 - 업무 보고", body, art, footer);
+
+    int startY = 5;
+    int startX = 6;
+
+    TypeTextAt(startY + 1, startX, "폐기처리장의 마지막 잔재가 조용히 흩어진다.", "90", 30);
+    Sleep(300);
+
+    TypeTextAt(startY + 3, startX, "더 이상 처리할 것이 남지 않았다.", "90", 25);
+    Sleep(300);
+
+    TypeTextAt(startY + 5, startX, "- 최종 민원 처리 대장 -", "93", 40);
+    Sleep(400);
+
+    std::string profile = "담당자   " + player->GetName()
+        + " (" + player->GetJobName()
+        + ", Lv." + std::to_string(player->GetLevel()) + ")";
+    TypeTextAt(startY + 7, startX, profile, "37", 20);
+    Sleep(300);
+
+    TypeTextAt(startY + 9, startX, "── 처리 내역 ──", "90", 20);
+    Sleep(200);
+
+    int lineOffset = 11;
+    for (const auto& pair : monsterkillCount) {
+        std::string line = "  " + pair.first + "   x" + std::to_string(pair.second);
+        TypeTextAt(startY + lineOffset, startX, line, "37", 15);
+        lineOffset++;
+    }
+    Sleep(300);
+
+    lineOffset++;
+    TypeTextAt(startY + lineOffset, startX,
+        "누적 처리 실적   " + std::to_string(totalWinCount) + "건", "96", 30);
+    Sleep(500);
+
+    lineOffset += 2;
+    TypeTextAt(startY + lineOffset, startX,
+        "폐기처리장 완전 정화 완료. 수고하셨습니다.", "92", 40);
+    Sleep(600);
+
+    std::cout << "\033[37;24H";
     std::cin.ignore();
     std::cin.get();
 }
