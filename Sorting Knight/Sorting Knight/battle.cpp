@@ -671,22 +671,22 @@ void EnterEnding(Player* player) {
         std::cin.get();
     }
 
-    // ── 4단계: THE END + 크레딧 ──────────────────────────
+    // ── 4단계: THE END + 크레딧 ────────────────────────── // 마지막에 무지개색으로 바꿈
     {
         const std::string pad(29, ' ');
         std::vector<std::string> body = {
             "", "", "",
-            pad + Color("████████╗██╗  ██╗███████╗    ███████╗███╗   ██╗██████╗ ", "92"),
-            pad + Color("╚══██╔══╝██║  ██║██╔════╝    ██╔════╝████╗  ██║██╔══██╗", "92"),
+            pad + Color("████████╗██╗  ██╗███████╗    ███████╗███╗   ██╗██████╗ ", "91"),
+            pad + Color("╚══██╔══╝██║  ██║██╔════╝    ██╔════╝████╗  ██║██╔══██╗", "93"),
             pad + Color("   ██║   ███████║█████╗      █████╗  ██╔██╗ ██║██║  ██║", "92"),
-            pad + Color("   ██║   ██╔══██║██╔══╝      ██╔══╝  ██║╚██╗██║██║  ██║", "92"),
-            pad + Color("   ██║   ██║  ██║███████╗    ███████╗██║ ╚████║██████╔╝", "92"),
-            pad + Color("   ╚═╝   ╚═╝  ╚═╝╚══════╝    ╚══════╝╚═╝  ╚═══╝╚═════╝ ", "92"),
+            pad + Color("   ██║   ██╔══██║██╔══╝      ██╔══╝  ██║╚██╗██║██║  ██║", "96"),
+            pad + Color("   ██║   ██║  ██║███████╗    ███████╗██║ ╚████║██████╔╝", "94"),
+            pad + Color("   ╚═╝   ╚═╝  ╚═╝╚══════╝    ╚══════╝╚═╝  ╚═══╝╚═════╝ ", "95"),
             ""
         };
         std::vector<std::string> art = {};
         std::vector<std::string> footer = { "" };
-        DrawScreen(Color("엔딩", "92"), body, art, footer);
+        DrawScreen(Color("크레딧", "92"), body, art, footer);
 
         auto centerCol = [](const std::string& text) {
             return 3 + (114 - DisplayWidth(text)) / 2;
@@ -694,14 +694,17 @@ void EnterEnding(Player* player) {
 
         std::string line1 = "재활용 공익근무요원 : 요원의 마지막 기록";
         std::string line2 = "기획 · 개발   TEAM 8 - INFINITY";
-        std::string line3 = "Thank You For Playing!";
+        std::string line3 = "허익 한명재 윤가원 최용준 한누리";
+        std::string line4 = "사랑하는 팀 스파르타 내일배움캠프 언리얼 10기 화이팅!";
 
         Sleep(400);
         TypeTextAt(16, centerCol(line1), line1, "96", 30);
         Sleep(400);
-        TypeTextAt(19, centerCol(line2), line2, "37", 30);
+        TypeTextAt(17, centerCol(line2), line2, "37", 30);
         Sleep(400);
-        TypeTextAt(22, centerCol(line3), line3, "93", 40);
+        TypeTextAt(19, centerCol(line3), line3, "37", 30);
+        Sleep(400);
+        TypeTextAt(22, centerCol(line4), line4, "93", 40);
         Sleep(600);
 
         std::string prompt = "[ Enter: 게임 종료 ]";
