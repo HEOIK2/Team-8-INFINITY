@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include <iostream>
 #include <string>
+#include <vector>
 #include "type.h"
 
 class Player;
@@ -11,6 +12,7 @@ private:
     MonsterType property; // 몬스터 속성 (type.h에 정의됨)
     int hp;
     int atk;
+    int maxHp;
     int expReward;
     int goldReward;
 
@@ -24,7 +26,7 @@ public:
 
     MonsterType getProperty() { return property; }
     void setProperty(MonsterType property) { this->property = property; }
-
+    int getMaxHp() { return maxHp; }
     int getHp() { return hp; }
     void setHp(int hp) { this->hp = hp; }
 
@@ -38,3 +40,4 @@ public:
 };
 
 Monster* CreateMonster(MonsterType, int playerlevel);
+std::vector<std::string> GetMonsterArt(const std::string& name); // 몬스터 아스키아트

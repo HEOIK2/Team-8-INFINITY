@@ -71,4 +71,7 @@ public:
     int GetBuffMaxHP() const;
     int GetGainLevel() const; 
     bool GetIsPermanent() const;
+
+    std::string GetPropertyString() const;
+    std::string GetEffectString() const;
 };

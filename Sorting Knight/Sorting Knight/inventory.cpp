@@ -165,7 +165,11 @@ UseResult Inventory::UseItem(const std::string& itemName, Player& player) {
         player.AddAttack(item->GetBuffATK());
     }
     if (item->GetGainLevel() > 0) {
-        player.SetLevel(player.GetLevel() + item->GetGainLevel());
+        // 최대 레벨(MAX_LEVEL)을 넘지 않도록 1레벨씩 올림
+        int gain = item->GetGainLevel();
+        while (gain-- > 0 && !player.IsMaxLevel()) {
+            player.SetLevel(player.GetLevel() + 1);
+        }
     }
 
     RemoveItem(itemName, 1); // 사용한 만큼 소모

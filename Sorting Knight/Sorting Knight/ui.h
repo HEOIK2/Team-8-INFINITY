@@ -3,6 +3,8 @@
 #include <vector>
 
 class Inventory;   // 전방 선언
+
+void TypeTextAt(int row, int col, const std::string& text, const std::string& colorCode = "37", int delay = 40);
 void ShowInventoryScreen(const Inventory& inv);
 
 void UI_Init();
@@ -29,8 +31,12 @@ void DrawScreen(const std::string& title,
     const std::vector<std::string>& body,
     const std::vector<std::string>& footer);
 
-// ★ 새로운 버전: 아스키 아트 영역이 추가된 분할 화면을 그린다.
+// ★ 새로운 버전: 아스키 아트 영역이 추가된 분할 화면을 그린다. 
 void DrawScreen(const std::string& title,
     const std::vector<std::string>& body,
     const std::vector<std::string>& art,
     const std::vector<std::string>& footer);
+
+void PlayBGM(const std::string& file); // BGM
+void StopBGM(); // 스탑용임 
+void PlaySE(const std::string& file); // 효과음용임
