@@ -27,10 +27,13 @@
     <ClCompile Include="Item.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="old_main.cpp">
+    <ClCompile Include="monster.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="monster.cpp">
+    <ClCompile Include="new_main.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="old_main.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="player.cpp">
@@ -40,9 +43,6 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="ui.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="new_main.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
@@ -62,9 +62,6 @@
     <ClInclude Include="ItemManager.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="main.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="monster.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -80,5 +77,13 @@
     <ClInclude Include="ui.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="main.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="loop_of_peace.wav">
+      <Filter>리소스 파일</Filter>
+    </Media>
   </ItemGroup>
 </Project>
