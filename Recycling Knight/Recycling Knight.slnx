@@ -3,5 +3,5 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="Sorting Knight/Sorting Knight.vcxproj" Id="1d91ae8e-3aff-4be0-8577-383a08870b71" />
+  <Project Path="Recycling Knight/Recycling Knight.vcxproj" Id="4b874adc-5c63-42a9-ae33-dc7315a5ed2a" />
 </Solution>
