@@ -483,6 +483,7 @@ int main() {
     SetConsoleOutputCP(CP_UTF8);
     SetConsoleCP(CP_UTF8);
     srand((unsigned int)time(nullptr));
+    PlayBGM("loop_of_peace.wav");
 
     bool isProgramRunning = true;
 

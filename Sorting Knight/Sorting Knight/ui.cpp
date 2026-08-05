@@ -1,6 +1,8 @@
 ﻿#include "ui.h" 
 #include <windows.h> 
 #include <iostream> 
+#include <mmsystem.h> // bgm용
+#pragma comment(lib, "winmm.lib") // bgm용 winmm 라이브러리에 연결하는 것임. 
 
 void UI_Init() {
 	system("mode con: cols=120 lines=40");
@@ -86,10 +88,10 @@ void ShowMainTitleArt() {
                           ██╔═██╗ ██║╚██╗██║██║██║   ██║██╔══██║   ██║   
                           ██║  ██╗██║ ╚████║██║╚██████╔╝██║  ██║   ██║   
                           ╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝ ╚═════╝ ╚═╝  ╚═╝   ╚═╝   
-)", "92");
+)", "36");
 
 	// 부제목과 하단 선, 시작 안내 문구도 중앙에 맞게 정렬
-	std::cout << Color("\n                          > 재활용 공익근무요원: 요원의 마지막 기록\n\n", "96");
+	std::cout << Color("\n                          > 재활용 공익근무요원: 요원의 마지막 기록\n\n", "92");
 	std::cout << "     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n";
 	std::cout << Color("\n                                            [ Enter 키를 눌러 시작 ]\n", "90");
 
@@ -221,4 +223,23 @@ void DrawScreen(const std::string& title,
 	for (const std::string& line : footer) { BoxLine(line, BOX_WIDTH); }
 
 	BoxBottom(BOX_WIDTH);
+}
+
+// bgm 재생용
+
+// 배경음악 반복 재생. wav 파일만 가능함다.
+void PlayBGM(const std::string& file) {
+	std::wstring w = ToWide(file);
+	PlaySoundW(w.c_str(), NULL, SND_FILENAME | SND_ASYNC | SND_LOOP);
+}
+
+// 재생 중지
+void StopBGM() {
+	PlaySoundW(NULL, NULL, 0);
+}
+
+// 효과음 1회 재생 (BGM을 끊어버리므로 주의)
+void PlaySE(const std::string& file) {
+	std::wstring w = ToWide(file);
+	PlaySoundW(w.c_str(), NULL, SND_FILENAME | SND_ASYNC);
 }
